@@ -95,7 +95,7 @@ make clean
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-To run the executable just type the following command:
+To run the executable, just type the following command:
 ```sh
 ./SimpleAStarExecutable
 ```
