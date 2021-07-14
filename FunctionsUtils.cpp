@@ -5,10 +5,10 @@
 // por ponteiros
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
-class CustomComparator
-{
-    public:
-        bool operator() (Node *n1, Node *n2)
+
+#include"AStarHeader.h"
+
+        bool CustomComparator::operator() (Node *n1, Node *n2)
         {
             if (n1->f > n2->f)
             {
@@ -19,7 +19,6 @@ class CustomComparator
                 return false;
             }
         }
-};
 
 // usa uma cópia da minha lista de prioridade
 // imprime a lista de prioridades a partir de uma cópia

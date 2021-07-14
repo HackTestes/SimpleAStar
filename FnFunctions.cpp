@@ -12,6 +12,7 @@ function heuristic(node) =
 */
 
 #include <cmath>
+#include"AStarHeader.h"
 
 // por cópia
 // além disso, adicionei esse parâmetro extra, já que esses nós (START, GOAL) estão fora do escopo da função

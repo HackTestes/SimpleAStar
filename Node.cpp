@@ -1,19 +1,8 @@
 
-class Node 
-{
-    public:
-        long x;
-        long y;
-        long node_index;
 
-        long f; // f(n) = g(n) + h(n)
-        long g;
+#include"AStarHeader.h"
 
-        Node *came_from;
-
-        std::string appearance;
-
-        Node(long x, long y, long node_index)
+	Node::Node(long x, long y, long node_index)
         {
             this->x = x;
             this->y = y;
@@ -26,4 +15,3 @@ class Node
 
             this->appearance = "o"; // nó normal
         }
-};

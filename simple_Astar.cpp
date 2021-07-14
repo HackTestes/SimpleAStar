@@ -5,9 +5,11 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include "Node.cpp"
-#include "FunctionsUtils.cpp"
-#include "FnFunctions.cpp"
+//#include "Node.cpp"
+//#include "FunctionsUtils.cpp"
+//#include "FnFunctions.cpp"
+
+#include"AStarHeader.h"
 
 // o mapa é uma tabela
 // movimentos: cima, baixo, esquerda, direta (4 movimentos possíveis)
