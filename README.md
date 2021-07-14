@@ -1,4 +1,4 @@
-<a>link<a>
+<a href=#SimpleAstar>link<a>
 
 ## SimpleAStar
 
