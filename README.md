@@ -55,6 +55,7 @@ SOFTWARE.
 ## About The Project
 
 ### Built With
+*GNU C Compiler
 
 <!-- GETTING STARTED -->
 ## Getting Started
