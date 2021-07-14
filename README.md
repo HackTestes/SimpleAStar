@@ -1,5 +1,3 @@
-  <h3 align="center">Best-README-Template</h3>
-
 <!-- Incluir referência ao autor : https://github.com/othneildrew/Best-README-Template
 
 MIT License
@@ -25,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 -->
+
+<h3 align="center">Simple AStar</h3>
 
 <details open="open">
   <summary>Table of Contents</summary>
@@ -55,26 +55,50 @@ SOFTWARE.
 ## About The Project
 
 ### Built With
-*GNU C Compiler
+* GNU C Compiler
+* GNU Makefile
+* C++ Programming language
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+It is necessary to have a Linux machine and the following programs installed:
+* GNU make
+* GNU C compiler
 
 
 ### Installation
+1. Clone the repo
+```sh
+git clone https://github.com/HackTestes/SimpleAStar.git
+```
+
+2. Change to the SimpleAStar directoty
+```sh
+cd SimpleAStar
+```
+
+3. Compile the code using the makefile
+```sh
+make
+```
+
+4. Clean unecessary files from the compilation process
+```sh
+make clean
+```
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+To run the executable just type the following command:
+```sh
+./SimpleAStarExecutable
+```
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
@@ -83,7 +107,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/HackTestes/SimpleAStar/issues) for a list of proposed features (and known issues).
 
 
 
@@ -93,17 +117,18 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the ???? License. See `LICENSE` for more information.
 
 
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Caio Gomes Flausino - caio.mensagens@gmail.com - caio.hacktestes@gmail.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/HackTestes/SimpleAStar](https://github.com/HackTestes/SimpleAStar)
 
 ## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
+* [Daniel](???????)
+* [Diego](???????)
