@@ -6,19 +6,92 @@
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
 
+#include <unordered_map>
+#include <vector>
+#include <map>
 #include"AStarHeader.h"
 
-        bool CustomComparator::operator() (Node *n1, Node *n2)
+void ArgsOptions(int argc, char* argv[])
+{
+    for (int i = 0; i < argc; ++i)
+    {
+        if ((std::string)argv[i] == "-Debug")
         {
-            if (n1->f > n2->f)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            debug = true;
+            std::cout << "Debug mode enabled!\n";
         }
+
+        if ((std::string)argv[i] == "-DebugAll")
+        {
+            debug_all = true;
+            std::cout << "Debug all mode enabled!\n";
+        }
+
+        if ((std::string)argv[i] == "-BestPathIndex")
+        {
+            best_path_index = true;
+        }
+
+        if ((std::string)argv[i] == "-ShowPriorityQueue")
+        {
+            show_priority_queue = true;
+        }
+
+        if ((std::string)argv[i] == "-ShowClosedList")
+        {
+            show_closed_list = true;
+        }
+
+        if ((std::string)argv[i] == "-ShowVisitedNeighbors")
+        {
+            show_visited_neighbors = true;
+        }
+
+        if ((std::string)argv[i] == "-Snapshot")
+        {
+            snapshot = true;
+
+            snapshot_start_node_index = std::stoi(argv[i + 1]);
+            snapshot_end_node_index = std::stoi(argv[i + 2]);
+        }
+
+        if ((std::string)argv[i] == "-SnapshotXY")
+        {
+            snapshot = true;
+
+            // X-X : start-end
+            snapshot_start_node_x = std::stoi(&argv[i + 1][0]);
+            snapshot_end_node_x = std::stoi((&argv[i + 1][2]));
+
+            // Y-Y : start-end
+            snapshot_start_node_y = std::stoi(&argv[i + 2][0]);
+            snapshot_end_node_y = std::stoi((&argv[i + 2][2]));
+        }
+
+        if ((std::string)argv[i] == "-Interactive")
+        {
+            interactive = true;
+        }
+
+        if ((std::string)argv[i] == "-ShowMap")
+        {
+            show_map = true;
+        }
+
+    }
+}
+
+bool CustomComparator::operator() (Node *n1, Node *n2)
+{
+    if (n1->f > n2->f)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
 // usa uma cópia da minha lista de prioridade
 // imprime a lista de prioridades a partir de uma cópia
@@ -26,8 +99,16 @@ void ShowPriorityQueue (std::priority_queue < Node*, std::vector<Node*>, CustomC
 {
     while (!priority_queue.empty())
     {
-        std::cout << "priority_queue_copy : " << " x " << priority_queue.top()->x << " y " << priority_queue.top()->y << " | f " << priority_queue.top()->f  << " | node_index " << priority_queue.top()->node_index << "\n";
+        std::cout << "priority_queue_copy : " << " x " << priority_queue.top()->x << "  y " << priority_queue.top()->y << "  |  f " << priority_queue.top()->f  << "  |  node_index " << priority_queue.top()->node_index << "\n";
         priority_queue.pop();
+    }
+}
+
+void ShowClosedList (std::unordered_map< long, Node* > closed_list)
+{
+    for (auto &node_index : closed_list)
+    {
+        std::cout << "CLOSED_copy : " << " node_index " << node_index.first << "\n";
     }
 }
 
@@ -52,7 +133,7 @@ bool CheckOpenList (std::priority_queue < Node*, std::vector<Node*>, CustomCompa
 {
     while (!priority_queue.empty())
     {
-        // é mais seguro olhar para as coordenadas ao em vez do endereço de momória,
+        // é mais seguro olhar para as coordenadas ao em vez do endereço de memória,
         // ainda mais porque o priority_queue é uma cópia!
         if ((item->x == priority_queue.top()->x) && (item->y == priority_queue.top()->y))
         {
@@ -65,55 +146,50 @@ bool CheckOpenList (std::priority_queue < Node*, std::vector<Node*>, CustomCompa
 }
 
 // essa função encontra os nós vizinhos e devolve um vetor do tamanho adequando (== a quantidade de vizinhos)
-void ExpandNeighbors2 (Node *current_node, std::vector <long> *my_neighbors_coord, long grid_size_x, long grid_size_y)
+void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord, long grid_size_x, long grid_size_y)
 {
-    // armazeno os possíveis vizinhos
-    long index[4];
+    Node neighbors_nodes[4];
+    neighbors_nodes[0] = Node(current_node->x, current_node->y - 1, ((current_node->x * grid_size_x) + current_node->y - 1));
+    neighbors_nodes[1] = Node(current_node->x + 1, current_node->y, ((current_node->x + 1) * grid_size_x + current_node->y));
+    neighbors_nodes[2] = Node(current_node->x, current_node->y + 1, ((current_node->x * grid_size_x) + current_node->y + 1));
+    neighbors_nodes[3] = Node(current_node->x - 1, current_node->y, ((current_node->x - 1) * grid_size_x + current_node->y));
 
-    // guardo os valores que seriam as coordenadas "modificadas" dos vizinhos
-    long modified_index_x[2];
-    long modified_index_y[2];
-
-    modified_index_x[0] = current_node->x - 1;
-    modified_index_x[1] = current_node->x + 1;
-
-    modified_index_y[0] = current_node->y - 1;
-    modified_index_y[1] = current_node->y + 1;
-
-    // verifico se estão dentro dos limite de tamanho X( e Y???)
-    for (long i = 0; i < 2; ++i)
-    {
-        if (modified_index_x[i] >= 0 && modified_index_x[i] < grid_size_x)
-        {
-            index[i] = ((modified_index_x[i]) * grid_size_x) + current_node->y;
-        }
-        else
-        {
-            index[i] = -1;
-        }
-    }
-
-    // verifico se estão dentro dos limite de tamanho Y( e X???)
-    for (long i = 0; i < 2; ++i)
-    {
-        if (modified_index_y[i] >= 0 && modified_index_y[i] < grid_size_x)
-        {
-            index[i + 2] = ((current_node->x) * grid_size_x) + modified_index_y[i];
-        }
-        else
-        {
-            index[i + 2] = -1;
-        }
-    }
-
-    //limite é a quantidade de vizinhos
-    //verifico se possuem um index válido ( x * y)
+    // verificar os vizinhos no sentido horário
     for (long i = 0; i < 4; ++i)
     {
-        if ( (index[i] >= 0) && (index[i] < (grid_size_x * grid_size_y)) )
+        bool valid_x = false;
+        bool valid_y = false;
+        bool valid_index = false;
+
+        // avalio se o a posição em X é válida
+        if (neighbors_nodes[i].x >= 0 && neighbors_nodes[i].x < grid_size_x)
         {
-            my_neighbors_coord->push_back(index[i]);
+            valid_x = true;
         }
+
+        if (neighbors_nodes[i].y >= 0 && neighbors_nodes[i].y < grid_size_y)
+        {
+            valid_y = true;
+        }
+
+        if (neighbors_nodes[i].node_index >= 0 && neighbors_nodes[i].node_index < (grid_size_x * grid_size_y))
+        {
+            valid_index = true;
+        }
+
+        if (valid_x && valid_y && valid_index)
+        {
+            my_neighbors_coord->push_back(neighbors_nodes[i].node_index);
+        }
+
+        if(debug == true)
+        {
+            std::cout << "neighbors_nodes[" << i << "] : x " << neighbors_nodes[i].x << " | y " << neighbors_nodes[i].y << " | node_index " << neighbors_nodes[i].node_index << "\n";
+        }
+    }
+    if(debug == true)
+    {
+        std::cout << "\n\n";
     }
 }
 
@@ -124,7 +200,24 @@ void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, l
     {
         for (long y = 0; y < grid_size_y; ++y)
         {
-            std::cout << " " << map[(x * grid_size_x) + y].appearance << " ";
+            long cell_size = 4;
+
+            std::cout << " ";
+            long i = 0;
+            for (auto letter : map[(x * grid_size_x) + y].appearance)
+            {
+                std::cout << letter;
+                ++i;
+            }
+            if (i < (cell_size))
+            {
+                while (i != (cell_size))
+                {
+                    std::cout << " ";
+                    ++i;
+                }
+            }
+            std::cout << " ";
         }
         std::cout << "\n";
     }
