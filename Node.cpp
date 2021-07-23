@@ -14,6 +14,7 @@
         this->came_from = NULL;
 
         this->appearance = "o"; // nó normal
+        //this->appearance = std::to_string(node_index);
     }
 
     Node::Node()

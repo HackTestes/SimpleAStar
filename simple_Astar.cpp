@@ -27,6 +27,8 @@
     .pode estar csando outros problemas.
     #talvez dê para somente usar uma array ao invés de um vetor
 
+- Mapas com lados de diferentes tamanhos (x!=y) geram erros (loops infinitos ou segmentation fault)
+
 */
 
 // Variáveis globais
@@ -77,10 +79,8 @@ int main (int argc, char* argv[])
     // com ponteiros
     std::priority_queue < Node*, std::vector<Node*>, CustomComparator > OPEN;
 
-    // talvez seja possível usar o nó como chave
-    // ou o endereço de memória do nó
-    // devo mesmo usar um hash_map ou posso usar uma lista ordenada?
-    // Já que é possível saber o index dos objetos
+    // talvez seja possível usar o nó como chave ou o endereço de memória do nó
+    // devo mesmo usar um hash_map ou posso usar uma lista ordenada? Já que é possível saber o index dos objetos
     std::unordered_map< long, Node* > CLOSED;
 
     (*START).f = g((*START), (*START)) + h((*START), (*GOAL));
@@ -133,7 +133,10 @@ int main (int argc, char* argv[])
             
             if (show_visited_neighbors)
             {
-                visited_neighbors += "visited neighbor  : index  " + std::to_string(neighbor_index) + "  |  neighbor_in_open " + std::to_string(neighbor_in_open) + "  |  neighbor_in_closed " + std::to_string(neighbor_in_closed) + "  |  path_executed " + path_executed + "\n";
+                visited_neighbors += "visited neighbor  : index  " + std::to_string(neighbor_index) +
+                "  |  neighbor_in_open " + std::to_string(neighbor_in_open) + 
+                "  |  neighbor_in_closed " + std::to_string(neighbor_in_closed) + 
+                "  |  path_executed " + path_executed + "\n";
             }
         }
 

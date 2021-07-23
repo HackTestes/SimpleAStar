@@ -1,11 +1,5 @@
 // esse arquivo contém funções "utilitárias" para o funcionamento do código principal
 
-
-
-// por ponteiros
-// essa classe é a que organiza a lista de prioridades
-// baseado no valor f de cada nó
-
 #include <unordered_map>
 #include <vector>
 #include <map>
@@ -15,39 +9,39 @@ void ArgsOptions(int argc, char* argv[])
 {
     for (int i = 0; i < argc; ++i)
     {
-        if ((std::string)argv[i] == "-Debug")
+        if ((std::string)argv[i] == "--Debug")
         {
             debug = true;
             std::cout << "Debug mode enabled!\n";
         }
 
-        if ((std::string)argv[i] == "-DebugAll")
+        if ((std::string)argv[i] == "--DebugAll")
         {
             debug_all = true;
             std::cout << "Debug all mode enabled!\n";
         }
 
-        if ((std::string)argv[i] == "-BestPathIndex")
+        if ((std::string)argv[i] == "--BestPathIndex")
         {
             best_path_index = true;
         }
 
-        if ((std::string)argv[i] == "-ShowPriorityQueue")
+        if ((std::string)argv[i] == "--ShowPriorityQueue")
         {
             show_priority_queue = true;
         }
 
-        if ((std::string)argv[i] == "-ShowClosedList")
+        if ((std::string)argv[i] == "--ShowClosedList")
         {
             show_closed_list = true;
         }
 
-        if ((std::string)argv[i] == "-ShowVisitedNeighbors")
+        if ((std::string)argv[i] == "--ShowVisitedNeighbors")
         {
             show_visited_neighbors = true;
         }
 
-        if ((std::string)argv[i] == "-Snapshot")
+        if ((std::string)argv[i] == "--Snapshot")
         {
             snapshot = true;
 
@@ -55,7 +49,7 @@ void ArgsOptions(int argc, char* argv[])
             snapshot_end_node_index = std::stoi(argv[i + 2]);
         }
 
-        if ((std::string)argv[i] == "-SnapshotXY")
+        if ((std::string)argv[i] == "--SnapshotXY")
         {
             snapshot = true;
 
@@ -68,18 +62,22 @@ void ArgsOptions(int argc, char* argv[])
             snapshot_end_node_y = std::stoi((&argv[i + 2][2]));
         }
 
-        if ((std::string)argv[i] == "-Interactive")
+        if ((std::string)argv[i] == "--Interactive")
         {
             interactive = true;
         }
 
-        if ((std::string)argv[i] == "-ShowMap")
+        if ((std::string)argv[i] == "--ShowMap")
         {
             show_map = true;
         }
 
     }
 }
+
+// por ponteiros
+// essa classe é a que organiza a lista de prioridades
+// baseado no valor f de cada nó
 
 bool CustomComparator::operator() (Node *n1, Node *n2)
 {
@@ -99,7 +97,12 @@ void ShowPriorityQueue (std::priority_queue < Node*, std::vector<Node*>, CustomC
 {
     while (!priority_queue.empty())
     {
-        std::cout << "priority_queue_copy : " << " x " << priority_queue.top()->x << "  y " << priority_queue.top()->y << "  |  f " << priority_queue.top()->f  << "  |  node_index " << priority_queue.top()->node_index << "\n";
+        std::cout << "priority_queue_copy : " 
+        << " x " << priority_queue.top()->x 
+        << "  y " << priority_queue.top()->y 
+        << "  |  f " << priority_queue.top()->f  
+        << "  |  node_index " << priority_queue.top()->node_index 
+        << "\n";
         priority_queue.pop();
     }
 }
@@ -184,7 +187,11 @@ void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord
 
         if(debug == true)
         {
-            std::cout << "neighbors_nodes[" << i << "] : x " << neighbors_nodes[i].x << " | y " << neighbors_nodes[i].y << " | node_index " << neighbors_nodes[i].node_index << "\n";
+            std::cout << "neighbors_nodes[" << i << "] : " 
+            << "x " << neighbors_nodes[i].x 
+            << " | y " << neighbors_nodes[i].y 
+            << " | node_index " << neighbors_nodes[i].node_index 
+            << "\n";
         }
     }
     if(debug == true)
@@ -196,30 +203,34 @@ void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord
 // imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
 void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, long grid_size_y)
 {
-    for (long x = 0; x < grid_size_x; ++x)
+    long cell_size = 7;
+    for (long x = 0; x < (grid_size_x + 2); ++x)
     {
+        if (x == grid_size_x || x == grid_size_x + 1)
+        {
+            std::cout << std::setw(cell_size) << " " << "|   " << std::setw(3);
+        }
+        else
+        {
+            std::cout << std::setw(cell_size) << x << "|   " << std::setw(3);
+        }
+
         for (long y = 0; y < grid_size_y; ++y)
         {
-            long cell_size = 4;
-
-            std::cout << " ";
-            long i = 0;
-            for (auto letter : map[(x * grid_size_x) + y].appearance)
+            if (x == grid_size_x)
             {
-                std::cout << letter;
-                ++i;
+                std::cout << "_" << std::setw(cell_size);
             }
-            if (i < (cell_size))
+            else if (x == grid_size_x + 1)
             {
-                while (i != (cell_size))
-                {
-                    std::cout << " ";
-                    ++i;
-                }
+                std::cout << y << std::setw(cell_size);
             }
-            std::cout << " ";
+            else
+            {
+                std::cout << map[(x * grid_size_x) + y].appearance << std::setw(cell_size);
+            }
         }
-        std::cout << "\n";
+        std::cout << "\n\n";
     }
     std::cout << "\n\n";
 }

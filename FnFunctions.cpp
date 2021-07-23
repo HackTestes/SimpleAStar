@@ -1,5 +1,5 @@
 // esse arquivo contém funções relacionadas ao f : f(n) = g(n) + h(n)
-// custo e heurística
+// custo(g) e heurística(h)
 
 
 // http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#manhattan-distance
@@ -17,6 +17,7 @@ function heuristic(node) =
 
 // por cópia
 // além disso, adicionei esse parâmetro extra, já que esses nós (START, GOAL) estão fora do escopo da função
+// !todo! MUDAR usando custo de um nó para outro
 long g (Node current, Node start)
 {
     long D = 4;
