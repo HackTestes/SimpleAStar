@@ -1,5 +1,6 @@
 // esse arquivo contém funções relacionadas ao f : f(n) = g(n) + h(n)
 // custo(g) e heurística(h)
+// f é usando para ordenar os nós na lista de prioridades
 
 
 // http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#manhattan-distance
@@ -16,15 +17,13 @@ function heuristic(node) =
 #include"AStarHeader.h"
 
 // por cópia
-// além disso, adicionei esse parâmetro extra, já que esses nós (START, GOAL) estão fora do escopo da função
-// !todo! MUDAR usando custo de um nó para outro
-long g (Node current, Node start)
+// além disso, adicionei esse parâmetro extra, já que esses nós (neighbor, GOAL) estão fora do escopo da função
+long g (Node current, Node neighbor)
 {
-    long D = 4;
-    long dx = abs(current.x - start.x);
-    long dy = abs(current.y - start.y);
+    long dx = abs(current.x - neighbor.x);
+    long dy = abs(current.y - neighbor.y);
 
-    return D * (dx + dy);
+    return (dx + dy);
 }
 
 long h (Node current, Node goal)

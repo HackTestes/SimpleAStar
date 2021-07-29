@@ -15,12 +15,6 @@
 /*
 
 #ERROS:
-- gera curvas
-    .pode ser uma segmentação de caminhos (ex.:impeime dois caminhos pela metade)
-        .pode ser pq deixer de fazer uma verificação no CLOSED no loop principal - em comparação ao do RedBlobGames
-        .pode ser que eu usei f(n) ao invés de g(n) no loop principal - em comparação ao do RedBlobGames
-        .pode ser uma "barreira" (fazer um mapa interativo para ver a curva)
-
 - OPEN e CLOSED apontam para os nós do map (um vetor!)
     .aparentemente o OPEN e CLOSED apontando (com ponteiros) para um vetor (que não garante linearidade e pode invalidar ponteiros mudando
     os itens de lugar ao fazer um resize) pode causar comportamento indefinido!!!
@@ -28,6 +22,7 @@
     #talvez dê para somente usar uma array ao invés de um vetor
 
 - Mapas com lados de diferentes tamanhos (x!=y) geram erros (loops infinitos ou segmentation fault)
+    .exemplo: ./SimpleAStarExecutabele 9999 10 0 5 --SnapshotXY 0-10 0-10 --BestPathIndex --ShowPriorityQueue --ShowClosedList
 
 */
 
@@ -65,15 +60,34 @@ int main (int argc, char* argv[])
     long grid_size_y = std::stoi(argv[2]);
 
     std::vector <Node, std::allocator<Node>> my_map;
-    CreateNode (&my_map, grid_size_x, grid_size_y);
+    CreateNode (&my_map, grid_size_x, grid_size_y); // !todo! talvez mudar de vetor para array
 
     //Node *GOAL = &my_map[94];
-    Node *GOAL = &my_map[std::stoi(argv[4])];
-    (*GOAL).appearance = "G";
+    Node *GOAL;
+    
+    if(std::stoi(argv[4]) >= 0 && std::stoi(argv[4]) < (grid_size_x * grid_size_y))
+    {
+        GOAL = &my_map[std::stoi(argv[4])];
+        (*GOAL).appearance = "G";
+    }
+    else
+    {
+        std::cout << "The set goal is out of bounds!!!\n";
+        return 0;
+    }
 
     //Node *START = &my_map[0];
-    Node *START = &my_map[std::stoi(argv[3])];
-    (*START).appearance = "S";
+    Node *START;
+    if(std::stoi(argv[3]) >= 0 && std::stoi(argv[3]) < (grid_size_x * grid_size_y))
+    {
+        START = &my_map[std::stoi(argv[3])];
+        (*START).appearance = "S";
+    }
+    else
+    {
+        std::cout << "The start is out of bounds!!!\n";
+        return 0;
+    }
 
     // usar o f do nó para ordenar
     // com ponteiros
@@ -92,7 +106,7 @@ int main (int argc, char* argv[])
     // inicio o loop principal
     while ( (OPEN.top()->x != (*GOAL).x) || (OPEN.top()->y != (*GOAL).y))
     {
-        long current_node_index = (OPEN.top()->x * grid_size_x) + OPEN.top()->y;
+        long current_node_index = OPEN.top()->node_index;//(OPEN.top()->x * grid_size_x) + OPEN.top()->y; // !todo! substituir por top()->index
         OPEN.pop();
 
         CLOSED[current_node_index] = &my_map[current_node_index];
@@ -100,33 +114,34 @@ int main (int argc, char* argv[])
         std::vector <long> my_neighbors_list;
         ExpandNeighbors(&my_map[current_node_index], &my_neighbors_list, grid_size_x, grid_size_y);
 
-        std::string visited_neighbors = "";
+        std::string visited_neighbors = ""; 
         for (long neighbor_index : my_neighbors_list)
         {
-            long neighbor_f = g (my_map[neighbor_index], (*START)) + h (my_map[neighbor_index], (*GOAL));
+            long cost_so_far = my_map[current_node_index].g + 1; // +1 ou g(current_node_index, current_neighbor)
 
-            bool neighbor_in_open = CheckOpenList(OPEN, &my_map[neighbor_index]);
-            bool neighbor_in_closed = CheckClosedList(CLOSED[neighbor_index]);
-            std::string path_executed = "didn't execute any if";
-
-            if (neighbor_in_open && (neighbor_f < my_map[neighbor_index].f))
+            std::string path_executed = "didn't execute any if";// !todo! melhorar para demonstrar multiplos caminhos executados
+            if (CheckOpenList(OPEN, &my_map[neighbor_index]) && (cost_so_far < my_map[neighbor_index].g))
             {
-                my_map[neighbor_index].f = neighbor_f;
+                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], (*GOAL));
+                my_map[neighbor_index].g = cost_so_far;
                 my_map[neighbor_index].came_from = &my_map[current_node_index];
-                path_executed = "if 1, neighbor_in_open with better path";
+                path_executed = "path 1, neighbor_in_open with better path";
             }
 
-            if (neighbor_in_closed && (neighbor_f < my_map[neighbor_index].f))
+            if (CheckClosedList(CLOSED[neighbor_index]) && (cost_so_far < my_map[neighbor_index].g))
             {
-                path_executed = "if 2, neighbor_in_closed with better path";
+                // !todo! adicionar o restante da lógica
+                CLOSED.erase(neighbor_index);
+                path_executed = "path 2, neighbor_in_closed with better path";
             }
 
-            if (!neighbor_in_open && !neighbor_in_closed)
+            if (!CheckOpenList(OPEN, &my_map[neighbor_index]) && !CheckClosedList(CLOSED[neighbor_index]))
             {
-                my_map[neighbor_index].f = neighbor_f;
+                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], (*GOAL));
+                my_map[neighbor_index].g = cost_so_far;
                 my_map[neighbor_index].came_from = &my_map[current_node_index];
                 OPEN.push(&my_map[neighbor_index]);
-                path_executed = "if 3, wasn't in any list";
+                path_executed = "path 3, wasn't in any list";
             }
 
             if (my_map[neighbor_index].appearance != "S" && my_map[neighbor_index].appearance != "G") {my_map[neighbor_index].appearance = "X";} // visited
@@ -134,8 +149,8 @@ int main (int argc, char* argv[])
             if (show_visited_neighbors)
             {
                 visited_neighbors += "visited neighbor  : index  " + std::to_string(neighbor_index) +
-                "  |  neighbor_in_open " + std::to_string(neighbor_in_open) + 
-                "  |  neighbor_in_closed " + std::to_string(neighbor_in_closed) + 
+                //"  |  neighbor_in_open " + std::to_string(neighbor_in_open) + 
+                //"  |  neighbor_in_closed " + std::to_string(neighbor_in_closed) + 
                 "  |  path_executed " + path_executed + "\n";
             }
         }

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <vector>
 #include <map>
+#include <stdlib.h> 
 #include"AStarHeader.h"
 
 void ArgsOptions(int argc, char* argv[])
@@ -45,8 +46,8 @@ void ArgsOptions(int argc, char* argv[])
         {
             snapshot = true;
 
-            snapshot_start_node_index = std::stoi(argv[i + 1]);
-            snapshot_end_node_index = std::stoi(argv[i + 2]);
+            snapshot_start_node_index = std::abs(std::stoi(argv[i + 1]));
+            snapshot_end_node_index = std::abs(std::stoi(argv[i + 2]));
         }
 
         if ((std::string)argv[i] == "--SnapshotXY")
@@ -54,12 +55,15 @@ void ArgsOptions(int argc, char* argv[])
             snapshot = true;
 
             // X-X : start-end
-            snapshot_start_node_x = std::stoi(&argv[i + 1][0]);
-            snapshot_end_node_x = std::stoi((&argv[i + 1][2]));
+            snapshot_start_node_x = std::abs(std::stoi(&argv[i + 1][0]));
+            snapshot_end_node_x = std::abs(std::stoi((&argv[i + 1][2])));
 
             // Y-Y : start-end
-            snapshot_start_node_y = std::stoi(&argv[i + 2][0]);
-            snapshot_end_node_y = std::stoi((&argv[i + 2][2]));
+            snapshot_start_node_y = std::abs(std::stoi(&argv[i + 2][0]));
+            snapshot_end_node_y = std::abs(std::stoi((&argv[i + 2][2])));
+            std::cout << "snapshot_start_node_x :  " << snapshot_start_node_x << " | snapshot_end_node_x:  " << snapshot_end_node_x << "\n"
+            << "snapshot_start_node_y :  " << snapshot_start_node_y << " | snapshot_end_node_y:  " << snapshot_end_node_y<< "\n\n";
+
         }
 
         if ((std::string)argv[i] == "--Interactive")
@@ -208,11 +212,11 @@ void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, l
     {
         if (x == grid_size_x || x == grid_size_x + 1)
         {
-            std::cout << std::setw(cell_size) << " " << "|   " << std::setw(3);
+            std::cout << std::setw(cell_size) << " " << "|   " << std::setw(cell_size);
         }
         else
         {
-            std::cout << std::setw(cell_size) << x << "|   " << std::setw(3);
+            std::cout << std::setw(cell_size) << x << "|   " << std::setw(cell_size);
         }
 
         for (long y = 0; y < grid_size_y; ++y)
