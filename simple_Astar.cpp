@@ -114,7 +114,8 @@ int main (int argc, char* argv[])
                 my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
                 my_map[neighbor_index].g = cost_so_far;
                 my_map[neighbor_index].came_from = current_node_index;
-                OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index);
+                OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
+                OPEN.push(my_map[neighbor_index]); // coloco de volta com o valor atualizado
                 path_executed = "path 1, neighbor_in_open with better path";
             }
 
