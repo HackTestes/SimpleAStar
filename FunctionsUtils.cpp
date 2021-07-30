@@ -32,6 +32,7 @@ void ArgsOptions(int argc, char* argv[])
             show_priority_queue = true;
         }
 
+        // !todo! retirar
         if ((std::string)argv[i] == "--ShowClosedList")
         {
             show_closed_list = true;
@@ -111,7 +112,25 @@ void ShowPriorityQueue (std::priority_queue < Node*, std::vector<Node*>, CustomC
     }
 }
 
-void ShowClosedList (std::unordered_map< long, Node* > closed_list)
+/*
+std::priority_queue < Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue,long except_index)
+{
+    std::priority_queue < Node, std::vector<Node>, CustomComparator > new_priority_queue;
+    while (!priority_queue.empty())
+    {
+        if(priority_queue.top().node_index != except_index)
+        {
+            new_priority_queue.push(priority_queue.top());
+        }
+        priority_queue.pop();
+    }
+
+    return new_priority_queue;
+}
+*/
+
+// !todo! retirar
+/*void ShowClosedList (std::unordered_map< long, Node* > closed_list)
 {
     for (auto &node_index : closed_list)
     {
@@ -121,9 +140,9 @@ void ShowClosedList (std::unordered_map< long, Node* > closed_list)
 
 // talvez seja melhor rever como fazer a comparação
 // Checa se um nó existe na CLOSED list
-bool CheckClosedList (Node *item)
+/*bool CheckClosedList (Node node)
 {
-    if (item == NULL)
+    if (node.visited == true)
     {
         //std::cout << "NADA" << "\n";
         return false;
@@ -133,7 +152,7 @@ bool CheckClosedList (Node *item)
         //std::cout << "EXISTE   " << "x : " << item->x << " | y : " << item->y <<  "\n";
         return true;
     }
-}
+}*/
 
 // checa se um nó existe na OPEN list, baseado no index do nó
 bool CheckOpenList (std::priority_queue < Node*, std::vector<Node*>, CustomComparator > priority_queue, Node *item)

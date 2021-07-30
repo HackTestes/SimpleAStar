@@ -53,10 +53,8 @@ int main (int argc, char* argv[])
 
     // defino as variáveis principais : tamanho X e Y, começo (START), fim (GOAL)
 
-    //long grid_size_x = 10;
     long grid_size_x = std::stoi(argv[1]);
 
-    //long grid_size_y = 10;
     long grid_size_y = std::stoi(argv[2]);
 
     std::vector <Node, std::allocator<Node>> my_map;
@@ -74,7 +72,6 @@ int main (int argc, char* argv[])
         return 0;
     }
 
-    //Node *START = &my_map[0];
     long START;
     if(std::stoi(argv[3]) >= 0 && std::stoi(argv[3]) < (grid_size_x * grid_size_y))
     {
@@ -93,7 +90,7 @@ int main (int argc, char* argv[])
 
     // talvez seja possível usar o nó como chave ou o endereço de memória do nó
     // devo mesmo usar um hash_map ou posso usar uma lista ordenada? Já que é possível saber o index dos objetos
-    std::unordered_map< long, Node* > CLOSED;
+    //std::unordered_map< long, Node* > CLOSED;
 
     my_map[START].f = g(my_map[START], my_map[START]) + h(my_map[START], my_map[GOAL]);
 
@@ -107,7 +104,7 @@ int main (int argc, char* argv[])
         long current_node_index = OPEN.top()->node_index;//(OPEN.top()->x * grid_size_x) + OPEN.top()->y; // !todo! substituir por top()->index
         OPEN.pop();
 
-        CLOSED[current_node_index] = &my_map[current_node_index];
+        my_map[current_node_index].visited = true;
 
         std::vector <long> my_neighbors_list;
         ExpandNeighbors(&my_map[current_node_index], &my_neighbors_list, grid_size_x, grid_size_y);
@@ -126,14 +123,14 @@ int main (int argc, char* argv[])
                 path_executed = "path 1, neighbor_in_open with better path";
             }
 
-            if (CheckClosedList(CLOSED[neighbor_index]) && (cost_so_far < my_map[neighbor_index].g))
+            if (my_map[neighbor_index].visited && (cost_so_far < my_map[neighbor_index].g))
             {
                 // !todo! adicionar o restante da lógica
-                CLOSED.erase(neighbor_index);
+                my_map[neighbor_index].visited = false;
                 path_executed = "path 2, neighbor_in_closed with better path";
             }
 
-            if (!CheckOpenList(OPEN, &my_map[neighbor_index]) && !CheckClosedList(CLOSED[neighbor_index]))
+            if (!CheckOpenList(OPEN, &my_map[neighbor_index]) && !my_map[neighbor_index].visited)
             {
                 my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
                 my_map[neighbor_index].g = cost_so_far;
@@ -171,7 +168,7 @@ int main (int argc, char* argv[])
 
                 if (show_closed_list)
                 {
-                    ShowClosedList(CLOSED);
+                    //ShowClosedList(CLOSED);
                     std::cout << "\n";
                 }
 

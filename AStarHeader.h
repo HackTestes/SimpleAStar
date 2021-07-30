@@ -21,6 +21,8 @@
 
             long came_from;
 
+            bool visited;
+
             std::string appearance;
 
             Node(long x, long y, long node_index);
