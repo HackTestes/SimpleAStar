@@ -156,10 +156,10 @@ bool CheckOpenList (std::priority_queue < Node*, std::vector<Node*>, CustomCompa
 void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord, long grid_size_x, long grid_size_y)
 {
     Node neighbors_nodes[4];
-    neighbors_nodes[0] = Node(current_node->x, current_node->y - 1, ((current_node->x * grid_size_x) + current_node->y - 1));
-    neighbors_nodes[1] = Node(current_node->x + 1, current_node->y, ((current_node->x + 1) * grid_size_x + current_node->y));
-    neighbors_nodes[2] = Node(current_node->x, current_node->y + 1, ((current_node->x * grid_size_x) + current_node->y + 1));
-    neighbors_nodes[3] = Node(current_node->x - 1, current_node->y, ((current_node->x - 1) * grid_size_x + current_node->y));
+    neighbors_nodes[0] = Node(current_node->x, current_node->y - 1, ((current_node->x * grid_size_y) + current_node->y - 1));
+    neighbors_nodes[1] = Node(current_node->x + 1, current_node->y, ((current_node->x + 1) * grid_size_y + current_node->y));
+    neighbors_nodes[2] = Node(current_node->x, current_node->y + 1, ((current_node->x * grid_size_y) + current_node->y + 1));
+    neighbors_nodes[3] = Node(current_node->x - 1, current_node->y, ((current_node->x - 1) * grid_size_y + current_node->y));
 
     // verificar os vizinhos no sentido horário
     for (long i = 0; i < 4; ++i)
@@ -231,7 +231,7 @@ void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, l
             }
             else
             {
-                std::cout << map[(x * grid_size_x) + y].appearance << std::setw(cell_size);
+                std::cout << map[(x * grid_size_y) + y].appearance << std::setw(cell_size);
             }
         }
         std::cout << "\n\n";
@@ -247,7 +247,7 @@ void CreateNode (std::vector <Node, std::allocator<Node>> *map, long grid_size_x
     {
         for (long y = 0; y < grid_size_y; ++y)
         {
-            map->insert(map->end(),Node(x, y, ((x * grid_size_x) + y)));
+            map->insert(map->end(),Node(x, y, ((x * grid_size_y) + y)));
 
             //std::cout << "map : " << ((x * grid_size_x) + y) << " x "<< (*map)[(x * grid_size_x) + y].x << " y " << (*map)[(x * grid_size_x) + y].y << "\n";
 

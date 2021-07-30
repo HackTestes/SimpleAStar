@@ -19,7 +19,7 @@
             long f; // f(n) = g(n) + h(n)
             long g;
 
-            Node *came_from;
+            long came_from;
 
             std::string appearance;
 

@@ -62,13 +62,11 @@ int main (int argc, char* argv[])
     std::vector <Node, std::allocator<Node>> my_map;
     CreateNode (&my_map, grid_size_x, grid_size_y); // !todo! talvez mudar de vetor para array
 
-    //Node *GOAL = &my_map[94];
-    Node *GOAL;
-    
+    long GOAL;
     if(std::stoi(argv[4]) >= 0 && std::stoi(argv[4]) < (grid_size_x * grid_size_y))
     {
-        GOAL = &my_map[std::stoi(argv[4])];
-        (*GOAL).appearance = "G";
+        GOAL = std::stoi(argv[4]);
+        my_map[GOAL].appearance = "G";
     }
     else
     {
@@ -77,11 +75,11 @@ int main (int argc, char* argv[])
     }
 
     //Node *START = &my_map[0];
-    Node *START;
+    long START;
     if(std::stoi(argv[3]) >= 0 && std::stoi(argv[3]) < (grid_size_x * grid_size_y))
     {
-        START = &my_map[std::stoi(argv[3])];
-        (*START).appearance = "S";
+        START = std::stoi(argv[3]);
+        my_map[START].appearance = "S";
     }
     else
     {
@@ -97,14 +95,14 @@ int main (int argc, char* argv[])
     // devo mesmo usar um hash_map ou posso usar uma lista ordenada? Já que é possível saber o index dos objetos
     std::unordered_map< long, Node* > CLOSED;
 
-    (*START).f = g((*START), (*START)) + h((*START), (*GOAL));
+    my_map[START].f = g(my_map[START], my_map[START]) + h(my_map[START], my_map[GOAL]);
 
-    OPEN.push(&(*START));
+    OPEN.push(&my_map[START]);
 
     std::cout << "PONTO DE CONTROLE  " << 1 << "\n";
 
     // inicio o loop principal
-    while ( (OPEN.top()->x != (*GOAL).x) || (OPEN.top()->y != (*GOAL).y))
+    while ( (OPEN.top()->x != my_map[GOAL].x) || (OPEN.top()->y != my_map[GOAL].y))
     {
         long current_node_index = OPEN.top()->node_index;//(OPEN.top()->x * grid_size_x) + OPEN.top()->y; // !todo! substituir por top()->index
         OPEN.pop();
@@ -114,17 +112,17 @@ int main (int argc, char* argv[])
         std::vector <long> my_neighbors_list;
         ExpandNeighbors(&my_map[current_node_index], &my_neighbors_list, grid_size_x, grid_size_y);
 
-        std::string visited_neighbors = ""; 
+        std::string visited_neighbors = "";
         for (long neighbor_index : my_neighbors_list)
         {
-            long cost_so_far = my_map[current_node_index].g + 1; // +1 ou g(current_node_index, current_neighbor)
+            long cost_so_far = my_map[current_node_index].g + g(my_map[current_node_index], my_map[neighbor_index]);//1; // +1 ou g(current_node_index, current_neighbor)
 
             std::string path_executed = "didn't execute any if";// !todo! melhorar para demonstrar multiplos caminhos executados
             if (CheckOpenList(OPEN, &my_map[neighbor_index]) && (cost_so_far < my_map[neighbor_index].g))
             {
-                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], (*GOAL));
+                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
                 my_map[neighbor_index].g = cost_so_far;
-                my_map[neighbor_index].came_from = &my_map[current_node_index];
+                my_map[neighbor_index].came_from = current_node_index;
                 path_executed = "path 1, neighbor_in_open with better path";
             }
 
@@ -137,9 +135,9 @@ int main (int argc, char* argv[])
 
             if (!CheckOpenList(OPEN, &my_map[neighbor_index]) && !CheckClosedList(CLOSED[neighbor_index]))
             {
-                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], (*GOAL));
+                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
                 my_map[neighbor_index].g = cost_so_far;
-                my_map[neighbor_index].came_from = &my_map[current_node_index];
+                my_map[neighbor_index].came_from = current_node_index;
                 OPEN.push(&my_map[neighbor_index]);
                 path_executed = "path 3, wasn't in any list";
             }
@@ -202,18 +200,16 @@ int main (int argc, char* argv[])
 
     // mudo a "aparência" dos nós que pertencem ao melhor caminho
     // fazendo o caminho reverso do GOAL para o START
-    long goal_index = ((*GOAL).x * grid_size_x) + (*GOAL).y;
-    long start_index = ((*START).x * grid_size_x) + (*START).y;
-    long index = goal_index;
+    long index = GOAL;
     while (true)
     {
-        if (index == start_index)
+        if (index == START)
         {
             break;
         }
         else
         {
-            if (index != goal_index)
+            if (index != GOAL)
             {
                 if (best_path_index)
                 {
@@ -224,7 +220,7 @@ int main (int argc, char* argv[])
                     my_map[index].appearance = "-";
                 }
             }
-            index = (my_map[index].came_from->x * grid_size_x) + my_map[index].came_from->y;
+            index = my_map[index].came_from;
             //std::cout << "came_from index  " << index << "\n";
         }
     }

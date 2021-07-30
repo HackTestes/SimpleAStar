@@ -11,7 +11,7 @@
         this->f = 0;
         this->g = 0;
         // came_from ou *came_from??????
-        this->came_from = NULL;
+        this->came_from = 0;
 
         this->appearance = "o"; // nó normal
         //this->appearance = std::to_string(node_index);
@@ -26,7 +26,7 @@
         this->f = 0;
         this->g = 0;
         // came_from ou *came_from??????
-        this->came_from = NULL;
+        this->came_from = 0;
 
         this->appearance = "o"; // nó normal
     }
