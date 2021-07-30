@@ -34,7 +34,6 @@
     extern bool best_path_index;
     extern bool debug_all;
     extern bool show_priority_queue;
-    extern bool show_closed_list;
     extern bool show_visited_neighbors;
 
     extern bool snapshot;
@@ -61,16 +60,14 @@
     class CustomComparator
     {
     public:
-        bool operator() (Node *n1, Node *n2);
+        bool operator() (Node n1, Node n2);
     };
 
-    void ShowPriorityQueue (std::priority_queue < Node*, std::vector<Node*>, CustomComparator > priority_queue);
+    void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue);
 
-    void ShowClosedList (std::unordered_map< long, Node* > closed_list);
+    std::priority_queue < Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue,long except_index);
 
-    bool CheckClosedList (Node *item);
-
-    bool CheckOpenList (std::priority_queue < Node*, std::vector<Node*>, CustomComparator > priority_queue, Node *item);
+    bool CheckOpenList (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue, Node item);
 
     void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord, long grid_size_x, long grid_size_y);
 

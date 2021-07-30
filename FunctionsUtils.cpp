@@ -32,12 +32,6 @@ void ArgsOptions(int argc, char* argv[])
             show_priority_queue = true;
         }
 
-        // !todo! retirar
-        if ((std::string)argv[i] == "--ShowClosedList")
-        {
-            show_closed_list = true;
-        }
-
         if ((std::string)argv[i] == "--ShowVisitedNeighbors")
         {
             show_visited_neighbors = true;
@@ -80,13 +74,12 @@ void ArgsOptions(int argc, char* argv[])
     }
 }
 
-// por ponteiros
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
 
-bool CustomComparator::operator() (Node *n1, Node *n2)
+bool CustomComparator::operator() (Node n1, Node n2)
 {
-    if (n1->f > n2->f)
+    if (n1.f > n2.f)
     {
         return true;
     }
@@ -98,22 +91,22 @@ bool CustomComparator::operator() (Node *n1, Node *n2)
 
 // usa uma cópia da minha lista de prioridade
 // imprime a lista de prioridades a partir de uma cópia
-void ShowPriorityQueue (std::priority_queue < Node*, std::vector<Node*>, CustomComparator > priority_queue)
+void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue)
 {
     while (!priority_queue.empty())
     {
         std::cout << "priority_queue_copy : " 
-        << " x " << priority_queue.top()->x 
-        << "  y " << priority_queue.top()->y 
-        << "  |  f " << priority_queue.top()->f  
-        << "  |  node_index " << priority_queue.top()->node_index 
+        << " x " << priority_queue.top().x 
+        << "  y " << priority_queue.top().y 
+        << "  |  f " << priority_queue.top().f  
+        << "  |  node_index " << priority_queue.top().node_index 
         << "\n";
         priority_queue.pop();
     }
 }
 
-/*
-std::priority_queue < Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue,long except_index)
+
+std::priority_queue< Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue <Node, std::vector<Node>, CustomComparator>priority_queue, long except_index)
 {
     std::priority_queue < Node, std::vector<Node>, CustomComparator > new_priority_queue;
     while (!priority_queue.empty())
@@ -124,44 +117,17 @@ std::priority_queue < Node, std::vector<Node>, CustomComparator > CopyPriorityQu
         }
         priority_queue.pop();
     }
-
     return new_priority_queue;
 }
-*/
-
-// !todo! retirar
-/*void ShowClosedList (std::unordered_map< long, Node* > closed_list)
-{
-    for (auto &node_index : closed_list)
-    {
-        std::cout << "CLOSED_copy : " << " node_index " << node_index.first << "\n";
-    }
-}
-
-// talvez seja melhor rever como fazer a comparação
-// Checa se um nó existe na CLOSED list
-/*bool CheckClosedList (Node node)
-{
-    if (node.visited == true)
-    {
-        //std::cout << "NADA" << "\n";
-        return false;
-    }
-    else
-    {
-        //std::cout << "EXISTE   " << "x : " << item->x << " | y : " << item->y <<  "\n";
-        return true;
-    }
-}*/
 
 // checa se um nó existe na OPEN list, baseado no index do nó
-bool CheckOpenList (std::priority_queue < Node*, std::vector<Node*>, CustomComparator > priority_queue, Node *item)
+bool CheckOpenList (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue, Node item)
 {
     while (!priority_queue.empty())
     {
         // é mais seguro olhar para as coordenadas ao em vez do endereço de memória,
         // ainda mais porque o priority_queue é uma cópia!
-        if ((item->x == priority_queue.top()->x) && (item->y == priority_queue.top()->y))
+        if (item.node_index == priority_queue.top().node_index)
         {
             //std::cout << "EXISTE NO OPEN!" << "\n";
             return true;
