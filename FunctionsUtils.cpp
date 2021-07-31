@@ -189,39 +189,63 @@ void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord
     }
 }
 
-// imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
-void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, long grid_size_y)
+std::string StringPadding(long string_length)
 {
     long cell_size = 7;
-    for (long x = 0; x < (grid_size_x + 2); ++x)
-    {
-        if (x == grid_size_x || x == grid_size_x + 1)
-        {
-            std::cout << std::setw(cell_size) << " " << "|   " << std::setw(cell_size);
-        }
-        else
-        {
-            std::cout << std::setw(cell_size) << x << "|   " << std::setw(cell_size);
-        }
+    long padding = cell_size - string_length;
+    std::string padding_text;
 
-        for (long y = 0; y < grid_size_y; ++y)
-        {
-            if (x == grid_size_x)
-            {
-                std::cout << "_" << std::setw(cell_size);
-            }
-            else if (x == grid_size_x + 1)
-            {
-                std::cout << y << std::setw(cell_size);
-            }
-            else
-            {
-                std::cout << map[(x * grid_size_y) + y].appearance << std::setw(cell_size);
-            }
-        }
-        std::cout << "\n\n";
+    for (long i = 0; i < padding; ++i)
+    {
+        padding_text += " ";
     }
-    std::cout << "\n\n";
+
+    return padding_text;
+}
+
+
+// imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
+// será construída uma string de baixo para cima em cada linha (cima para baixo, esquerda para direita)
+void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, long grid_size_y)
+{
+    std::string map_string;
+    std::string line;
+
+    // construa a primeira linha com os índices de X
+    line = StringPadding(1) + "|";
+    for (long x = 0; x < grid_size_x; ++x)
+    {
+        std::string coordinate_x = std::to_string(x);
+        line += StringPadding(coordinate_x.length()) + coordinate_x;
+    }
+    line += "\n\n\n";
+    map_string = line;
+
+
+    // separador
+    line = StringPadding(1) + "|";
+    for (long x = 0; x < grid_size_x; ++x)
+    {
+        line += StringPadding(1) + "_";
+    }
+    line += "\n\n\n";
+    map_string = line + map_string; // faz em append no começo, ao invés de no final
+
+    // constrói todo o restante do mapa, cada linha sendo um Y
+    for (long y = 0; y < grid_size_y; ++y)
+    {
+        std::string coordinate_y = std::to_string(y);
+        line = StringPadding( (coordinate_y.length() + 1) ) + coordinate_y + "|";
+        for (long x = 0; x < grid_size_x; ++x)
+        {
+            std::string node_appearance = map[(x * grid_size_y) + y].appearance;
+            line += StringPadding(node_appearance.length()) + node_appearance;
+        }
+        line += "\n\n\n";
+        map_string = line + map_string;
+    }
+
+    std::cout << map_string;
 }
 
 
