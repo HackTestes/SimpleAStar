@@ -32,11 +32,6 @@ void ArgsOptions(int argc, char* argv[])
             show_priority_queue = true;
         }
 
-        if ((std::string)argv[i] == "--ShowClosedList")
-        {
-            show_closed_list = true;
-        }
-
         if ((std::string)argv[i] == "--ShowVisitedNeighbors")
         {
             show_visited_neighbors = true;
@@ -79,13 +74,12 @@ void ArgsOptions(int argc, char* argv[])
     }
 }
 
-// por ponteiros
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
 
-bool CustomComparator::operator() (Node *n1, Node *n2)
+bool CustomComparator::operator() (Node n1, Node n2)
 {
-    if (n1->f > n2->f)
+    if (n1.f > n2.f)
     {
         return true;
     }
@@ -97,52 +91,43 @@ bool CustomComparator::operator() (Node *n1, Node *n2)
 
 // usa uma cópia da minha lista de prioridade
 // imprime a lista de prioridades a partir de uma cópia
-void ShowPriorityQueue (std::priority_queue < Node*, std::vector<Node*>, CustomComparator > priority_queue)
+void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue)
 {
     while (!priority_queue.empty())
     {
         std::cout << "priority_queue_copy : " 
-        << " x " << priority_queue.top()->x 
-        << "  y " << priority_queue.top()->y 
-        << "  |  f " << priority_queue.top()->f  
-        << "  |  node_index " << priority_queue.top()->node_index 
+        << " x " << priority_queue.top().x 
+        << "  y " << priority_queue.top().y 
+        << "  |  f " << priority_queue.top().f  
+        << "  |  node_index " << priority_queue.top().node_index 
         << "\n";
         priority_queue.pop();
     }
 }
 
-void ShowClosedList (std::unordered_map< long, Node* > closed_list)
-{
-    for (auto &node_index : closed_list)
-    {
-        std::cout << "CLOSED_copy : " << " node_index " << node_index.first << "\n";
-    }
-}
 
-// talvez seja melhor rever como fazer a comparação
-// Checa se um nó existe na CLOSED list
-bool CheckClosedList (Node *item)
+std::priority_queue< Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue <Node, std::vector<Node>, CustomComparator>priority_queue, long except_index)
 {
-    if (item == NULL)
+    std::priority_queue < Node, std::vector<Node>, CustomComparator > new_priority_queue;
+    while (!priority_queue.empty())
     {
-        //std::cout << "NADA" << "\n";
-        return false;
+        if(priority_queue.top().node_index != except_index)
+        {
+            new_priority_queue.push(priority_queue.top());
+        }
+        priority_queue.pop();
     }
-    else
-    {
-        //std::cout << "EXISTE   " << "x : " << item->x << " | y : " << item->y <<  "\n";
-        return true;
-    }
+    return new_priority_queue;
 }
 
 // checa se um nó existe na OPEN list, baseado no index do nó
-bool CheckOpenList (std::priority_queue < Node*, std::vector<Node*>, CustomComparator > priority_queue, Node *item)
+bool CheckOpenList (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue, Node item)
 {
     while (!priority_queue.empty())
     {
         // é mais seguro olhar para as coordenadas ao em vez do endereço de memória,
         // ainda mais porque o priority_queue é uma cópia!
-        if ((item->x == priority_queue.top()->x) && (item->y == priority_queue.top()->y))
+        if (item.node_index == priority_queue.top().node_index)
         {
             //std::cout << "EXISTE NO OPEN!" << "\n";
             return true;
@@ -204,39 +189,63 @@ void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord
     }
 }
 
-// imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
-void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, long grid_size_y)
+std::string StringPadding(long string_length)
 {
     long cell_size = 7;
-    for (long x = 0; x < (grid_size_x + 2); ++x)
-    {
-        if (x == grid_size_x || x == grid_size_x + 1)
-        {
-            std::cout << std::setw(cell_size) << " " << "|   " << std::setw(cell_size);
-        }
-        else
-        {
-            std::cout << std::setw(cell_size) << x << "|   " << std::setw(cell_size);
-        }
+    long padding = cell_size - string_length;
+    std::string padding_text;
 
-        for (long y = 0; y < grid_size_y; ++y)
-        {
-            if (x == grid_size_x)
-            {
-                std::cout << "_" << std::setw(cell_size);
-            }
-            else if (x == grid_size_x + 1)
-            {
-                std::cout << y << std::setw(cell_size);
-            }
-            else
-            {
-                std::cout << map[(x * grid_size_y) + y].appearance << std::setw(cell_size);
-            }
-        }
-        std::cout << "\n\n";
+    for (long i = 0; i < padding; ++i)
+    {
+        padding_text += " ";
     }
-    std::cout << "\n\n";
+
+    return padding_text;
+}
+
+
+// imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
+// será construída uma string de baixo para cima em cada linha (cima para baixo, esquerda para direita)
+void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, long grid_size_y)
+{
+    std::string map_string;
+    std::string line;
+
+    // construa a primeira linha com os índices de X
+    line = StringPadding(1) + "|";
+    for (long x = 0; x < grid_size_x; ++x)
+    {
+        std::string coordinate_x = std::to_string(x);
+        line += StringPadding(coordinate_x.length()) + coordinate_x;
+    }
+    line += "\n\n\n";
+    map_string = line;
+
+
+    // separador
+    line = StringPadding(1) + "|";
+    for (long x = 0; x < grid_size_x; ++x)
+    {
+        line += StringPadding(1) + "_";
+    }
+    line += "\n\n\n";
+    map_string = line + map_string; // faz em append no começo, ao invés de no final
+
+    // constrói todo o restante do mapa, cada linha sendo um Y
+    for (long y = 0; y < grid_size_y; ++y)
+    {
+        std::string coordinate_y = std::to_string(y);
+        line = StringPadding( (coordinate_y.length() + 1) ) + coordinate_y + "|";
+        for (long x = 0; x < grid_size_x; ++x)
+        {
+            std::string node_appearance = map[(x * grid_size_y) + y].appearance;
+            line += StringPadding(node_appearance.length()) + node_appearance;
+        }
+        line += "\n\n\n";
+        map_string = line + map_string;
+    }
+
+    std::cout << map_string;
 }
 
 

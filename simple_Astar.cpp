@@ -31,7 +31,6 @@ bool debug = false;
 bool best_path_index = false;
 bool debug_all = false;
 bool show_priority_queue = false;
-bool show_closed_list = false;
 bool show_visited_neighbors = false;
 
 bool snapshot = false;
@@ -53,14 +52,12 @@ int main (int argc, char* argv[])
 
     // defino as variáveis principais : tamanho X e Y, começo (START), fim (GOAL)
 
-    //long grid_size_x = 10;
     long grid_size_x = std::stoi(argv[1]);
 
-    //long grid_size_y = 10;
     long grid_size_y = std::stoi(argv[2]);
 
     std::vector <Node, std::allocator<Node>> my_map;
-    CreateNode (&my_map, grid_size_x, grid_size_y); // !todo! talvez mudar de vetor para array
+    CreateNode (&my_map, grid_size_x, grid_size_y);
 
     long GOAL;
     if(std::stoi(argv[4]) >= 0 && std::stoi(argv[4]) < (grid_size_x * grid_size_y))
@@ -74,7 +71,6 @@ int main (int argc, char* argv[])
         return 0;
     }
 
-    //Node *START = &my_map[0];
     long START;
     if(std::stoi(argv[3]) >= 0 && std::stoi(argv[3]) < (grid_size_x * grid_size_y))
     {
@@ -87,27 +83,22 @@ int main (int argc, char* argv[])
         return 0;
     }
 
-    // usar o f do nó para ordenar
-    // com ponteiros
-    std::priority_queue < Node*, std::vector<Node*>, CustomComparator > OPEN;
-
-    // talvez seja possível usar o nó como chave ou o endereço de memória do nó
-    // devo mesmo usar um hash_map ou posso usar uma lista ordenada? Já que é possível saber o index dos objetos
-    std::unordered_map< long, Node* > CLOSED;
+    // usa o f do nó para ordenar
+    std::priority_queue < Node, std::vector<Node>, CustomComparator > OPEN;
 
     my_map[START].f = g(my_map[START], my_map[START]) + h(my_map[START], my_map[GOAL]);
 
-    OPEN.push(&my_map[START]);
+    OPEN.push(my_map[START]);
 
     std::cout << "PONTO DE CONTROLE  " << 1 << "\n";
 
     // inicio o loop principal
-    while ( (OPEN.top()->x != my_map[GOAL].x) || (OPEN.top()->y != my_map[GOAL].y))
+    while (OPEN.top().node_index != my_map[GOAL].node_index)
     {
-        long current_node_index = OPEN.top()->node_index;//(OPEN.top()->x * grid_size_x) + OPEN.top()->y; // !todo! substituir por top()->index
+        long current_node_index = OPEN.top().node_index;//(OPEN.top()->x * grid_size_x) + OPEN.top()->y; // !todo! substituir por top()->index
         OPEN.pop();
 
-        CLOSED[current_node_index] = &my_map[current_node_index];
+        my_map[current_node_index].visited = true;
 
         std::vector <long> my_neighbors_list;
         ExpandNeighbors(&my_map[current_node_index], &my_neighbors_list, grid_size_x, grid_size_y);
@@ -118,27 +109,29 @@ int main (int argc, char* argv[])
             long cost_so_far = my_map[current_node_index].g + g(my_map[current_node_index], my_map[neighbor_index]);//1; // +1 ou g(current_node_index, current_neighbor)
 
             std::string path_executed = "didn't execute any if";// !todo! melhorar para demonstrar multiplos caminhos executados
-            if (CheckOpenList(OPEN, &my_map[neighbor_index]) && (cost_so_far < my_map[neighbor_index].g))
+            if (CheckOpenList(OPEN, my_map[neighbor_index]) && (cost_so_far < my_map[neighbor_index].g))
             {
                 my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
                 my_map[neighbor_index].g = cost_so_far;
                 my_map[neighbor_index].came_from = current_node_index;
+                OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
+                OPEN.push(my_map[neighbor_index]); // coloco de volta com o valor atualizado
                 path_executed = "path 1, neighbor_in_open with better path";
             }
 
-            if (CheckClosedList(CLOSED[neighbor_index]) && (cost_so_far < my_map[neighbor_index].g))
+            if (my_map[neighbor_index].visited && (cost_so_far < my_map[neighbor_index].g))
             {
                 // !todo! adicionar o restante da lógica
-                CLOSED.erase(neighbor_index);
+                my_map[neighbor_index].visited = false;
                 path_executed = "path 2, neighbor_in_closed with better path";
             }
 
-            if (!CheckOpenList(OPEN, &my_map[neighbor_index]) && !CheckClosedList(CLOSED[neighbor_index]))
+            if (!CheckOpenList(OPEN, my_map[neighbor_index]) && !my_map[neighbor_index].visited)
             {
                 my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
                 my_map[neighbor_index].g = cost_so_far;
                 my_map[neighbor_index].came_from = current_node_index;
-                OPEN.push(&my_map[neighbor_index]);
+                OPEN.push(my_map[neighbor_index]);
                 path_executed = "path 3, wasn't in any list";
             }
 
@@ -147,8 +140,6 @@ int main (int argc, char* argv[])
             if (show_visited_neighbors)
             {
                 visited_neighbors += "visited neighbor  : index  " + std::to_string(neighbor_index) +
-                //"  |  neighbor_in_open " + std::to_string(neighbor_in_open) + 
-                //"  |  neighbor_in_closed " + std::to_string(neighbor_in_closed) + 
                 "  |  path_executed " + path_executed + "\n";
             }
         }
@@ -166,12 +157,6 @@ int main (int argc, char* argv[])
                 if (show_priority_queue)
                 {
                     ShowPriorityQueue(OPEN);
-                    std::cout << "\n";
-                }
-
-                if (show_closed_list)
-                {
-                    ShowClosedList(CLOSED);
                     std::cout << "\n";
                 }
 
