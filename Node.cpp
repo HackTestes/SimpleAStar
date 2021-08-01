@@ -14,6 +14,7 @@
         this->came_from = 0;
 
         this->visited = false;
+        this->in_priority_queue = false;
 
         this->appearance = "o"; // nó normal
         //this->appearance = std::to_string(node_index);
@@ -31,6 +32,7 @@
         this->came_from = 0;
 
         this->visited = false;
+        this->in_priority_queue = false;
 
         this->appearance = "o"; // nó normal
     }

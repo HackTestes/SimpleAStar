@@ -2,9 +2,7 @@
 // custo(g) e heurística(h)
 // f é usando para ordenar os nós na lista de prioridades
 
-
 // http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#manhattan-distance
-
 /*
 function heuristic(node) =
     dx = abs(node.x - goal.x)
@@ -13,11 +11,10 @@ function heuristic(node) =
 */
 
 #include <cmath>
-
 #include"AStarHeader.h"
 
 // por cópia
-// além disso, adicionei esse parâmetro extra, já que esses nós (neighbor, GOAL) estão fora do escopo da função
+// além disso, adicionei esse parâmetro extra, já que alguns nós estão fora do escopo da função
 long g (Node current, Node neighbor)
 {
     long dx = abs(current.x - neighbor.x);

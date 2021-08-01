@@ -22,6 +22,7 @@
             long came_from;
 
             bool visited;
+            bool in_priority_queue;
 
             std::string appearance;
 
@@ -66,8 +67,6 @@
     void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue);
 
     std::priority_queue < Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue,long except_index);
-
-    bool CheckOpenList (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue, Node item);
 
     void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord, long grid_size_x, long grid_size_y);
 

@@ -120,23 +120,6 @@ std::priority_queue< Node, std::vector<Node>, CustomComparator > CopyPriorityQue
     return new_priority_queue;
 }
 
-// checa se um nó existe na OPEN list, baseado no index do nó
-bool CheckOpenList (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue, Node item)
-{
-    while (!priority_queue.empty())
-    {
-        // é mais seguro olhar para as coordenadas ao em vez do endereço de memória,
-        // ainda mais porque o priority_queue é uma cópia!
-        if (item.node_index == priority_queue.top().node_index)
-        {
-            //std::cout << "EXISTE NO OPEN!" << "\n";
-            return true;
-        }
-        priority_queue.pop();
-    }
-    return false;
-}
-
 // essa função encontra os nós vizinhos e devolve um vetor do tamanho adequando (== a quantidade de vizinhos)
 void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord, long grid_size_x, long grid_size_y)
 {
@@ -189,6 +172,7 @@ void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord
     }
 }
 
+// gera os espaços necessário para fazer um padding 
 std::string StringPadding(long string_length)
 {
     long cell_size = 7;
@@ -202,7 +186,6 @@ std::string StringPadding(long string_length)
 
     return padding_text;
 }
-
 
 // imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
 // será construída uma string de baixo para cima em cada linha (cima para baixo, esquerda para direita)
@@ -220,7 +203,6 @@ void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, l
     }
     line += "\n\n\n";
     map_string = line;
-
 
     // separador
     line = StringPadding(1) + "|";
@@ -257,8 +239,6 @@ void CreateNode (std::vector <Node, std::allocator<Node>> *map, long grid_size_x
         for (long y = 0; y < grid_size_y; ++y)
         {
             map->insert(map->end(),Node(x, y, ((x * grid_size_y) + y)));
-
-            //std::cout << "map : " << ((x * grid_size_x) + y) << " x "<< (*map)[(x * grid_size_x) + y].x << " y " << (*map)[(x * grid_size_x) + y].y << "\n";
 
             //std::cout << "x:" << x << "   y:" << y << "\n";
         }
