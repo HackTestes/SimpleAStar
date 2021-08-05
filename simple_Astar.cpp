@@ -96,7 +96,7 @@ int main (int argc, char* argv[])
 
             std::string path_executed = "didn't execute any alternative path";// !todo! melhorar para demonstrar multiplos caminhos executados
 
-            // !todo! verificar se um nó está na fila OPEN, pode ser feito com uma flag no nó
+            // !done! verificar se um nó está na fila OPEN, pode ser feito com uma flag no nó
             // in_priority_queue = true ---> se estiver na PQ (toda adição na PQ)
             // in_priority_queue = false ---> se não estiver na PQ (toda remoção da PQ)
             // no caso dele precisar ser atualizado na PQ (remove e adiciona), não é necessário mudar a flag (porque é apenas uma atualização de valor)
@@ -128,7 +128,7 @@ int main (int argc, char* argv[])
                 path_executed = "path 3, wasn't in any list";
             }
 
-            if (my_map[neighbor_index].appearance != "S" && my_map[neighbor_index].appearance != "G") {my_map[neighbor_index].appearance = "X";} // visited
+            if (my_map[neighbor_index].appearance != "S" && my_map[neighbor_index].appearance != "G") {my_map[neighbor_index].appearance = "X";} // visited but not expanded
             
             if (show_visited_neighbors)
             {

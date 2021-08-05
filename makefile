@@ -6,7 +6,7 @@ OBJ= FnFunctions.o FunctionsUtils.o Node.o simple_Astar.o
 %.o: %.cpp %.h
 	$(CC) -c -o $@ $(CPP)
 
-SimpleAStarExecutabele: $(OBJ)
+SimpleAStarExecutable: $(OBJ)
 	$(CC) -o $@ $^
 
 .PHONY: clean
