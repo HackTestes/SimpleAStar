@@ -4,7 +4,9 @@
 #include <queue>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <stdlib.h>
 
@@ -26,9 +28,13 @@
 
             std::string appearance;
 
-            Node(long x, long y, long node_index);
+            Node(long node_index);
             Node();
     };
+
+    // grid_size
+    extern long grid_size_x;
+    extern long grid_size_y;
 
     // boleanos e variáveis para argumentos
     extern bool debug;
@@ -49,6 +55,13 @@
 
     extern bool interactive;
     extern bool show_map;
+    extern bool show_barrier;
+    extern bool barrier_enabled;
+
+    // map padding
+    extern long padding_cell_size;
+
+    extern std::string barrier_file_path;
 
     // FnFunctions.cpp
     long g (Node current, Node start);
@@ -56,7 +69,7 @@
 
     // FunctionsUtils.cpp
 
-    void ArgsOptions(int argc, char* argv[]);
+    long ArgsOptions(int argc, char* argv[]);
 
     class CustomComparator
     {
@@ -68,10 +81,12 @@
 
     std::priority_queue < Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue,long except_index);
 
-    void ExpandNeighbors (Node *current_node, std::vector <long> *my_neighbors_coord, long grid_size_x, long grid_size_y);
+    void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord);
 
-    void PrintMap (std::vector <Node, std::allocator<Node>> map, long grid_size_x, long grid_size_y);
+    void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> barrier_map);
 
-    void CreateNode (std::vector <Node, std::allocator<Node>> *map, long grid_size_x, long grid_size_y);
+    long ReadBarrier(std::unordered_set<long> *my_barrier);
+
+    void ShowBarrier(std::unordered_set<long> my_barrier);
 
 #endif

@@ -1,17 +1,25 @@
 
 // !todo! Devo manter????
-// #include <queue>
-// #include <vector>
-// #include <unordered_map>
-// #include <iostream>
-// #include <stdlib.h>
+#include <queue>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
 
 #include"AStarHeader.h"
 
 // o mapa é uma tabela
 // movimentos: cima, baixo, esquerda, direta (4 movimentos possíveis)
 
+
 // Variáveis globais
+
+// grid_size
+long grid_size_x = 0;
+long grid_size_y = 0;
+
 bool debug = false;
 bool best_path_index = false;
 bool debug_all = false;
@@ -30,24 +38,40 @@ long snapshot_end_node_y = -1;
 
 bool interactive = false;
 bool show_map = false;
+bool show_barrier = false;
+bool barrier_enabled = false;
+
+// map padding
+long padding_cell_size = 7;
+
+std::string barrier_file_path = "";
 
 int main (int argc, char* argv[])
 {
-    ArgsOptions(argc, argv);
+    switch (ArgsOptions(argc, argv))
+    {
+        case (0):
+            break;
+
+        case (1):
+            return 1;
+
+        case (2): // --help
+            return 0;
+    }
 
     // defino as variáveis principais : tamanho X e Y, começo (START), fim (GOAL)
+    grid_size_x = std::stoi(argv[1]);
 
-    long grid_size_x = std::stoi(argv[1]);
+    grid_size_y = std::stoi(argv[2]);
 
-    long grid_size_y = std::stoi(argv[2]);
-
-    std::vector <Node, std::allocator<Node>> my_map;
-    CreateNode (&my_map, grid_size_x, grid_size_y);
+    std::unordered_map <long, Node> my_map;
 
     long GOAL;
     if(std::stoi(argv[4]) >= 0 && std::stoi(argv[4]) < (grid_size_x * grid_size_y))
     {
         GOAL = std::stoi(argv[4]);
+        my_map[GOAL] = Node(GOAL);
         my_map[GOAL].appearance = "G";
     }
     else
@@ -60,6 +84,7 @@ int main (int argc, char* argv[])
     if(std::stoi(argv[3]) >= 0 && std::stoi(argv[3]) < (grid_size_x * grid_size_y))
     {
         START = std::stoi(argv[3]);
+        my_map[START] = Node(START);
         my_map[START].appearance = "S";
     }
     else
@@ -68,13 +93,22 @@ int main (int argc, char* argv[])
         return 0;
     }
 
+    long previous_map_size = my_map.size();
+
+    std::unordered_set<long> barrier;
+    if (barrier_enabled)
+    {
+        if (ReadBarrier(&barrier) != 0)
+        {
+            return 1; // se não conseguir ler o arquivi, indique o erro e finaliza o programa
+        }
+    }
+
     // usa o f do nó para ordenar
     std::priority_queue < Node, std::vector<Node>, CustomComparator > OPEN;
 
     // inicializo todos os atributos necessários para começar
-    //my_map[START].f = g(my_map[START], my_map[START]) + h(my_map[START], my_map[GOAL]); // precisa????
     my_map[START].in_priority_queue = true;
-
     OPEN.push(my_map[START]);
 
     // inicio o loop principal
@@ -87,53 +121,73 @@ int main (int argc, char* argv[])
         my_map[current_node_index].visited = true;
 
         std::vector <long> my_neighbors_list;
-        ExpandNeighbors(&my_map[current_node_index], &my_neighbors_list, grid_size_x, grid_size_y);
+        ExpandNeighbors(my_map[current_node_index], &my_neighbors_list);
 
         std::string visited_neighbors = "";
         for (long neighbor_index : my_neighbors_list)
         {
-            long cost_so_far = my_map[current_node_index].g + g(my_map[current_node_index], my_map[neighbor_index]);
-
             std::string path_executed = "didn't execute any alternative path";// !todo! melhorar para demonstrar multiplos caminhos executados
 
-            // !done! verificar se um nó está na fila OPEN, pode ser feito com uma flag no nó
-            // in_priority_queue = true ---> se estiver na PQ (toda adição na PQ)
-            // in_priority_queue = false ---> se não estiver na PQ (toda remoção da PQ)
-            // no caso dele precisar ser atualizado na PQ (remove e adiciona), não é necessário mudar a flag (porque é apenas uma atualização de valor)
-            // Fazer isso retira a necessidade da função CheckOpenList() e a verificação não precisa iterar sobre a PQ (otimização de velocidade?)
-            if (my_map[neighbor_index].in_priority_queue && (cost_so_far < my_map[neighbor_index].g))
+            // se não for uma barreira
+            if (!(barrier.find(neighbor_index) != barrier.end()))
             {
-                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
-                my_map[neighbor_index].g = cost_so_far;
-                my_map[neighbor_index].came_from = current_node_index;
-                OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
-                OPEN.push(my_map[neighbor_index]); // coloco de volta com o valor atualizado
-                path_executed = "path 1, neighbor_in_open with better path";
-            }
 
-            if (my_map[neighbor_index].visited && (cost_so_far < my_map[neighbor_index].g))
-            {
-                my_map[neighbor_index].visited = false;
-                path_executed = "path 2, neighbor_in_closed with better path";
-            }
+                // se não existir, crie
+                if (!(my_map.find(neighbor_index) != my_map.end()))
+                {
+                    my_map[neighbor_index] = Node(neighbor_index);
+                }
 
-            if (!my_map[neighbor_index].in_priority_queue && !my_map[neighbor_index].visited)
-            {
-                my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
-                my_map[neighbor_index].g = cost_so_far;
-                my_map[neighbor_index].came_from = current_node_index;
-                my_map[neighbor_index].in_priority_queue = true;
+                long cost_so_far = my_map[current_node_index].g + g(my_map[current_node_index], my_map[neighbor_index]);
 
-                OPEN.push(my_map[neighbor_index]);
-                path_executed = "path 3, wasn't in any list";
-            }
+                // !done! verificar se um nó está na fila OPEN, pode ser feito com uma flag no nó
+                // in_priority_queue = true ---> se estiver na PQ (toda adição na PQ)
+                // in_priority_queue = false ---> se não estiver na PQ (toda remoção da PQ)
+                // no caso dele precisar ser atualizado na PQ (remove e adiciona), não é necessário mudar a flag (porque é apenas uma atualização de valor)
+                // Fazer isso retira a necessidade da função CheckOpenList() e a verificação não precisa iterar sobre a PQ (otimização de velocidade?)
+                if (my_map[neighbor_index].in_priority_queue && (cost_so_far < my_map[neighbor_index].g))
+                {
+                    my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
+                    my_map[neighbor_index].g = cost_so_far;
+                    my_map[neighbor_index].came_from = current_node_index;
+                    OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
+                    OPEN.push(my_map[neighbor_index]); // coloco de volta com o valor atualizado
+                    path_executed = "path 1, neighbor_in_open with better path";
+                }
 
-            if (my_map[neighbor_index].appearance != "S" && my_map[neighbor_index].appearance != "G") {my_map[neighbor_index].appearance = "X";} // visited but not expanded
-            
-            if (show_visited_neighbors)
-            {
-                visited_neighbors += "visited neighbor  : index  " + std::to_string(neighbor_index) +
-                "  |  path_executed " + path_executed + "\n";
+                if (my_map[neighbor_index].visited && (cost_so_far < my_map[neighbor_index].g))
+                {
+                    my_map[neighbor_index].visited = false;
+                    path_executed = "path 2, neighbor_in_closed with better path";
+                }
+
+                if (!my_map[neighbor_index].in_priority_queue && !my_map[neighbor_index].visited)
+                {
+                    my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
+                    my_map[neighbor_index].g = cost_so_far;
+                    my_map[neighbor_index].came_from = current_node_index;
+                    my_map[neighbor_index].in_priority_queue = true;
+
+                    OPEN.push(my_map[neighbor_index]);
+                    path_executed = "path 3, wasn't in any list";
+                }
+
+                previous_map_size = my_map.size(); // atualiza o valor de tamanho para posterior avaliação
+
+                if (my_map[neighbor_index].appearance != "S" && my_map[neighbor_index].appearance != "G") {my_map[neighbor_index].appearance = "X";} // visited but not expanded
+                
+                if (show_visited_neighbors)
+                {
+                    visited_neighbors += "Visited neighbor:\n"
+                                         "  -  node_index " + std::to_string(my_map[neighbor_index].node_index) + "\n" +
+                                         "  -  x " + std::to_string(my_map[neighbor_index].x) +
+                                         "  y " + std::to_string(my_map[neighbor_index].y) +  "\n" +
+                                         "  -  f " + std::to_string(my_map[neighbor_index].f) + "\n" +
+                                         "  -  g " + std::to_string(my_map[neighbor_index].g) + "\n" +
+                                         "  -  visited " + std::to_string(my_map[neighbor_index].visited) + "\n" +
+                                         "  -  in_priority_queue " + std::to_string(my_map[neighbor_index].in_priority_queue) + "\n" +
+                                         "  -  path_executed " + path_executed + "\n\n";
+                }
             }
         }
 
@@ -145,7 +199,13 @@ int main (int argc, char* argv[])
                 my_map[current_node_index].y >= snapshot_start_node_y  && my_map[current_node_index].y <= snapshot_end_node_y) )
             {
                 std::cout << "<<-------------------------End of loop iformation:------------------------->>\n\n";
-                std::cout << "CURRENT NODE  : " << " x " << my_map[current_node_index].x << "  y " << my_map[current_node_index].y << "  |  f " << my_map[current_node_index].f  << "  |  node_index " << my_map[current_node_index].node_index << "\n\n";
+                std::cout << "CURRENT NODE  : " << " node_index " << my_map[current_node_index].node_index
+                                                << "  |  x " << my_map[current_node_index].x
+                                                << "  y " << my_map[current_node_index].y
+                                                << "  |  f " << my_map[current_node_index].f
+                                                << "  |  g " << my_map[current_node_index].g
+                                                << "  |  visited " << my_map[current_node_index].visited
+                                                << "  |  in_priority_queue " << my_map[current_node_index].in_priority_queue << "\n\n";
 
                 if (show_priority_queue)
                 {
@@ -158,9 +218,15 @@ int main (int argc, char* argv[])
                     std::cout << visited_neighbors << "\n";
                 }
 
+                if (show_barrier)
+                {
+                    ShowBarrier(barrier);
+                    std::cout << "\n\n";
+                }
+
                 if (show_map)
                 {
-                    PrintMap(my_map, grid_size_x, grid_size_y);
+                    PrintMap(my_map, barrier);
                 }
 
                 if (interactive)
@@ -170,6 +236,14 @@ int main (int argc, char* argv[])
 
                 std::cout << "<<------------------------------------------------------------------------->>\n";
             }
+        }
+
+        // (mapa não aumentou e PQ vazia) - condição de parada com barreiras
+        if (previous_map_size == my_map.size() && OPEN.size() == 0)
+        {
+            std::cout << "The best path doesn't exist\n\n";
+            PrintMap(my_map, barrier);
+            return 0;
         }
     }
 
@@ -202,7 +276,7 @@ int main (int argc, char* argv[])
         }
     }
 
-    PrintMap(my_map, grid_size_x, grid_size_y);
+    PrintMap(my_map, barrier);
 
     return 0;
 }
