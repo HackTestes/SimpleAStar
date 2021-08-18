@@ -9,6 +9,17 @@
 #include <stdlib.h> 
 #include"AStarHeader.h"
 
+// --------------------------teste--------------------------------------- //
+    NodeParsed::NodeParsed(long x, long y)
+    {
+        this->index = Node::GetIndex(x, y);
+        this->x = x;
+        this->y = y;
+    }
+
+// --------------------------teste--------------------------------------- //
+
+
 // !todo! adicionar supporte para opções com uma única letra "-h"
 // !todo! melhorar opções que recebem valores (Snapshot, SnapshotXY)
 // - verificar a entrada de dados (números)
@@ -20,7 +31,7 @@ long ArgsOptions(int argc, char* argv[])
 
         if ((std::string)argv[i] == "--help")
         {
-            std::cout << "./SimpleAStarExecutable [gid_size_x] [gid_size_y] [START] [GOAL]\n\n"
+            std::cout << "./SimpleAStarExecutable [gid_size_x] [gid_size_y] [START_X-START_Y] [GOAL_X-GOAL_Y]\n\n"
                       << "Options:\n\n"
                       << "--help\n"
                       << "--Debug\n"
@@ -88,6 +99,7 @@ long ArgsOptions(int argc, char* argv[])
             // X-X : start-end
             snapshot_start_node_x = std::abs(std::stoi(&argv[i + 1][0]));
             snapshot_end_node_x = std::abs(std::stoi((&argv[i + 1][2])));
+
 
             // Y-Y : start-end
             snapshot_start_node_y = std::abs(std::stoi(&argv[i + 2][0]));
@@ -300,7 +312,6 @@ void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> bar
     std::string map_string;
     std::string line;
 
-
     // construa a primeira linha com os índices de X
     line = StringPadding(1) + "|";
     for (long x = 0; x < grid_size_x; ++x)
@@ -311,7 +322,6 @@ void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> bar
     line += "\n\n\n";
     map_string = line;
 
-
     // separador
     line = StringPadding(1) + "|";
     for (long x = 0; x < grid_size_x; ++x)
@@ -320,7 +330,6 @@ void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> bar
     }
     line += "\n\n\n";
     map_string = line + map_string; // faz em append no começo, ao invés de no final
-
 
     // constrói todo o restante do mapa, cada linha sendo um Y
     for (long y = 0; y < grid_size_y; ++y)
@@ -331,14 +340,15 @@ void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> bar
         {
             long index = (x * grid_size_y) + y;
 
-            if (map.find(index) != map.end())
+
+            if (barrier_map.find(index) != barrier_map.end())
+            {
+                line += StringPadding(1) + ".";
+            }
+            else if (map.find(index) != map.end())
             {
                 std::string node_appearance = map[index].appearance;
                 line += StringPadding(node_appearance.length()) + node_appearance;
-            }
-            else if (barrier_map.find(index) != barrier_map.end())
-            {
-                line += StringPadding(1) + "#";
             }
             else
             {
@@ -368,16 +378,20 @@ void ShowBarrier(std::unordered_set<long> my_barrier)
     std::cout << barrier_indexes;
 }
 
+// novo ReadBarrier
+// padrão .tsv de arquivo
 long ReadBarrier(std::unordered_set<long> *my_barrier)
 {
-    std::string barrier_index;
+    std::string barrier_line;
     std::ifstream barrier_file (barrier_file_path);
 
     if (barrier_file.is_open())
     {
-        while (getline(barrier_file, barrier_index))
+        while (getline(barrier_file, barrier_line))
         {
-            my_barrier->insert(std::stoi(barrier_index));
+            long barrier_index = ParserXY(barrier_line, "\t").index;
+
+            my_barrier->insert(barrier_index);
         }
         barrier_file.close();
     }
@@ -388,4 +402,28 @@ long ReadBarrier(std::unordered_set<long> *my_barrier)
     }
 
     return 0;
+}
+
+/*long ParserXY(std::string string_coordinate, std::string separator)
+{
+    long x, y;
+    long separator_pos = string_coordinate.find(separator);
+    long end_line_pos = string_coordinate.size();
+
+    x = std::stoi(string_coordinate.substr(0, separator_pos));
+    y = std::stoi(string_coordinate.substr(separator_pos + 1, end_line_pos - separator_pos));
+
+    return Node::GetIndex(x, y);
+}*/
+
+NodeParsed ParserXY(std::string string_coordinate, std::string separator)
+{
+    long x, y;
+    long separator_pos = string_coordinate.find(separator);
+    long end_line_pos = string_coordinate.size();
+
+    x = std::stoi(string_coordinate.substr(0, separator_pos));
+    y = std::stoi(string_coordinate.substr(separator_pos + 1, end_line_pos - separator_pos));
+
+    return NodeParsed(x, y);
 }

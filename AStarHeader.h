@@ -30,6 +30,10 @@
 
             Node(long node_index);
             Node();
+
+            static long GetX(long node_index);
+            static long GetY(long node_index);
+            static long GetIndex(long x, long y);
     };
 
     // grid_size
@@ -88,5 +92,17 @@
     long ReadBarrier(std::unordered_set<long> *my_barrier);
 
     void ShowBarrier(std::unordered_set<long> my_barrier);
+
+class NodeParsed
+{
+    public:
+        long x;
+        long y;
+        long index;
+
+    NodeParsed(long x, long y);
+};
+
+    NodeParsed ParserXY(std::string string_coordinate, std::string separator);
 
 #endif

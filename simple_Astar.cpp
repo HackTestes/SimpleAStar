@@ -67,29 +67,27 @@ int main (int argc, char* argv[])
 
     std::unordered_map <long, Node> my_map;
 
-    long GOAL;
-    if(std::stoi(argv[4]) >= 0 && std::stoi(argv[4]) < (grid_size_x * grid_size_y))
+    long START = ParserXY(argv[3], "-").index;
+    if(START >= 0 && START < (grid_size_x * grid_size_y))
     {
-        GOAL = std::stoi(argv[4]);
-        my_map[GOAL] = Node(GOAL);
-        my_map[GOAL].appearance = "G";
-    }
-    else
-    {
-        std::cout << "The set goal is out of bounds!!!\n";
-        return 0;
-    }
-
-    long START;
-    if(std::stoi(argv[3]) >= 0 && std::stoi(argv[3]) < (grid_size_x * grid_size_y))
-    {
-        START = std::stoi(argv[3]);
         my_map[START] = Node(START);
         my_map[START].appearance = "S";
     }
     else
     {
         std::cout << "The start is out of bounds!!!\n";
+        return 0;
+    }
+
+    long GOAL = ParserXY(argv[4], "-").index;
+    if(GOAL >= 0 && GOAL < (grid_size_x * grid_size_y))
+    {
+        my_map[GOAL] = Node(GOAL);
+        my_map[GOAL].appearance = "G";
+    }
+    else
+    {
+        std::cout << "The set goal is out of bounds!!!\n";
         return 0;
     }
 

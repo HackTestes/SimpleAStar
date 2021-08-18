@@ -38,17 +38,23 @@ Node::Node()
     this->appearance = "o"; // nó normal
 }
 
-/* Talvez usar no futuro - !todo! clacular x e y ao invés de armazenar (otimiza espaço na memória)
-long Node::GetX() const
+// !todo! clacular x e y ao invés de armazenar (otimiza espaço na memória)
+// !todo! substituir o armazenamento pelo método de clacular
+// !todo! adicionar restrições: o X ou Y estão corretos? Estão fora do tamanho do mapa? Isso vale para o index?
+long Node::GetX(long node_index)
 {
-    return this->node_index / (grid_size_y); // floor division
+    return node_index / (grid_size_y); // floor division
 }
 
-long Node::GetY() const
+long Node::GetY(long node_index)
 {
-    return this->node_index - (GetX() * grid_size_y);
+    return node_index - (GetX(node_index) * grid_size_y);
 }
-*/
+
+long Node::GetIndex(long x, long y)
+{
+    return (x * grid_size_y) + y;
+}
 
 
 
