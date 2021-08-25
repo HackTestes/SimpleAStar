@@ -40,7 +40,10 @@ Node::Node()
 
 // !todo! clacular x e y ao invés de armazenar (otimiza espaço na memória)
 // !todo! substituir o armazenamento pelo método de clacular
-// !todo! adicionar restrições: o X ou Y estão corretos? Estão fora do tamanho do mapa? Isso vale para o index?
+// !todo! adicionar restrições: o X ou Y estão corretos? Estão fora do tamanho do mapa?
+
+// !todo! Essas funções devem receber apenas valores válidos?
+// Poderia ser uma restrição? Valores inválidos devem ser avaliados antes
 long Node::GetX(long node_index)
 {
     return node_index / (grid_size_y); // floor division
@@ -54,6 +57,34 @@ long Node::GetY(long node_index)
 long Node::GetIndex(long x, long y)
 {
     return (x * grid_size_y) + y;
+}
+
+// verifica se um determinado parâmetro é válido
+// !todo! usar essas funções na função dos vizinhos
+bool Node::VerifyCoordinate(long x, long y)
+{
+    bool valid_x = false;
+    bool valid_y = false;
+
+    if ( !(x >= 0 && x < grid_size_x) )
+    {
+        return false;
+    }
+
+    if ( !(y >= 0 && y < grid_size_y) )
+    {
+        return false;
+    }
+    return true;
+}
+
+bool Node::VerifyIndex(long node_index)
+{
+    if ( !(node_index >= 0 && node_index < (grid_size_x * grid_size_y)) )
+    {
+        return false;
+    }
+    return true;
 }
 
 

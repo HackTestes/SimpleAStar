@@ -1,14 +1,14 @@
 #ifndef Astar_H
 #define AStar_H
 
-#include <queue>
-#include <vector>
-#include <unordered_map>
-#include <unordered_set>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <stdlib.h>
+    #include <queue>
+    #include <vector>
+    #include <unordered_map>
+    #include <unordered_set>
+    #include <iostream>
+    #include <fstream>
+    #include <iomanip>
+    #include <stdlib.h>
 
     // Node.cpp
     class Node
@@ -34,11 +34,19 @@
             static long GetX(long node_index);
             static long GetY(long node_index);
             static long GetIndex(long x, long y);
+
+            static bool VerifyCoordinate(long x, long y);
+            static bool VerifyIndex(long node_index);
     };
 
     // grid_size
     extern long grid_size_x;
     extern long grid_size_y;
+
+    extern long START;
+    extern long GOAL;
+
+    extern std::unordered_set<long> barrier;
 
     // boleanos e variáveis para argumentos
     extern bool debug;
@@ -60,25 +68,26 @@
     extern bool interactive;
     extern bool show_map;
     extern bool show_barrier;
-    extern bool barrier_enabled;
+    extern bool barrier_enabled; // !todo! retirar - depreciado
 
     // map padding
     extern long padding_cell_size;
 
-    extern std::string barrier_file_path;
+    extern std::string barrier_file_path; // !todo! retirar - depreciado
+    extern std::string json_config_file_path;
+    extern bool json_config_enabled;
 
     // FnFunctions.cpp
     long g (Node current, Node start);
     long h (Node current, Node goal);
 
     // FunctionsUtils.cpp
-
-    long ArgsOptions(int argc, char* argv[]);
+    //long ArgsOptions(int argc, char* argv[]);
 
     class CustomComparator
     {
-    public:
-        bool operator() (Node n1, Node n2);
+        public:
+            bool operator() (Node n1, Node n2);
     };
 
     void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue);
@@ -93,16 +102,24 @@
 
     void ShowBarrier(std::unordered_set<long> my_barrier);
 
-class NodeParsed
-{
-    public:
-        long x;
-        long y;
-        long index;
+    class NodeParsed
+    {
+        public:
+            long x;
+            long y;
+            long index;
 
-    NodeParsed(long x, long y);
-};
+        NodeParsed(long x, long y);
+    };
 
     NodeParsed ParserXY(std::string string_coordinate, std::string separator);
+
+    // FunctionsConfig.cpp
+    void ArgsOptions(int argc, char* argv[]);
+    void JsonConfig();
+    void SetStart(long start_x, long start_y);
+    void SetGoal(long goal_x, long goal_y);
+    void SetGirdSizeX(long size_x);
+    void SetGirdSizeY(long size_y);
 
 #endif

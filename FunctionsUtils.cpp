@@ -6,20 +6,12 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-#include <stdlib.h> 
+#include <stdlib.h>
+
 #include"AStarHeader.h"
 
-// --------------------------teste--------------------------------------- //
-    NodeParsed::NodeParsed(long x, long y)
-    {
-        this->index = Node::GetIndex(x, y);
-        this->x = x;
-        this->y = y;
-    }
-
-// --------------------------teste--------------------------------------- //
-
-
+// !todo! Retirar. Já tem no FunctionsConfig.cpp
+/*
 // !todo! adicionar supporte para opções com uma única letra "-h"
 // !todo! melhorar opções que recebem valores (Snapshot, SnapshotXY)
 // - verificar a entrada de dados (números)
@@ -92,6 +84,7 @@ long ArgsOptions(int argc, char* argv[])
             continue;
         }
 
+        // !todo! adicionar o ParserXY
         else if ((std::string)argv[i] == "--SnapshotXY")
         {
             snapshot = true;
@@ -166,10 +159,10 @@ long ArgsOptions(int argc, char* argv[])
 
     return 0;
 }
+*/
 
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
-
 bool CustomComparator::operator() (Node n1, Node n2)
 {
     if (n1.f > n2.f)
@@ -197,7 +190,6 @@ void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomCom
         priority_queue.pop();
     }
 }
-
 
 std::priority_queue< Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue <Node, std::vector<Node>, CustomComparator>priority_queue, long except_index)
 {
@@ -237,6 +229,7 @@ class SmallNode
         }
 };
 
+// !todo! usar Node::Verify
 // essa função encontra os nós vizinhos e devolve um vetor do tamanho adequando (== a quantidade de vizinhos)
 void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord)
 {
@@ -378,6 +371,7 @@ void ShowBarrier(std::unordered_set<long> my_barrier)
     std::cout << barrier_indexes;
 }
 
+// !todo! retirar - depreciado
 // novo ReadBarrier
 // padrão .tsv de arquivo
 long ReadBarrier(std::unordered_set<long> *my_barrier)
@@ -397,24 +391,20 @@ long ReadBarrier(std::unordered_set<long> *my_barrier)
     }
     else
     {
-        std::cout << "Cannot open file";
+        std::cout << "Cannot open file\n";
         return 1;
     }
 
     return 0;
 }
 
-/*long ParserXY(std::string string_coordinate, std::string separator)
+// !todo! NodeParsed => ParsedNode
+NodeParsed::NodeParsed(long x, long y)
 {
-    long x, y;
-    long separator_pos = string_coordinate.find(separator);
-    long end_line_pos = string_coordinate.size();
-
-    x = std::stoi(string_coordinate.substr(0, separator_pos));
-    y = std::stoi(string_coordinate.substr(separator_pos + 1, end_line_pos - separator_pos));
-
-    return Node::GetIndex(x, y);
-}*/
+    this->index = Node::GetIndex(x, y);
+    this->x = x;
+    this->y = y;
+}
 
 NodeParsed ParserXY(std::string string_coordinate, std::string separator)
 {

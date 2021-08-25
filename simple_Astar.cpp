@@ -13,12 +13,16 @@
 // o mapa é uma tabela
 // movimentos: cima, baixo, esquerda, direta (4 movimentos possíveis)
 
-
+// !todo! GlobalParameters.cpp ????? Ou .h?
 // Variáveis globais
-
 // grid_size
 long grid_size_x = 0;
 long grid_size_y = 0;
+
+long START = 0;
+long GOAL = 0;
+
+std::unordered_set<long> barrier = {};
 
 bool debug = false;
 bool best_path_index = false;
@@ -30,7 +34,6 @@ bool snapshot = false;
 long snapshot_start_node_index = -1;
 long snapshot_end_node_index = -1;
 
-//bool snapshot_XY = false;
 long snapshot_start_node_x = -1;
 long snapshot_end_node_x = -1;
 long snapshot_start_node_y = -1;
@@ -39,66 +42,36 @@ long snapshot_end_node_y = -1;
 bool interactive = false;
 bool show_map = false;
 bool show_barrier = false;
-bool barrier_enabled = false;
+bool barrier_enabled = false; // !todo! retirar - depreciado
 
 // map padding
 long padding_cell_size = 7;
 
-std::string barrier_file_path = "";
+std::string barrier_file_path = ""; // !todo! retirar - depreciado
+std::string json_config_file_path = "";
+bool json_config_enabled = false;
 
 int main (int argc, char* argv[])
 {
-    switch (ArgsOptions(argc, argv))
-    {
-        case (0):
-            break;
-
-        case (1):
-            return 1;
-
-        case (2): // --help
-            return 0;
-    }
-
-    // defino as variáveis principais : tamanho X e Y, começo (START), fim (GOAL)
-    grid_size_x = std::stoi(argv[1]);
-
-    grid_size_y = std::stoi(argv[2]);
-
     std::unordered_map <long, Node> my_map;
 
-    long START = ParserXY(argv[3], "-").index;
-    if(START >= 0 && START < (grid_size_x * grid_size_y))
-    {
-        my_map[START] = Node(START);
-        my_map[START].appearance = "S";
-    }
-    else
-    {
-        std::cout << "The start is out of bounds!!!\n";
-        return 0;
-    }
+    ArgsOptions(argc, argv);
 
-    long GOAL = ParserXY(argv[4], "-").index;
-    if(GOAL >= 0 && GOAL < (grid_size_x * grid_size_y))
-    {
-        my_map[GOAL] = Node(GOAL);
-        my_map[GOAL].appearance = "G";
-    }
-    else
-    {
-        std::cout << "The set goal is out of bounds!!!\n";
-        return 0;
-    }
+    // Verificação feita em outro lugar, criação do nó aqui
+    my_map[START] = Node(START); 
+    my_map[START].appearance = "S";
+
+    my_map[GOAL] = Node(GOAL);
+    my_map[GOAL].appearance = "G";
 
     long previous_map_size = my_map.size();
 
-    std::unordered_set<long> barrier;
+    // !todo! retirar - depreciado
     if (barrier_enabled)
     {
         if (ReadBarrier(&barrier) != 0)
         {
-            return 1; // se não conseguir ler o arquivi, indique o erro e finaliza o programa
+            return 1; // se não conseguir ler o arquivo, indique o erro e finalize o programa
         }
     }
 
@@ -130,7 +103,7 @@ int main (int argc, char* argv[])
             if (!(barrier.find(neighbor_index) != barrier.end()))
             {
 
-                // se não existir, crie
+                // se não existir no meu mapa ainda, crie
                 if (!(my_map.find(neighbor_index) != my_map.end()))
                 {
                     my_map[neighbor_index] = Node(neighbor_index);
@@ -245,7 +218,7 @@ int main (int argc, char* argv[])
         }
     }
 
-    std::cout << " BEST PATH FOUND!!!" << "\n" << " ... " << "\n\n";
+    std::cout << " BEST PATH FOUND!!!" << "\n\n\n";
 
     // mudo a "aparência" dos nós que pertencem ao melhor caminho
     // fazendo o caminho reverso do GOAL para o START
@@ -270,7 +243,6 @@ int main (int argc, char* argv[])
                 }
             }
             index = my_map[index].came_from;
-            //std::cout << "came_from index  " << index << "\n";
         }
     }
 
