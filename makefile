@@ -1,10 +1,13 @@
 CC=g++
-CPP= FnFunctions.cpp FunctionsUtils.cpp Node.cpp simple_Astar.cpp
-HEADERS= AStarHeader.h
-OBJ= FnFunctions.o FunctionsUtils.o Node.o simple_Astar.o
+CPP= FnFunctions.cpp FunctionsUtils.cpp Node.cpp simple_Astar.cpp FunctionsConfig.cpp
+HEADERS= AStarHeader.h json.hpp
+OBJ= FnFunctions.o FunctionsUtils.o Node.o simple_Astar.o FunctionsConfig.o
 
-%.o: %.cpp %.h
-	$(CC) -c -o $@ $(CPP)
+#%.o: %.cpp %.h
+#	$(CC) -c -o $@ $(CPP)
+
+%.o: %.cpp
+	$(CC) -c -o $@ $^
 
 SimpleAStarExecutable: $(OBJ)
 	$(CC) -o $@ $^
@@ -12,4 +15,4 @@ SimpleAStarExecutable: $(OBJ)
 .PHONY: clean
 
 clean:
-	rm -f *.o 
+	rm -f *.o

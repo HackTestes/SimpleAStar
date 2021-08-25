@@ -15,6 +15,7 @@ function heuristic(node) =
 
 // por cópia
 // além disso, adicionei esse parâmetro extra, já que alguns nós estão fora do escopo da função
+// !todo! usar como argumento o index do nó ao invés de o nó em si (para usar GetX e GetY)
 long g (Node current, Node neighbor)
 {
     long dx = abs(current.x - neighbor.x);
@@ -25,7 +26,7 @@ long g (Node current, Node neighbor)
 
 long h (Node current, Node goal)
 {
-    long D = 4;
+    long D = 1;
     long dx = abs(current.x - goal.x);
     long dy = abs(current.y - goal.y);
 
