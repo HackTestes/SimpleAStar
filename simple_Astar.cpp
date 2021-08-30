@@ -42,6 +42,9 @@ long snapshot_end_node_y = -1;
 bool interactive = false;
 bool show_map = false;
 bool show_barrier = false;
+bool no_warning = false;
+long heuristic_weight = 1;
+long cost_weight = 1;
 
 // map padding
 long padding_cell_size = 7;
@@ -207,7 +210,7 @@ int main (int argc, char* argv[])
         }
     }
 
-    std::cout << " BEST PATH FOUND!!!" << "\n\n\n";
+    std::cout << " BEST PATH\n\n\n";
 
     // mudo a "aparência" dos nós que pertencem ao melhor caminho
     // fazendo o caminho reverso do GOAL para o START
@@ -228,7 +231,7 @@ int main (int argc, char* argv[])
                 }
                 else
                 {
-                    my_map[index].appearance = "-";
+                    my_map[index].appearance = "@";
                 }
             }
             index = my_map[index].came_from;

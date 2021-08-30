@@ -21,14 +21,13 @@ long g (Node current, Node neighbor)
     long dx = abs(current.x - neighbor.x);
     long dy = abs(current.y - neighbor.y);
 
-    return (dx + dy);
+    return cost_weight * (dx + dy);
 }
 
 long h (Node current, Node goal)
 {
-    long D = 1;
     long dx = abs(current.x - goal.x);
     long dy = abs(current.y - goal.y);
 
-    return D * (dx + dy);
+    return heuristic_weight * (dx + dy);
 }

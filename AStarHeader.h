@@ -68,6 +68,9 @@
     extern bool interactive;
     extern bool show_map;
     extern bool show_barrier;
+    extern bool no_warning;
+    extern long heuristic_weight;
+    extern long cost_weight;
 
     // map padding
     extern long padding_cell_size;

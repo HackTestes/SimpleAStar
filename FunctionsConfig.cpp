@@ -36,6 +36,9 @@ void ArgsOptions(int argc, char* argv[])
                       << "--ShowMap\n"
                       << "--ShowBarrier\n"
                       << "--Padding [padding_cell_size]\n"
+                      << "--NoWarning\n"
+                      << "--Heuristic [heuristic_weight]\n"
+                      << "--Cost [cost_weight]\n"
                       << "--JsonConfig [json_config_file_path]\n";
             std::exit(0); // qual o código para --help?
         }
@@ -133,6 +136,26 @@ void ArgsOptions(int argc, char* argv[])
             json_config_file_path = (std::string)argv[i + 1];
             i = i + 1;
             JsonConfig();
+            continue;
+        }
+
+        else if ((std::string)argv[i] == "--NoWarning")
+        {
+            no_warning = true;
+            continue;
+        }
+
+        else if ((std::string)argv[i] == "--Heuristic")
+        {
+            heuristic_weight = std::stoi(argv[i + 1]);
+            i = i + 1;
+            continue;
+        }
+
+        else if ((std::string)argv[i] == "--Cost")
+        {
+            cost_weight = std::stoi(argv[i + 1]);
+            i = i + 1;
             continue;
         }
 
@@ -262,7 +285,7 @@ void JsonConfig()
         {
             barrier.insert(Node::GetIndex(barrier_x, barrier_y));
         }
-        else
+        else if (!no_warning)
         {
             // A barreira simplesmente não será inserida, não é necessário encerrar o programa
             // Um aviso será envido apenas para se saber do problema
@@ -273,11 +296,13 @@ void JsonConfig()
     if (barrier.find(START) != barrier.end())
     {
         std::cout << "WARNING: Barrier overlaps the START node\n";
+        std::exit(0);
     }
 
     if (barrier.find(GOAL) != barrier.end())
     {
         std::cout << "WARNING: Barrier overlaps the GOAL node\n";
+        std::exit(0);
     }
 
     /*
