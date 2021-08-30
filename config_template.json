@@ -1,10 +1,10 @@
 {
-    "Grid size X" : 0,
-    "Grid size Y" : 0,
+    "Grid size X" : 10,
+    "Grid size Y" : 10,
     "Start" : [0, 0],
-    "Goal" : [0, 0],
+    "Goal" : [0, 9],
     "Barrier coordinates" :
     [
-        [0, 0]
+        [0]
     ]
 }

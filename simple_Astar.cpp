@@ -42,12 +42,10 @@ long snapshot_end_node_y = -1;
 bool interactive = false;
 bool show_map = false;
 bool show_barrier = false;
-bool barrier_enabled = false; // !todo! retirar - depreciado
 
 // map padding
 long padding_cell_size = 7;
 
-std::string barrier_file_path = ""; // !todo! retirar - depreciado
 std::string json_config_file_path = "";
 bool json_config_enabled = false;
 
@@ -65,15 +63,6 @@ int main (int argc, char* argv[])
     my_map[GOAL].appearance = "G";
 
     long previous_map_size = my_map.size();
-
-    // !todo! retirar - depreciado
-    if (barrier_enabled)
-    {
-        if (ReadBarrier(&barrier) != 0)
-        {
-            return 1; // se não conseguir ler o arquivo, indique o erro e finalize o programa
-        }
-    }
 
     // usa o f do nó para ordenar
     std::priority_queue < Node, std::vector<Node>, CustomComparator > OPEN;
