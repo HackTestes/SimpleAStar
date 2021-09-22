@@ -68,7 +68,7 @@
     extern bool interactive;
     extern bool show_map;
     extern bool show_barrier;
-    extern bool no_warning;
+    extern bool warning_enabled;
     extern long heuristic_weight;
     extern long cost_weight;
 

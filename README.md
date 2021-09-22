@@ -70,7 +70,7 @@ It is necessary to have a Linux machine and the following programs installed:
 ### Installation
 1. Clone the repo
 ```sh
-git clone https://github.com/HackTestes/SimpleAStar.git
+git clone https://github.com/HackTestes/SimpleAStar.git ./SimpleAStar
 ```
 
 2. Change to the SimpleAStar directoty
@@ -114,7 +114,7 @@ See the [open issues](https://github.com/HackTestes/SimpleAStar/issues) for a li
 <!-- LICENSE -->
 ## License
 
-Distributed under the ???? License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 
 

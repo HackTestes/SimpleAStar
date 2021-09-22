@@ -42,7 +42,7 @@ long snapshot_end_node_y = -1;
 bool interactive = false;
 bool show_map = false;
 bool show_barrier = false;
-bool no_warning = false;
+bool warning_enabled = false;
 long heuristic_weight = 1;
 long cost_weight = 1;
 

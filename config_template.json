@@ -5,6 +5,6 @@
     "Goal" : [0, 9],
     "Barrier coordinates" :
     [
-        [0]
+        [0,0]
     ]
 }

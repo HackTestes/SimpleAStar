@@ -91,6 +91,7 @@ void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord)
     // verificar os vizinhos no sentido horário
     for (long i = 0; i < 4; ++i)
     {
+        /*
         bool valid_x = false;
         bool valid_y = false;
         bool valid_index = false;
@@ -110,8 +111,17 @@ void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord)
         {
             valid_index = true;
         }
-
+        
         if (valid_x && valid_y && valid_index)
+        {
+            my_neighbors_coord->push_back(neighbors_nodes[i].node_index);
+        }
+        */
+
+        bool valid_coord = Node::VerifyCoordinate(neighbors_nodes[i].x, neighbors_nodes[i].y);
+        bool valid_index = Node::VerifyIndex(neighbors_nodes[i].node_index);
+
+        if (valid_coord && valid_index)
         {
             my_neighbors_coord->push_back(neighbors_nodes[i].node_index);
         }

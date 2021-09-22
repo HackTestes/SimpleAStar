@@ -1,5 +1,4 @@
-// Esse arquivo contém funções de configuração
-
+    // Esse arquivo contém funções de configuração
 #include <unordered_set>
 #include <map>
 #include <iostream>
@@ -36,7 +35,7 @@ void ArgsOptions(int argc, char* argv[])
                       << "--ShowMap\n"
                       << "--ShowBarrier\n"
                       << "--Padding [padding_cell_size]\n"
-                      << "--NoWarning\n"
+                      << "--WarningEnabled\n"
                       << "--Heuristic [heuristic_weight]\n"
                       << "--Cost [cost_weight]\n"
                       << "--JsonConfig [json_config_file_path]\n";
@@ -139,9 +138,9 @@ void ArgsOptions(int argc, char* argv[])
             continue;
         }
 
-        else if ((std::string)argv[i] == "--NoWarning")
+        else if ((std::string)argv[i] == "--WarningEnabled")
         {
-            no_warning = true;
+            warning_enabled = true;
             continue;
         }
 
@@ -167,6 +166,7 @@ void ArgsOptions(int argc, char* argv[])
         // os parâmetros iniciais (tamanho, início e fim) são estáticos
         else if ( !json_config_enabled && ( (i == 1) || (i == 2) || (i == 3) || (i == 4) ) && std::isdigit(*(argv[i])) )
         {
+            // !todo! usar switch case
             if (i == 1)
             {
                 SetGirdSizeX(std::stoi(argv[i]));
@@ -285,7 +285,7 @@ void JsonConfig()
         {
             barrier.insert(Node::GetIndex(barrier_x, barrier_y));
         }
-        else if (!no_warning)
+        else if (warning_enabled)
         {
             // A barreira simplesmente não será inserida, não é necessário encerrar o programa
             // Um aviso será envido apenas para se saber do problema
