@@ -35,8 +35,10 @@ void ArgsOptions(int argc, char* argv[])
                       << "--Interactive\n"
                       << "--ShowMap\n"
                       << "--ShowBarrier\n"
-                      << "--BarrierFilePath [barrier_file_path]\n" // !todo! retirar - depreciado
                       << "--Padding [padding_cell_size]\n"
+                      << "--NoWarning\n"
+                      << "--Heuristic [heuristic_weight]\n"
+                      << "--Cost [cost_weight]\n"
                       << "--JsonConfig [json_config_file_path]\n";
             std::exit(0); // qual o código para --help?
         }
@@ -121,15 +123,6 @@ void ArgsOptions(int argc, char* argv[])
             continue;
         }
 
-        // !todo! retirar - depreciado
-        else if ((std::string)argv[i] == "--BarrierFilePath")
-        {
-            barrier_enabled = true;
-            barrier_file_path = (std::string)argv[i + 1];
-            i = i + 1;
-            continue;
-        }
-
         else if ((std::string)argv[i] == "--Padding")
         {
             padding_cell_size = std::stoi(argv[i + 1]);
@@ -143,7 +136,26 @@ void ArgsOptions(int argc, char* argv[])
             json_config_file_path = (std::string)argv[i + 1];
             i = i + 1;
             JsonConfig();
-            std::cout << "JSON";
+            continue;
+        }
+
+        else if ((std::string)argv[i] == "--NoWarning")
+        {
+            no_warning = true;
+            continue;
+        }
+
+        else if ((std::string)argv[i] == "--Heuristic")
+        {
+            heuristic_weight = std::stoi(argv[i + 1]);
+            i = i + 1;
+            continue;
+        }
+
+        else if ((std::string)argv[i] == "--Cost")
+        {
+            cost_weight = std::stoi(argv[i + 1]);
+            i = i + 1;
             continue;
         }
 
@@ -153,24 +165,24 @@ void ArgsOptions(int argc, char* argv[])
         }
 
         // os parâmetros iniciais (tamanho, início e fim) são estáticos
-        if (!json_config_enabled)
+        else if ( !json_config_enabled && ( (i == 1) || (i == 2) || (i == 3) || (i == 4) ) && std::isdigit(*(argv[i])) )
         {
-            if ( (i == 1) && std::isdigit(*(argv[i])) )
+            if (i == 1)
             {
                 SetGirdSizeX(std::stoi(argv[i]));
             }
 
-            else if ( (i == 2) && std::isdigit(*(argv[i])) )
+            else if (i == 2)
             {
                 SetGirdSizeY(std::stoi(argv[i]));
             }
 
-            else if ( (i == 3) && std::isdigit(*(argv[i])) )
+            else if (i == 3)
             {
                 SetStart(ParserXY(argv[i], "-").x, ParserXY(argv[i], "-").y);
             }
 
-            else if ( (i == 4) && std::isdigit(*(argv[i])) )
+            else if (i == 4)
             {
                 SetGoal(ParserXY(argv[i], "-").x, ParserXY(argv[i], "-").y);
             }
@@ -273,7 +285,7 @@ void JsonConfig()
         {
             barrier.insert(Node::GetIndex(barrier_x, barrier_y));
         }
-        else
+        else if (!no_warning)
         {
             // A barreira simplesmente não será inserida, não é necessário encerrar o programa
             // Um aviso será envido apenas para se saber do problema
@@ -284,11 +296,13 @@ void JsonConfig()
     if (barrier.find(START) != barrier.end())
     {
         std::cout << "WARNING: Barrier overlaps the START node\n";
+        std::exit(0);
     }
 
     if (barrier.find(GOAL) != barrier.end())
     {
         std::cout << "WARNING: Barrier overlaps the GOAL node\n";
+        std::exit(0);
     }
 
     /*

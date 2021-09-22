@@ -3,9 +3,6 @@ CPP= FnFunctions.cpp FunctionsUtils.cpp Node.cpp simple_Astar.cpp FunctionsConfi
 HEADERS= AStarHeader.h json.hpp
 OBJ= FnFunctions.o FunctionsUtils.o Node.o simple_Astar.o FunctionsConfig.o
 
-#%.o: %.cpp %.h
-#	$(CC) -c -o $@ $(CPP)
-
 %.o: %.cpp
 	$(CC) -c -o $@ $^
 

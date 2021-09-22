@@ -10,157 +10,6 @@
 
 #include"AStarHeader.h"
 
-// !todo! Retirar. Já tem no FunctionsConfig.cpp
-/*
-// !todo! adicionar supporte para opções com uma única letra "-h"
-// !todo! melhorar opções que recebem valores (Snapshot, SnapshotXY)
-// - verificar a entrada de dados (números)
-// !todo! adicionar um Snapshot/SnapshotXY all: imprimir para todos os nós
-long ArgsOptions(int argc, char* argv[])
-{
-    for (int i = 0; i < argc; ++i)
-    {
-
-        if ((std::string)argv[i] == "--help")
-        {
-            std::cout << "./SimpleAStarExecutable [gid_size_x] [gid_size_y] [START_X-START_Y] [GOAL_X-GOAL_Y]\n\n"
-                      << "Options:\n\n"
-                      << "--help\n"
-                      << "--Debug\n"
-                      << "--DebugAll\n"
-                      << "--BestPathIndex\n"
-                      << "--ShowPriorityQueue\n"
-                      << "--ShowVisitedNeighbors\n"
-                      << "--Snapshot [snapshot_start_node_index] [snapshot_end_node_index]\n"
-                      << "--SnapshotXY [snapshot_start_node_x]-[snapshot_end_node_x] [snapshot_start_node_y]-[snapshot_end_node_y]\n"
-                      << "--Interactive\n"
-                      << "--ShowMap\n"
-                      << "--ShowBarrier\n"
-                      << "--BarrierFilePath [barrier_file_path]\n"
-                      << "--Padding [padding_cell_size]\n";
-            return 2; // qual o código para --help?
-        }
-
-        else if ((std::string)argv[i] == "--Debug")
-        {
-            debug = true;
-            std::cout << "Debug mode enabled!\n";
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--DebugAll")
-        {
-            debug_all = true;
-            std::cout << "Debug all mode enabled!\n";
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--BestPathIndex")
-        {
-            best_path_index = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowPriorityQueue")
-        {
-            show_priority_queue = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowVisitedNeighbors")
-        {
-            show_visited_neighbors = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Snapshot")
-        {
-            snapshot = true;
-
-            snapshot_start_node_index = std::abs(std::stoi(argv[i + 1]));
-            snapshot_end_node_index = std::abs(std::stoi(argv[i + 2]));
-
-            i = i + 2;
-            continue;
-        }
-
-        // !todo! adicionar o ParserXY
-        else if ((std::string)argv[i] == "--SnapshotXY")
-        {
-            snapshot = true;
-
-            // X-X : start-end
-            snapshot_start_node_x = std::abs(std::stoi(&argv[i + 1][0]));
-            snapshot_end_node_x = std::abs(std::stoi((&argv[i + 1][2])));
-
-
-            // Y-Y : start-end
-            snapshot_start_node_y = std::abs(std::stoi(&argv[i + 2][0]));
-            snapshot_end_node_y = std::abs(std::stoi((&argv[i + 2][2])));
-            std::cout << "snapshot_start_node_x :  " << snapshot_start_node_x << " | snapshot_end_node_x:  " << snapshot_end_node_x << "\n"
-            << "snapshot_start_node_y :  " << snapshot_start_node_y << " | snapshot_end_node_y:  " << snapshot_end_node_y<< "\n\n";
-
-            i = i + 2;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Interactive")
-        {
-            interactive = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowMap")
-        {
-            show_map = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowBarrier")
-        {
-            show_barrier = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--BarrierFilePath")
-        {
-            barrier_enabled = true;
-            barrier_file_path = (std::string)argv[i + 1];
-            i = i + 1;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Padding")
-        {
-            padding_cell_size = std::stoi(argv[i + 1]);
-            i = i + 1;
-            continue;
-        }
-
-        else if (i == 0)
-        {
-            continue;
-        }
-
-        // os parâmetros iniciais (tamanho, início e fim) são estáticos
-        // caso nada dê certo e essa opção faça parte das posições estáticas,
-        // pule
-        else if ( (i == 1 | i == 2 | i == 3 | i == 4) && std::isdigit(*(argv[i])) )
-        {
-            continue;
-        }
-
-        else
-        {
-            std::cout << "Invalid option - " << (std::string)argv[i] << "\n";
-            return 1;
-        }
-    }
-
-    return 0;
-}
-*/
-
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
 bool CustomComparator::operator() (Node n1, Node n2)
@@ -336,7 +185,7 @@ void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> bar
 
             if (barrier_map.find(index) != barrier_map.end())
             {
-                line += StringPadding(1) + ".";
+                line += StringPadding(1) + " ";
             }
             else if (map.find(index) != map.end())
             {
@@ -369,33 +218,6 @@ void ShowBarrier(std::unordered_set<long> my_barrier)
     barrier_indexes += "\n";
 
     std::cout << barrier_indexes;
-}
-
-// !todo! retirar - depreciado
-// novo ReadBarrier
-// padrão .tsv de arquivo
-long ReadBarrier(std::unordered_set<long> *my_barrier)
-{
-    std::string barrier_line;
-    std::ifstream barrier_file (barrier_file_path);
-
-    if (barrier_file.is_open())
-    {
-        while (getline(barrier_file, barrier_line))
-        {
-            long barrier_index = ParserXY(barrier_line, "\t").index;
-
-            my_barrier->insert(barrier_index);
-        }
-        barrier_file.close();
-    }
-    else
-    {
-        std::cout << "Cannot open file\n";
-        return 1;
-    }
-
-    return 0;
 }
 
 // !todo! NodeParsed => ParsedNode

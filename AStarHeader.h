@@ -68,12 +68,13 @@
     extern bool interactive;
     extern bool show_map;
     extern bool show_barrier;
-    extern bool barrier_enabled; // !todo! retirar - depreciado
+    extern bool no_warning;
+    extern long heuristic_weight;
+    extern long cost_weight;
 
     // map padding
     extern long padding_cell_size;
 
-    extern std::string barrier_file_path; // !todo! retirar - depreciado
     extern std::string json_config_file_path;
     extern bool json_config_enabled;
 
