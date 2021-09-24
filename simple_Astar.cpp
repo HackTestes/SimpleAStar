@@ -68,7 +68,7 @@ int main (int argc, char* argv[])
     long previous_map_size = my_map.size();
 
     // usa o f do nó para ordenar
-    std::priority_queue < Node, std::vector<Node>, CustomComparator > OPEN;
+    std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > OPEN;
 
     // inicializo todos os atributos necessários para começar
     my_map[START].in_priority_queue = true;
@@ -101,16 +101,16 @@ int main (int argc, char* argv[])
                     my_map[neighbor_index] = Node(neighbor_index);
                 }
 
-                long cost_so_far = my_map[current_node_index].g + g(my_map[current_node_index], my_map[neighbor_index]);
+                long cost_so_far = my_map[current_node_index].g + cost_g(my_map[current_node_index], my_map[neighbor_index]);
 
                 // !done! verificar se um nó está na fila OPEN, pode ser feito com uma flag no nó
                 // in_priority_queue = true ---> se estiver na PQ (toda adição na PQ)
                 // in_priority_queue = false ---> se não estiver na PQ (toda remoção da PQ)
                 // no caso dele precisar ser atualizado na PQ (remove e adiciona), não é necessário mudar a flag (porque é apenas uma atualização de valor)
-                // Fazer isso retira a necessidade da função CheckOpenList() e a verificação não precisa iterar sobre a PQ (otimização de velocidade?)
+                // A verificação não precisa iterar sobre a PQ (otimização de velocidade talvez?)
                 if (my_map[neighbor_index].in_priority_queue && (cost_so_far < my_map[neighbor_index].g))
                 {
-                    my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
+                    my_map[neighbor_index].f = cost_so_far + heuristic_h(my_map[neighbor_index], my_map[GOAL]);
                     my_map[neighbor_index].g = cost_so_far;
                     my_map[neighbor_index].came_from = current_node_index;
                     OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
@@ -126,7 +126,7 @@ int main (int argc, char* argv[])
 
                 if (!my_map[neighbor_index].in_priority_queue && !my_map[neighbor_index].visited)
                 {
-                    my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
+                    my_map[neighbor_index].f = cost_so_far + heuristic_h(my_map[neighbor_index], my_map[GOAL]);
                     my_map[neighbor_index].g = cost_so_far;
                     my_map[neighbor_index].came_from = current_node_index;
                     my_map[neighbor_index].in_priority_queue = true;

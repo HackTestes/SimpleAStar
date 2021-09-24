@@ -12,7 +12,7 @@
 
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
-bool CustomComparator::operator() (Node n1, Node n2)
+bool SortPriorityQueue::operator() (Node n1, Node n2)
 {
     if (n1.f > n2.f)
     {
@@ -26,23 +26,23 @@ bool CustomComparator::operator() (Node n1, Node n2)
 
 // usa uma cópia da minha lista de prioridade
 // imprime a lista de prioridades a partir de uma cópia
-void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue)
+void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > priority_queue)
 {
     while (!priority_queue.empty())
     {
         std::cout << "priority_queue_copy : " 
         << " x " << priority_queue.top().x 
         << "  y " << priority_queue.top().y 
-        << "  |  f " << priority_queue.top().f  
+        << "  |  f " << priority_queue.top().f 
         << "  |  node_index " << priority_queue.top().node_index 
         << "\n";
         priority_queue.pop();
     }
 }
 
-std::priority_queue< Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue <Node, std::vector<Node>, CustomComparator>priority_queue, long except_index)
+std::priority_queue< Node, std::vector<Node>, SortPriorityQueue > CopyPriorityQueueExcept (std::priority_queue <Node, std::vector<Node>, SortPriorityQueue>priority_queue, long except_index)
 {
-    std::priority_queue < Node, std::vector<Node>, CustomComparator > new_priority_queue;
+    std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > new_priority_queue;
     while (!priority_queue.empty())
     {
         if(priority_queue.top().node_index != except_index)
@@ -78,7 +78,7 @@ class SmallNode
         }
 };
 
-// !todo! usar Node::Verify
+// !done! usar Node::Verify
 // essa função encontra os nós vizinhos e devolve um vetor do tamanho adequando (== a quantidade de vizinhos)
 void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord)
 {
@@ -91,33 +91,6 @@ void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord)
     // verificar os vizinhos no sentido horário
     for (long i = 0; i < 4; ++i)
     {
-        /*
-        bool valid_x = false;
-        bool valid_y = false;
-        bool valid_index = false;
-
-        // avalio se o a posição em X é válida
-        if (neighbors_nodes[i].x >= 0 && neighbors_nodes[i].x < grid_size_x)
-        {
-            valid_x = true;
-        }
-
-        if (neighbors_nodes[i].y >= 0 && neighbors_nodes[i].y < grid_size_y)
-        {
-            valid_y = true;
-        }
-
-        if (neighbors_nodes[i].node_index >= 0 && neighbors_nodes[i].node_index < (grid_size_x * grid_size_y))
-        {
-            valid_index = true;
-        }
-        
-        if (valid_x && valid_y && valid_index)
-        {
-            my_neighbors_coord->push_back(neighbors_nodes[i].node_index);
-        }
-        */
-
         bool valid_coord = Node::VerifyCoordinate(neighbors_nodes[i].x, neighbors_nodes[i].y);
         bool valid_index = Node::VerifyIndex(neighbors_nodes[i].node_index);
 
@@ -230,22 +203,39 @@ void ShowBarrier(std::unordered_set<long> my_barrier)
     std::cout << barrier_indexes;
 }
 
-// !todo! NodeParsed => ParsedNode
-NodeParsed::NodeParsed(long x, long y)
+std::pair<long, long> CoordinateParser(std::string string_coordinate, std::string separator)
+{
+    long first, second;
+    long separator_pos = string_coordinate.find(separator);
+    long end_line_pos = string_coordinate.size();
+
+    first = std::stoi(string_coordinate.substr(0, separator_pos));
+    second = std::stoi(string_coordinate.substr(separator_pos + 1, end_line_pos - separator_pos));
+
+    return std::make_pair(first, second);
+}
+
+// !done! ParsedNode => ParsedNode
+ParsedNode::ParsedNode(long x, long y)
 {
     this->index = Node::GetIndex(x, y);
     this->x = x;
     this->y = y;
 }
 
-NodeParsed ParserXY(std::string string_coordinate, std::string separator)
+ParsedNode ParserXY(std::string string_coordinate, std::string separator)
 {
+    // !todo! Retirar trecho
+    /*
     long x, y;
     long separator_pos = string_coordinate.find(separator);
     long end_line_pos = string_coordinate.size();
 
     x = std::stoi(string_coordinate.substr(0, separator_pos));
     y = std::stoi(string_coordinate.substr(separator_pos + 1, end_line_pos - separator_pos));
+    */
 
-    return NodeParsed(x, y);
+    std::pair<long, long>coordinate_pair = CoordinateParser(string_coordinate, separator);
+
+    return ParsedNode(coordinate_pair.first, coordinate_pair.second);
 }

@@ -16,7 +16,10 @@ function heuristic(node) =
 // por cópia
 // além disso, adicionei esse parâmetro extra, já que alguns nós estão fora do escopo da função
 // !todo! usar como argumento o index do nó ao invés de o nó em si (para usar GetX e GetY)
-long g (Node current, Node neighbor)
+// Exemplo:
+// current_node_index, neighbor_node_index
+// dx = Node::GetX(current_node_index) - Node::GetX(neighbor_node_index)
+long cost_g (Node current, Node neighbor)
 {
     long dx = abs(current.x - neighbor.x);
     long dy = abs(current.y - neighbor.y);
@@ -24,7 +27,7 @@ long g (Node current, Node neighbor)
     return cost_weight * (dx + dy);
 }
 
-long h (Node current, Node goal)
+long heuristic_h (Node current, Node goal)
 {
     long dx = abs(current.x - goal.x);
     long dy = abs(current.y - goal.y);

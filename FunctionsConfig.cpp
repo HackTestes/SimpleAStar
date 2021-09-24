@@ -1,4 +1,4 @@
-    // Esse arquivo contém funções de configuração
+// Esse arquivo contém funções de configuração
 #include <unordered_set>
 #include <map>
 #include <iostream>
@@ -10,15 +10,16 @@
 
 // !todo! adicionar supporte para opções com uma única letra "-h"
 // !todo! melhorar opções que recebem valores (Snapshot, SnapshotXY)
-// - verificar a entrada de dados (números)
-// !todo! adicionar um Snapshot/SnapshotXY all: imprimir para todos os nós
-// !todo! warning flag?
-// !todo! show JSON config info (ex.: file path)
+// - verificar a entrada de dados (números - verificar se são dígitos)
+// !done! adicionar um Snapshot/SnapshotXY all: imprimir para todos os nós
+// !done! warning flag?
+// !todo! Melhorar os warnings?
+// !todo! show JSON config info (ex.: file path)????
+// Obs: Switch só funciona bem com comparação de inteiros!
 void ArgsOptions(int argc, char* argv[])
 {
-    for (int i = 0; i < argc; ++i)
+    for (int i = 1; i < argc; ++i)
     {
-
         if ((std::string)argv[i] == "--help")
         {
             std::cout << "./SimpleAStarExecutable [gid_size_x] [gid_size_y] [START_X-START_Y] [GOAL_X-GOAL_Y]\n\n"
@@ -29,7 +30,7 @@ void ArgsOptions(int argc, char* argv[])
                       << "--BestPathIndex\n"
                       << "--ShowPriorityQueue\n"
                       << "--ShowVisitedNeighbors\n"
-                      << "--Snapshot [snapshot_start_node_index] [snapshot_end_node_index]\n"
+                      << "--Snapshot [[snapshot_start_node_index] [snapshot_end_node_index]|all]\n"
                       << "--SnapshotXY [snapshot_start_node_x]-[snapshot_end_node_x] [snapshot_start_node_y]-[snapshot_end_node_y]\n"
                       << "--Interactive\n"
                       << "--ShowMap\n"
@@ -78,18 +79,32 @@ void ArgsOptions(int argc, char* argv[])
         {
             snapshot = true;
 
-            snapshot_start_node_index = std::abs(std::stoi(argv[i + 1]));
-            snapshot_end_node_index = std::abs(std::stoi(argv[i + 2]));
+            if ((std::string)argv[i + 1] == "all")
+            {
+                snapshot_start_node_index = 0;
+                snapshot_end_node_index = grid_size_x * grid_size_y;
 
-            i = i + 2;
-            continue;
+                i = i + 1;
+                continue;
+            }
+            else
+            {
+                snapshot_start_node_index = std::abs(std::stoi(argv[i + 1]));
+                snapshot_end_node_index = std::abs(std::stoi(argv[i + 2]));
+
+                i = i + 2;
+                continue;
+            }
         }
 
-        // !todo! adicionar o ParserXY
+        // !done! adicionar o CoordinateParser
+        // ParserXY(std::string string_coordinate, std::string separator)
         else if ((std::string)argv[i] == "--SnapshotXY")
         {
             snapshot = true;
 
+            // !todo! Retirar trecho
+            /*
             // X-X : start-end
             snapshot_start_node_x = std::abs(std::stoi(&argv[i + 1][0]));
             snapshot_end_node_x = std::abs(std::stoi((&argv[i + 1][2])));
@@ -97,6 +112,19 @@ void ArgsOptions(int argc, char* argv[])
             // Y-Y : start-end
             snapshot_start_node_y = std::abs(std::stoi(&argv[i + 2][0]));
             snapshot_end_node_y = std::abs(std::stoi((&argv[i + 2][2])));
+            */
+
+            std::pair<long, long> start_coordinates_pair_x = CoordinateParser(argv[i + 1], "-");
+            std::pair<long, long> start_coordinates_pair_y = CoordinateParser(argv[i + 2], "-");
+
+            // X-X : start-end
+            snapshot_start_node_x = start_coordinates_pair_x.first;
+            snapshot_end_node_x = start_coordinates_pair_x.second;
+
+            // Y-Y : start-end
+            snapshot_start_node_y = start_coordinates_pair_y.first;
+            snapshot_end_node_y = start_coordinates_pair_y.second;
+
             std::cout << "snapshot_start_node_x :  " << snapshot_start_node_x << " | snapshot_end_node_x:  " << snapshot_end_node_x << "\n"
             << "snapshot_start_node_y :  " << snapshot_start_node_y << " | snapshot_end_node_y:  " << snapshot_end_node_y<< "\n\n";
 
@@ -158,15 +186,12 @@ void ArgsOptions(int argc, char* argv[])
             continue;
         }
 
-        else if (i == 0)
-        {
-            continue;
-        }
-
+        // !todo! Retirar trecho
+        /*// !todo! ineficiente - "setar" todos os valores logo de uma vez
         // os parâmetros iniciais (tamanho, início e fim) são estáticos
         else if ( !json_config_enabled && ( (i == 1) || (i == 2) || (i == 3) || (i == 4) ) && std::isdigit(*(argv[i])) )
         {
-            // !todo! usar switch case
+            // !todo! usar switch case - talvez nem precise
             if (i == 1)
             {
                 SetGirdSizeX(std::stoi(argv[i]));
@@ -186,6 +211,21 @@ void ArgsOptions(int argc, char* argv[])
             {
                 SetGoal(ParserXY(argv[i], "-").x, ParserXY(argv[i], "-").y);
             }
+        }*/
+
+        // !done! ineficiente - "setar" todos os valores logo de uma vez
+        // os parâmetros iniciais (tamanho, início e fim) são estáticos
+        else if ( !json_config_enabled && (i == 1) )
+        {
+            SetGirdSizeX(std::stoi(argv[i]));
+
+            SetGirdSizeY(std::stoi(argv[i + 1]));
+
+            SetStart(ParserXY(argv[i + 2], "-").x, ParserXY(argv[i + 2], "-").y);
+
+            SetGoal(ParserXY(argv[i + 3], "-").x, ParserXY(argv[i + 3], "-").y);
+
+            i = i + 3;
         }
 
         else
