@@ -31,8 +31,8 @@ void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, SortPrior
     while (!priority_queue.empty())
     {
         std::cout << "priority_queue_copy : " 
-        << " x " << priority_queue.top().x 
-        << "  y " << priority_queue.top().y 
+        << " x " << Node::GetX(priority_queue.top().node_index) 
+        << "  y " << Node::GetY(priority_queue.top().node_index) 
         << "  |  f " << priority_queue.top().f 
         << "  |  node_index " << priority_queue.top().node_index 
         << "\n";
@@ -80,13 +80,13 @@ class SmallNode
 
 // !done! usar Node::Verify
 // essa função encontra os nós vizinhos e devolve um vetor do tamanho adequando (== a quantidade de vizinhos)
-void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord)
+void ExpandNeighbors (long current_node_x, long current_node_y, std::vector <long> *my_neighbors_coord)
 {
     SmallNode neighbors_nodes[4];
-    neighbors_nodes[0] = SmallNode(current_node.x, current_node.y - 1, ((current_node.x * grid_size_y) + current_node.y - 1));
-    neighbors_nodes[1] = SmallNode(current_node.x + 1, current_node.y, ((current_node.x + 1) * grid_size_y + current_node.y));
-    neighbors_nodes[2] = SmallNode(current_node.x, current_node.y + 1, ((current_node.x * grid_size_y) + current_node.y + 1));
-    neighbors_nodes[3] = SmallNode(current_node.x - 1, current_node.y, ((current_node.x - 1) * grid_size_y + current_node.y));
+    neighbors_nodes[0] = SmallNode(current_node_x, current_node_y - 1, ((current_node_x * grid_size_y) + current_node_y - 1));
+    neighbors_nodes[1] = SmallNode(current_node_x + 1, current_node_y, ((current_node_x + 1) * grid_size_y + current_node_y));
+    neighbors_nodes[2] = SmallNode(current_node_x, current_node_y + 1, ((current_node_x * grid_size_y) + current_node_y + 1));
+    neighbors_nodes[3] = SmallNode(current_node_x - 1, current_node_y, ((current_node_x - 1) * grid_size_y + current_node_y));
 
     // verificar os vizinhos no sentido horário
     for (long i = 0; i < 4; ++i)

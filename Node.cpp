@@ -9,13 +9,14 @@
 // Se feito:
 //    - Nó normal não precisa mais armazenar o "f"
 
-// !todo! Usar GetX, GetY ou GetIndex
+// !todo! Retirar o index também???
+// !done~! Usar GetX, GetY ou GetIndex
 Node::Node(long node_index)
 {
     this->node_index = node_index;
 
-    this->x = node_index / (grid_size_y);
-    this->y = node_index - (this->x * grid_size_y);
+    //this->x = node_index / (grid_size_y);
+    //this->y = node_index - (this->x * grid_size_y);
 
     this->f = 0;
     this->g = 0;
@@ -31,8 +32,8 @@ Node::Node(long node_index)
 
 Node::Node()
 {
-    this->x = 0;
-    this->y = 0;
+    //this->x = 0;
+    //this->y = 0;
     this->node_index = 0;
 
     this->f = 0;
@@ -46,11 +47,11 @@ Node::Node()
     this->appearance = "o"; // nó normal
 }
 
-// !todo! clacular x e y ao invés de armazenar (otimiza espaço na memória)
-// !todo! substituir o armazenamento pelo método de clacular
+// !done! clacular x e y ao invés de armazenar (otimiza espaço na memória)
+// !done! substituir o armazenamento pelo método de clacular
 // !todo! adicionar restrições ao usar Get*(antes de retornar): o X ou Y estão corretos? Estão fora do tamanho do mapa? NÃO
 
-// !todo! Essas funções devem receber apenas valores válidos? SIM
+// !todo! Essas funções devem receber apenas valores válidos? SIM - criar aviso
 // Poderia ser uma restrição? Valores inválidos devem ser avaliados antes SIM
 long Node::GetX(long node_index)
 {
@@ -71,7 +72,7 @@ long Node::GetIndex(long x, long y)
 // !done! usar essas funções na função dos vizinhos
 bool Node::VerifyCoordinate(long x, long y)
 {
-    //bool valid_x = false;
+    //bool valid_x = false; // !todo! Retirar
     //bool valid_y = false;
 
     if ( !(x >= 0 && x < grid_size_x) )

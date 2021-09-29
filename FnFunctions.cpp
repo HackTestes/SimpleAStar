@@ -15,10 +15,30 @@ function heuristic(node) =
 
 // por cópia
 // além disso, adicionei esse parâmetro extra, já que alguns nós estão fora do escopo da função
-// !todo! usar como argumento o index do nó ao invés de o nó em si (para usar GetX e GetY)
+// !done! usar como argumento o index do nó ao invés de o nó em si (para usar GetX e GetY)
 // Exemplo:
 // current_node_index, neighbor_node_index
 // dx = Node::GetX(current_node_index) - Node::GetX(neighbor_node_index)
+
+long cost_g (long current_node_index, long neighbor_node_index)
+{
+    long dx = abs(Node::GetX(current_node_index) - Node::GetX(neighbor_node_index));
+    long dy = abs(Node::GetY(current_node_index) - Node::GetY(neighbor_node_index));
+
+    return cost_weight * (dx + dy);
+}
+
+long heuristic_h (long current_node_index, long goal_node_index)
+{
+    long dx = abs(Node::GetX(current_node_index) - Node::GetX(goal_node_index));
+    long dy = abs(Node::GetY(current_node_index) - Node::GetY(goal_node_index));
+
+    return heuristic_weight * (dx + dy);
+}
+
+
+// !todo! Retirar trecho
+/*
 long cost_g (Node current, Node neighbor)
 {
     long dx = abs(current.x - neighbor.x);
@@ -26,7 +46,10 @@ long cost_g (Node current, Node neighbor)
 
     return cost_weight * (dx + dy);
 }
+*/
 
+// !todo! Retirar trecho
+/*
 long heuristic_h (Node current, Node goal)
 {
     long dx = abs(current.x - goal.x);
@@ -34,3 +57,4 @@ long heuristic_h (Node current, Node goal)
 
     return heuristic_weight * (dx + dy);
 }
+*/

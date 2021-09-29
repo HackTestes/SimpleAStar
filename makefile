@@ -4,7 +4,7 @@ HEADERS= AStarHeader.h json.hpp
 OBJ= FnFunctions.o FunctionsUtils.o Node.o simple_Astar.o FunctionsConfig.o
 
 %.o: %.cpp
-	$(CC) -c -o $@ $^
+	$(CC) -c -o $@ $^ -std=c++17
 
 SimpleAStarExecutable: $(OBJ)
 	$(CC) -o $@ $^
