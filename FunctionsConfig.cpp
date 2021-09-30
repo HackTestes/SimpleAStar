@@ -10,378 +10,384 @@
 
 // TEMPLATE para a reestruturação dos argumentos
 
-class Snapshot
+namespace ArgumentSnapshot
 {
-    public:
-        inline static std::string long_option = "--Snapshot";
-        inline static std::string short_option= "-s";
+    std::string long_option = "--Snapshot";
+    std::string short_option= "-s";
 
-        static void help()
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + " [[snapshot_start_node_index] [snapshot_end_node_index]|all]  Filter the desired nodes based on their index\n\n";
+        std::cout << help;
+    };
+
+    long run(int current_arg, char* argv[])
+    {
+        snapshot = true;
+
+        if ((std::string)argv[current_arg + 1] == "all")
         {
-            std::string help = "\t" + long_option + "  " + short_option + " [[snapshot_start_node_index] [snapshot_end_node_index]|all]  Filter the desired nodes based on their index\n\n";
-            std::cout << help;
-        };
+            snapshot_start_node_index = 0;
+            snapshot_end_node_index = grid_size_x * grid_size_y;
 
-        static long run(int current_arg, char* argv[])
-        {
-            snapshot = true;
-
-            if ((std::string)argv[current_arg + 1] == "all")
-            {
-                snapshot_start_node_index = 0;
-                snapshot_end_node_index = grid_size_x * grid_size_y;
-
-                return 1;
-            }
-            else
-            {
-                snapshot_start_node_index = std::abs(std::stoi(argv[current_arg + 1]));
-                snapshot_end_node_index = std::abs(std::stoi(argv[current_arg + 2]));
-
-                return 2;
-            }
+            return 1;
         }
-};
-
-class SnapshotXY
-{
-    public:
-        inline static std::string long_option = "--SnapshotXY";
-        inline static std::string short_option= "-S";
-
-        static void help()
+        else
         {
-            std::string help = "\t" + long_option + "  " + short_option + " [snapshot_start_node_x]-[snapshot_end_node_x] [snapshot_start_node_y]-[snapshot_end_node_y]  Filter the desired nodes based on their coordinates\n\n";
-            std::cout << help;
-        };
-
-        static long run(int current_arg, char* argv[])
-        {
-            snapshot = true;
-
-            std::pair<long, long> start_coordinates_pair_x = CoordinateParser(argv[current_arg + 1], "-");
-            std::pair<long, long> start_coordinates_pair_y = CoordinateParser(argv[current_arg + 2], "-");
-
-            // X-X : start-end
-            snapshot_start_node_x = start_coordinates_pair_x.first;
-            snapshot_end_node_x = start_coordinates_pair_x.second;
-
-            // Y-Y : start-end
-            snapshot_start_node_y = start_coordinates_pair_y.first;
-            snapshot_end_node_y = start_coordinates_pair_y.second;
-
-            std::cout << "snapshot_start_node_x :  " << snapshot_start_node_x << " | snapshot_end_node_x:  " << snapshot_end_node_x << "\n"
-            << "snapshot_start_node_y :  " << snapshot_start_node_y << " | snapshot_end_node_y:  " << snapshot_end_node_y<< "\n\n";
+            snapshot_start_node_index = std::abs(std::stoi(argv[current_arg + 1]));
+            snapshot_end_node_index = std::abs(std::stoi(argv[current_arg + 2]));
 
             return 2;
         }
+    }
 };
 
-class Debug
+namespace ArgumentSnapshotXY
 {
-    public:
-        inline static std::string long_option = "--Debug";
-        inline static std::string short_option= "-d";
+    std::string long_option = "--SnapshotXY";
+    std::string short_option= "-S";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Enable debug output, used in some tests only\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + " [snapshot_start_node_x]-[snapshot_end_node_x] [snapshot_start_node_y]-[snapshot_end_node_y]  Filter the desired nodes based on their coordinates\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            debug = true;
-            std::cout << "Debug mode enabled!\n";
+    long run(int current_arg, char* argv[])
+    {
+        snapshot = true;
 
-            return 0;
-        }
+        std::pair<long, long> start_coordinates_pair_x = CoordinateParser(argv[current_arg + 1], "-");
+        std::pair<long, long> start_coordinates_pair_y = CoordinateParser(argv[current_arg + 2], "-");
+
+        // X-X : start-end
+        snapshot_start_node_x = start_coordinates_pair_x.first;
+        snapshot_end_node_x = start_coordinates_pair_x.second;
+
+        // Y-Y : start-end
+        snapshot_start_node_y = start_coordinates_pair_y.first;
+        snapshot_end_node_y = start_coordinates_pair_y.second;
+
+        std::cout << "snapshot_start_node_x :  " << snapshot_start_node_x << " | snapshot_end_node_x:  " << snapshot_end_node_x << "\n"
+        << "snapshot_start_node_y :  " << snapshot_start_node_y << " | snapshot_end_node_y:  " << snapshot_end_node_y<< "\n\n";
+
+        return 2;
+    }
 };
 
-class BestPathIndex
+namespace ArgumentDebug
 {
-    public:
-        inline static std::string long_option = "--BestPathIndex";
-        inline static std::string short_option= "-p";
+    std::string long_option = "--Debug";
+    std::string short_option= "-d";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Every node in the best path will display its index\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Enable debug output, used in some tests only\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            best_path_index = true;
+    long run(int current_arg, char* argv[])
+    {
+        debug = true;
+        std::cout << "Debug mode enabled!\n";
 
-            return 0;
-        }
+        return 0;
+    }
 };
 
-class ShowPriorityQueue
+namespace ArgumentBestPathIndex
 {
-    public:
-        inline static std::string long_option = "--ShowPriorityQueue";
-        inline static std::string short_option= "-q";
+    std::string long_option = "--BestPathIndex";
+    std::string short_option= "-p";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Show the Priority Queue for each selected node of the Snapshot\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Every node in the best path will display its index\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            show_priority_queue = true;
+    long run(int current_arg, char* argv[])
+    {
+        best_path_index = true;
 
-            return 0;
-        }
+        return 0;
+    }
 };
 
-class ShowVisitedNeighbors
+namespace ArgumentShowPriorityQueue
 {
-    public:
-        inline static std::string long_option = "--ShowVisitedNeighbors";
-        inline static std::string short_option= "-n";
+    std::string long_option = "--ShowPriorityQueue";
+    std::string short_option= "-q";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Show all the visited neighbors for each selected node of the Snapshot\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Show the Priority Queue for each selected node of the Snapshot\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            show_visited_neighbors = true;
+    long run(int current_arg, char* argv[])
+    {
+        show_priority_queue = true;
 
-            return 0;
-        }
+        return 0;
+    }
 };
 
-class Interactive
+namespace ArgumentShowVisitedNeighbors
 {
-    public:
-        inline static std::string long_option = "--Interactive";
-        inline static std::string short_option= "-i";
+    std::string long_option = "--ShowVisitedNeighbors";
+    std::string short_option= "-n";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Allows to stop execution for each selected node of the Snapshot\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Show all the visited neighbors for each selected node of the Snapshot\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            interactive = true;
+    long run(int current_arg, char* argv[])
+    {
+        show_visited_neighbors = true;
 
-            return 0;
-        }
+        return 0;
+    }
 };
 
-class ShowMap
+namespace ArgumentInteractive
 {
-    public:
-        inline static std::string long_option = "--ShowMap";
-        inline static std::string short_option= "-m";
+    std::string long_option = "--Interactive";
+    std::string short_option= "-i";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Displays the map for each selected node of the Snapshot\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Allows to stop execution for each selected node of the Snapshot\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            show_map = true;
+    long run(int current_arg, char* argv[])
+    {
+        interactive = true;
 
-            return 0;
-        }
+        return 0;
+    }
 };
 
-class ShowBarrier
+namespace ArgumentShowMap
 {
-    public:
-        inline static std::string long_option = "--ShowBarrier";
-        inline static std::string short_option= "-b";
+    std::string long_option = "--ShowMap";
+    std::string short_option= "-m";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Displays the barrier for each selected node of the Snapshot\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Displays the map for each selected node of the Snapshot\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            show_barrier = true;
+    long run(int current_arg, char* argv[])
+    {
+        show_map = true;
 
-            return 0;
-        }
+        return 0;
+    }
 };
 
-class Padding
+namespace ArgumentShowBarrier
 {
-    public:
-        inline static std::string long_option = "--Padding";
-        inline static std::string short_option= "-P";
+    std::string long_option = "--ShowBarrier";
+    std::string short_option= "-b";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + " [padding_cell_size]  Controls map padding, default value: "+ std::to_string(padding_cell_size) + "\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Displays the barrier for each selected node of the Snapshot\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            padding_cell_size = std::stoi(argv[current_arg + 1]);
+    long run(int current_arg, char* argv[])
+    {
+        show_barrier = true;
 
-            return 1;
-        }
+        return 0;
+    }
 };
 
-class WarningEnabled
+namespace ArgumentPadding
 {
-    public:
-        inline static std::string long_option = "--WarningEnabled";
-        inline static std::string short_option= "-w";
+    std::string long_option = "--Padding";
+    std::string short_option= "-P";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  Enables serveral warnings of non critical problems\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + " [padding_cell_size]  Controls map padding, default value: "+ std::to_string(padding_cell_size) + "\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            warning_enabled = true;
+    long run(int current_arg, char* argv[])
+    {
+        padding_cell_size = std::stoi(argv[current_arg + 1]);
 
-            return 0;
-        }
+        return 1;
+    }
 };
 
-class Heuristic
+namespace ArgumentWarningEnabled
 {
-    public:
-        inline static std::string long_option = "--Heuristic";
-        inline static std::string short_option= "-H";
+    std::string long_option = "--WarningEnabled";
+    std::string short_option= "-w";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + " [heuristic_weight]  Controls heuristic value (heuristic_weight * (dx + dy)), default value: " + std::to_string(heuristic_weight) + "\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Enables serveral warnings of non critical problems\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            heuristic_weight = std::stoi(argv[current_arg + 1]);
+    long run(int current_arg, char* argv[])
+    {
+        warning_enabled = true;
 
-            return 1;
-        }
+        return 0;
+    }
 };
 
-class Cost
+namespace ArgumentHeuristic
 {
-    public:
-        inline static std::string long_option = "--Cost";
-        inline static std::string short_option= "-c";
+    std::string long_option = "--Heuristic";
+    std::string short_option= "-H";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + " [cost_weight]  Controls cost value (cost_weight * (dx + dy)), default value: " + std::to_string(cost_weight) + "\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + " [heuristic_weight]  Controls heuristic value (heuristic_weight * (dx + dy)), default value: " + std::to_string(heuristic_weight) + "\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            cost_weight = std::stoi(argv[current_arg + 1]);
+    long run(int current_arg, char* argv[])
+    {
+        heuristic_weight = std::stoi(argv[current_arg + 1]);
 
-            return 1;
-        }
+        return 1;
+    }
 };
 
-class JsonConfig
+namespace ArgumentCost
 {
-    public:
-        inline static std::string long_option = "--JsonConfig";
-        inline static std::string short_option= "-J";
+    std::string long_option = "--Cost";
+    std::string short_option= "-c";
 
-        static void help()
-        {
-            std::string help = "\t" + long_option + "  " + short_option + "  [json_config_file_path]  Path to a Json configuration file\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + " [cost_weight]  Controls cost value (cost_weight * (dx + dy)), default value: " + std::to_string(cost_weight) + "\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            json_config_enabled = true;
-            json_config_file_path = (std::string)argv[current_arg + 1];
-            JsonConfig();
+    long run(int current_arg, char* argv[])
+    {
+        cost_weight = std::stoi(argv[current_arg + 1]);
 
-            return 1;
-        }
+        return 1;
+    }
 };
 
-class DefaultArguments
+namespace ArgumentJsonConfig
 {
-    public:
-        inline static std::string long_option = "";
-        inline static std::string short_option= "";
+    std::string long_option = "--JsonConfig";
+    std::string short_option= "-J";
 
-        static void help()
-        {
-            std::string help = "\n  ./SimpleAStarExecutable [gid_size_x] [gid_size_y] [START_X-START_Y] [GOAL_X-GOAL_Y]\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  [json_config_file_path]  Path to a Json configuration file\n\n";
+        std::cout << help;
+    };
 
-        static long run(int current_arg, char* argv[])
-        {
-            SetGirdSizeX(std::stoi(argv[current_arg]));
+    long run(int current_arg, char* argv[])
+    {
+        json_config_enabled = true;
+        json_config_file_path = (std::string)argv[current_arg + 1];
+        JsonConfig();
 
-            SetGirdSizeY(std::stoi(argv[current_arg + 1]));
+        return 1;
+    }
+};
 
-            SetStart(ParserXY(argv[current_arg + 2], "-").x, ParserXY(argv[current_arg + 2], "-").y);
+namespace ArgumentDefaultArguments
+{
+    std::string long_option = "";
+    std::string short_option= "";
 
-            SetGoal(ParserXY(argv[current_arg + 3], "-").x, ParserXY(argv[current_arg + 3], "-").y);
+    void help()
+    {
+        std::string help = "\n  ./SimpleAStarExecutable [gid_size_x] [gid_size_y] [START_X-START_Y] [GOAL_X-GOAL_Y]\n\n";
+        std::cout << help;
+    };
 
-            return 3;
-        }
+    long run(int current_arg, char* argv[])
+    {
+        SetGirdSizeX(std::stoi(argv[current_arg]));
+
+        SetGirdSizeY(std::stoi(argv[current_arg + 1]));
+
+        SetStart(ParserXY(argv[current_arg + 2], "-").x, ParserXY(argv[current_arg + 2], "-").y);
+
+        SetGoal(ParserXY(argv[current_arg + 3], "-").x, ParserXY(argv[current_arg + 3], "-").y);
+
+        return 3;
+    }
 };
 
 
-class Help
+namespace ArgumentTest
 {
-    public:
-        inline static std::string long_option = "--help";
-        inline static std::string short_option = "-h";
+    std::string long_option = "--test";
+    std::string short_option = "-t";
 
-        static void help()
-        {
-            std::string help =  "\t" + long_option + "  " + short_option + "  Display help text\n\n";
-            std::cout << help;
-        };
+    void help()
+    {
+        std::string help =  "\t" + long_option + "  " + short_option + "  Execute a test\n\n";
+        std::cout << help;
+    }
 
-        static long run(int current_arg, char* argv[])
-        {
-            DefaultArguments::help();
-            std::cout << "\tOptions:\n\n";
-            Help::help();
-            Snapshot::help();
-            SnapshotXY::help();
-            Debug::help();
-            BestPathIndex::help();
-            ShowPriorityQueue::help();
-            ShowVisitedNeighbors::help();
-            Interactive::help();
-            ShowMap::help();
-            ShowBarrier::help();
-            Padding::help();
-            WarningEnabled::help();
-            Heuristic::help();
-            Cost::help();
-            JsonConfig::help();
-            std::exit(0); // !todo! Perigoso?
+    long run(int current_arg, char* argv[])
+    {
+        warning_enabled = true;
 
-            return 0;
-        }
+        return 0;
+    }
+}
+
+
+namespace ArgumentHelp
+{
+    std::string long_option = "--help";
+    std::string short_option = "-h";
+
+    void help()
+    {
+        std::string help =  "\t" + long_option + "  " + short_option + "  Display help text\n\n";
+        std::cout << help;
+    };
+
+    long run(int current_arg, char* argv[])
+    {
+        ArgumentDefaultArguments::help();
+        std::cout << "\tOptions:\n\n";
+        ArgumentHelp::help();
+        ArgumentSnapshot::help();
+        ArgumentSnapshotXY::help();
+        ArgumentDebug::help();
+        ArgumentBestPathIndex::help();
+        ArgumentShowPriorityQueue::help();
+        ArgumentShowVisitedNeighbors::help();
+        ArgumentInteractive::help();
+        ArgumentShowMap::help();
+        ArgumentShowBarrier::help();
+        ArgumentPadding::help();
+        ArgumentWarningEnabled::help();
+        ArgumentHeuristic::help();
+        ArgumentCost::help();
+        ArgumentJsonConfig::help();
+        ArgumentTest::help();
+
+        std::exit(0); // !todo! Perigoso?
+
+        return 0;
+    }
 };
 
 long ExecuteArg(std::string my_argument, int current_arg, char* argv[])
@@ -390,67 +396,71 @@ long ExecuteArg(std::string my_argument, int current_arg, char* argv[])
 
     // Mapping
     // Help
-    arguments_mapping[Help::long_option] = &Help::run;
-    arguments_mapping[Help::short_option] = &Help::run;
+    arguments_mapping[ArgumentHelp::long_option] = ArgumentHelp::run;
+    arguments_mapping[ArgumentHelp::short_option] = ArgumentHelp::run;
 
     // DefaultArguments
-    arguments_mapping[DefaultArguments::long_option] = &DefaultArguments::run;
+    arguments_mapping[ArgumentDefaultArguments::long_option] = ArgumentDefaultArguments::run;
 
     // Snapshot
-    arguments_mapping[Snapshot::long_option] = &Snapshot::run;
-    arguments_mapping[Snapshot::short_option] = &Snapshot::run;
+    arguments_mapping[ArgumentSnapshot::long_option] = ArgumentSnapshot::run;
+    arguments_mapping[ArgumentSnapshot::short_option] = ArgumentSnapshot::run;
 
     // SnapshotXY
-    arguments_mapping[SnapshotXY::long_option] = &SnapshotXY::run;
-    arguments_mapping[SnapshotXY::short_option] = &SnapshotXY::run;
+    arguments_mapping[ArgumentSnapshotXY::long_option] = ArgumentSnapshotXY::run;
+    arguments_mapping[ArgumentSnapshotXY::short_option] = ArgumentSnapshotXY::run;
 
     // Debug
-    arguments_mapping[Debug::long_option] = &Debug::run;
-    arguments_mapping[Debug::short_option] = &Debug::run;
+    arguments_mapping[ArgumentDebug::long_option] = ArgumentDebug::run;
+    arguments_mapping[ArgumentDebug::short_option] = ArgumentDebug::run;
 
     // BestPathIndex
-    arguments_mapping[BestPathIndex::long_option] = &BestPathIndex::run;
-    arguments_mapping[BestPathIndex::short_option] = &BestPathIndex::run;
+    arguments_mapping[ArgumentBestPathIndex::long_option] = ArgumentBestPathIndex::run;
+    arguments_mapping[ArgumentBestPathIndex::short_option] = ArgumentBestPathIndex::run;
 
     // ShowPriorityQueue
-    arguments_mapping[ShowPriorityQueue::long_option] = &ShowPriorityQueue::run;
-    arguments_mapping[ShowPriorityQueue::short_option] = &ShowPriorityQueue::run;
+    arguments_mapping[ArgumentShowPriorityQueue::long_option] = ArgumentShowPriorityQueue::run;
+    arguments_mapping[ArgumentShowPriorityQueue::short_option] = ArgumentShowPriorityQueue::run;
 
     // ShowVisitedNeighbors
-    arguments_mapping[ShowVisitedNeighbors::long_option] = &ShowVisitedNeighbors::run;
-    arguments_mapping[ShowVisitedNeighbors::short_option] = &ShowVisitedNeighbors::run;
+    arguments_mapping[ArgumentShowVisitedNeighbors::long_option] = ArgumentShowVisitedNeighbors::run;
+    arguments_mapping[ArgumentShowVisitedNeighbors::short_option] = ArgumentShowVisitedNeighbors::run;
 
     // Interactive
-    arguments_mapping[Interactive::long_option] = &Interactive::run;
-    arguments_mapping[Interactive::short_option] = &Interactive::run;
+    arguments_mapping[ArgumentInteractive::long_option] = ArgumentInteractive::run;
+    arguments_mapping[ArgumentInteractive::short_option] = ArgumentInteractive::run;
 
     // ShowMap
-    arguments_mapping[ShowMap::long_option] = &ShowMap::run;
-    arguments_mapping[ShowMap::short_option] = &ShowMap::run;
+    arguments_mapping[ArgumentShowMap::long_option] = ArgumentShowMap::run;
+    arguments_mapping[ArgumentShowMap::short_option] = ArgumentShowMap::run;
 
     // ShowBarrier
-    arguments_mapping[ShowBarrier::long_option] = &ShowBarrier::run;
-    arguments_mapping[ShowBarrier::short_option] = &ShowBarrier::run;
+    arguments_mapping[ArgumentShowBarrier::long_option] = ArgumentShowBarrier::run;
+    arguments_mapping[ArgumentShowBarrier::short_option] = ArgumentShowBarrier::run;
 
     // Padding
-    arguments_mapping[Padding::long_option] = &Padding::run;
-    arguments_mapping[Padding::short_option] = &Padding::run;
+    arguments_mapping[ArgumentPadding::long_option] = ArgumentPadding::run;
+    arguments_mapping[ArgumentPadding::short_option] = ArgumentPadding::run;
 
     // WarningEnabled
-    arguments_mapping[WarningEnabled::long_option] = &WarningEnabled::run;
-    arguments_mapping[WarningEnabled::short_option] = &WarningEnabled::run;
+    arguments_mapping[ArgumentWarningEnabled::long_option] = ArgumentWarningEnabled::run;
+    arguments_mapping[ArgumentWarningEnabled::short_option] = ArgumentWarningEnabled::run;
 
     // Heuristic
-    arguments_mapping[Heuristic::long_option] = &Heuristic::run;
-    arguments_mapping[Heuristic::short_option] = &Heuristic::run;
+    arguments_mapping[ArgumentHeuristic::long_option] = ArgumentHeuristic::run;
+    arguments_mapping[ArgumentHeuristic::short_option] = ArgumentHeuristic::run;
 
     // Cost
-    arguments_mapping[Cost::long_option] = &Cost::run;
-    arguments_mapping[Cost::short_option] = &Cost::run;
+    arguments_mapping[ArgumentCost::long_option] = ArgumentCost::run;
+    arguments_mapping[ArgumentCost::short_option] = ArgumentCost::run;
 
     // JsonConfig
-    arguments_mapping[JsonConfig::long_option] = &JsonConfig::run;
-    arguments_mapping[JsonConfig::short_option] = &JsonConfig::run;
+    arguments_mapping[ArgumentJsonConfig::long_option] = ArgumentJsonConfig::run;
+    arguments_mapping[ArgumentJsonConfig::short_option] = ArgumentJsonConfig::run;
+
+    //Test
+    arguments_mapping[ArgumentTest::long_option] = ArgumentTest::run;
+    arguments_mapping[ArgumentTest::short_option] = ArgumentTest::run;
 
     if (arguments_mapping.count(my_argument) != 0)
     {
@@ -460,6 +470,7 @@ long ExecuteArg(std::string my_argument, int current_arg, char* argv[])
     {
         std::cout << "Invalid option : " << my_argument << "\n";
 
+        std::exit(0);
         return 0;
     }
 }
@@ -497,6 +508,13 @@ void ArgsOptions(int argc, char* argv[])
         {
             i = i + ExecuteArg("", i, argv);
         }
+
+        else
+        {
+            std::cout << "Invalid option : " << argument << "\n";
+
+            std::exit(0);
+        }
     }
 
 }
@@ -507,7 +525,7 @@ void ArgsOptions(int argc, char* argv[])
 // --------------------------------------- TESTE ACIMA ------------------------------------------ //
 
 
-
+/*
 // !todo! Adicionar parâmetro obrigatório
 // !todo! adicionar supporte para opções com uma única letra "-h"
 // !todo! melhorar opções que recebem valores (Snapshot, SnapshotXY)
@@ -608,7 +626,7 @@ void ArgsOptions_old(int argc, char* argv[])
             snapshot = true;
 
             // !todo! Retirar trecho
-            /*
+            
             // X-X : start-end
             snapshot_start_node_x = std::abs(std::stoi(&argv[i + 1][0]));
             snapshot_end_node_x = std::abs(std::stoi((&argv[i + 1][2])));
@@ -616,7 +634,7 @@ void ArgsOptions_old(int argc, char* argv[])
             // Y-Y : start-end
             snapshot_start_node_y = std::abs(std::stoi(&argv[i + 2][0]));
             snapshot_end_node_y = std::abs(std::stoi((&argv[i + 2][2])));
-            */
+            
 
             std::pair<long, long> start_coordinates_pair_x = CoordinateParser(argv[i + 1], "-");
             std::pair<long, long> start_coordinates_pair_y = CoordinateParser(argv[i + 2], "-");
@@ -691,7 +709,7 @@ void ArgsOptions_old(int argc, char* argv[])
         }
 
         // !todo! Retirar trecho
-        /*// !todo! ineficiente - "setar" todos os valores logo de uma vez
+        // !todo! ineficiente - "setar" todos os valores logo de uma vez
         // os parâmetros iniciais (tamanho, início e fim) são estáticos
         else if ( !json_config_enabled && ( (i == 1) || (i == 2) || (i == 3) || (i == 4) ) && std::isdigit(*(argv[i])) )
         {
@@ -715,7 +733,7 @@ void ArgsOptions_old(int argc, char* argv[])
             {
                 SetGoal(ParserXY(argv[i], "-").x, ParserXY(argv[i], "-").y);
             }
-        }*/
+        }
 
         // !done! ineficiente - "setar" todos os valores logo de uma vez
         // os parâmetros iniciais (tamanho, início e fim) são estáticos
@@ -739,6 +757,8 @@ void ArgsOptions_old(int argc, char* argv[])
         }
     }
 }
+
+*/
 
 void SetStart(long start_x, long start_y)
 {
@@ -790,7 +810,7 @@ void SetGirdSizeY(long size_y)
     grid_size_y = std::abs(size_y);
 }
 
-/*
+
 void JsonConfig()
 {
     std::string json_config;
@@ -850,13 +870,11 @@ void JsonConfig()
         std::exit(0);
     }
 
-    
+    /*
     std::cout << "Grid size X " << grid_size_x << "\n";
     std::cout << "Grid size Y " << grid_size_y << "\n";
     std::cout << "Start [" << configuration["Start"][0] << "] [" << configuration["Start"][1] << "]\n";
     std::cout << "Goal [" << configuration["Goal"][0] << "] [" << configuration["Goal"][1] << "]\n";
     std::cout << "Barrier coordinates " << configuration["Barrier coordinates"] << "\n";
-    
+    */
 }
-
-*/
