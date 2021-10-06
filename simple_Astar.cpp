@@ -42,7 +42,7 @@ long snapshot_end_node_y = -1;
 bool interactive = false;
 bool show_map = false;
 bool show_barrier = false;
-bool no_warning = false;
+bool warning_enabled = false;
 long heuristic_weight = 1;
 long cost_weight = 1;
 
@@ -68,7 +68,7 @@ int main (int argc, char* argv[])
     long previous_map_size = my_map.size();
 
     // usa o f do nó para ordenar
-    std::priority_queue < Node, std::vector<Node>, CustomComparator > OPEN;
+    std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > OPEN;
 
     // inicializo todos os atributos necessários para começar
     my_map[START].in_priority_queue = true;
@@ -84,12 +84,16 @@ int main (int argc, char* argv[])
         my_map[current_node_index].visited = true;
 
         std::vector <long> my_neighbors_list;
-        ExpandNeighbors(my_map[current_node_index], &my_neighbors_list);
+        ExpandNeighbors(Node::GetX(current_node_index), Node::GetY(current_node_index), &my_neighbors_list);
 
         std::string visited_neighbors = "";
         for (long neighbor_index : my_neighbors_list)
         {
-            std::string path_executed = "didn't execute any alternative path";// !todo! melhorar para demonstrar multiplos caminhos executados
+            bool path_executed_bool[4];
+            path_executed_bool[0] = true;
+            path_executed_bool[1] = false;
+            path_executed_bool[2] = false;
+            path_executed_bool[3] = false;
 
             // se não for uma barreira
             if (!(barrier.find(neighbor_index) != barrier.end()))
@@ -101,38 +105,43 @@ int main (int argc, char* argv[])
                     my_map[neighbor_index] = Node(neighbor_index);
                 }
 
-                long cost_so_far = my_map[current_node_index].g + g(my_map[current_node_index], my_map[neighbor_index]);
+                long cost_so_far = my_map[current_node_index].g + cost_g(current_node_index, neighbor_index);
 
-                // !done! verificar se um nó está na fila OPEN, pode ser feito com uma flag no nó
                 // in_priority_queue = true ---> se estiver na PQ (toda adição na PQ)
                 // in_priority_queue = false ---> se não estiver na PQ (toda remoção da PQ)
                 // no caso dele precisar ser atualizado na PQ (remove e adiciona), não é necessário mudar a flag (porque é apenas uma atualização de valor)
-                // Fazer isso retira a necessidade da função CheckOpenList() e a verificação não precisa iterar sobre a PQ (otimização de velocidade?)
+                // A verificação não precisa iterar sobre a PQ (otimização de velocidade talvez?)
                 if (my_map[neighbor_index].in_priority_queue && (cost_so_far < my_map[neighbor_index].g))
                 {
-                    my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
+                    my_map[neighbor_index].f = cost_so_far + heuristic_h(neighbor_index, GOAL);
                     my_map[neighbor_index].g = cost_so_far;
                     my_map[neighbor_index].came_from = current_node_index;
                     OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
                     OPEN.push(my_map[neighbor_index]); // coloco de volta com o valor atualizado
-                    path_executed = "path 1, neighbor_in_open with better path";
+
+                    path_executed_bool[0] = false;
+                    path_executed_bool[1] = true;
                 }
 
                 if (my_map[neighbor_index].visited && (cost_so_far < my_map[neighbor_index].g))
                 {
                     my_map[neighbor_index].visited = false;
-                    path_executed = "path 2, neighbor_in_closed with better path";
+
+                    path_executed_bool[0] = false;
+                    path_executed_bool[2] = true;
                 }
 
                 if (!my_map[neighbor_index].in_priority_queue && !my_map[neighbor_index].visited)
                 {
-                    my_map[neighbor_index].f = cost_so_far + h(my_map[neighbor_index], my_map[GOAL]);
+                    my_map[neighbor_index].f = cost_so_far + heuristic_h(neighbor_index, GOAL);
                     my_map[neighbor_index].g = cost_so_far;
                     my_map[neighbor_index].came_from = current_node_index;
                     my_map[neighbor_index].in_priority_queue = true;
 
                     OPEN.push(my_map[neighbor_index]);
-                    path_executed = "path 3, wasn't in any list";
+
+                    path_executed_bool[0] = false;
+                    path_executed_bool[3] = true;
                 }
 
                 previous_map_size = my_map.size(); // atualiza o valor de tamanho para posterior avaliação
@@ -143,13 +152,17 @@ int main (int argc, char* argv[])
                 {
                     visited_neighbors += "Visited neighbor:\n"
                                          "  -  node_index " + std::to_string(my_map[neighbor_index].node_index) + "\n" +
-                                         "  -  x " + std::to_string(my_map[neighbor_index].x) +
-                                         "  y " + std::to_string(my_map[neighbor_index].y) +  "\n" +
+                                         "  -  x " + std::to_string( Node::GetX(neighbor_index) ) +
+                                         "  y " + std::to_string( Node::GetY(neighbor_index) ) +  "\n" +
                                          "  -  f " + std::to_string(my_map[neighbor_index].f) + "\n" +
                                          "  -  g " + std::to_string(my_map[neighbor_index].g) + "\n" +
                                          "  -  visited " + std::to_string(my_map[neighbor_index].visited) + "\n" +
                                          "  -  in_priority_queue " + std::to_string(my_map[neighbor_index].in_priority_queue) + "\n" +
-                                         "  -  path_executed " + path_executed + "\n\n";
+                                         "  -  path[0] = " + std::to_string(path_executed_bool[0]) +":  didn't execute any alternative path\n" +
+                                         "  -  path[1] = " + std::to_string(path_executed_bool[1]) +":  neighbor_in_open with better path\n" +
+                                         "  -  path[2] = " + std::to_string(path_executed_bool[2]) +":  neighbor_in_closed with better path\n" +
+                                         "  -  path[3] = " + std::to_string(path_executed_bool[3]) +":  added to the open queue, bacause it wasn't in any list\n\n";
+
                 }
             }
         }
@@ -158,13 +171,13 @@ int main (int argc, char* argv[])
         if (snapshot)
         {
             if ( (current_node_index >= snapshot_start_node_index && current_node_index <= snapshot_end_node_index) || //usando index
-                (my_map[current_node_index].x >= snapshot_start_node_x  && my_map[current_node_index].x <= snapshot_end_node_x && //usando as coordenadas
-                my_map[current_node_index].y >= snapshot_start_node_y  && my_map[current_node_index].y <= snapshot_end_node_y) )
+                (Node::GetX(current_node_index) >= snapshot_start_node_x  && Node::GetX(current_node_index) <= snapshot_end_node_x && //usando as coordenadas
+                Node::GetY(current_node_index) >= snapshot_start_node_y  && Node::GetY(current_node_index) <= snapshot_end_node_y) )
             {
                 std::cout << "<<-------------------------End of loop iformation:------------------------->>\n\n";
                 std::cout << "CURRENT NODE  : " << " node_index " << my_map[current_node_index].node_index
-                                                << "  |  x " << my_map[current_node_index].x
-                                                << "  y " << my_map[current_node_index].y
+                                                << "  |  x " << Node::GetX(current_node_index)
+                                                << "  y " << Node::GetY(current_node_index)
                                                 << "  |  f " << my_map[current_node_index].f
                                                 << "  |  g " << my_map[current_node_index].g
                                                 << "  |  visited " << my_map[current_node_index].visited

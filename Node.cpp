@@ -2,12 +2,21 @@
 
 #include"AStarHeader.h"
 
+// !todo! Criar um nó especial para a lista de prioridades
+// Ideia -> o construtor desse nó deve:
+//    - Receber um nó convencional como argumento
+//    - Ter como atributos um valor "f" e o "node_index" apenas
+// Se feito:
+//    - Nó normal não precisa mais armazenar o "f"
+
+// !todo! Retirar o index também???
+// !done~! Usar GetX, GetY ou GetIndex
 Node::Node(long node_index)
 {
     this->node_index = node_index;
 
-    this->x = node_index / (grid_size_y);
-    this->y = node_index - (this->x * grid_size_y);
+    //this->x = node_index / (grid_size_y);
+    //this->y = node_index - (this->x * grid_size_y);
 
     this->f = 0;
     this->g = 0;
@@ -15,7 +24,7 @@ Node::Node(long node_index)
     this->came_from = 0;
 
     this->visited = false;
-    this->in_priority_queue = false;
+    this->in_priority_queue = false; // otimização de velocidade em busca
 
     this->appearance = "o"; // nó normal
     //this->appearance = std::to_string(node_index);
@@ -23,8 +32,8 @@ Node::Node(long node_index)
 
 Node::Node()
 {
-    this->x = 0;
-    this->y = 0;
+    //this->x = 0;
+    //this->y = 0;
     this->node_index = 0;
 
     this->f = 0;
@@ -33,17 +42,17 @@ Node::Node()
     this->came_from = 0;
 
     this->visited = false;
-    this->in_priority_queue = false;
+    this->in_priority_queue = false; // otimização de velocidade em busca
 
     this->appearance = "o"; // nó normal
 }
 
-// !todo! clacular x e y ao invés de armazenar (otimiza espaço na memória)
-// !todo! substituir o armazenamento pelo método de clacular
-// !todo! adicionar restrições: o X ou Y estão corretos? Estão fora do tamanho do mapa?
+// !done! clacular x e y ao invés de armazenar (otimiza espaço na memória)
+// !done! substituir o armazenamento pelo método de clacular
+// !todo! adicionar restrições ao usar Get*(antes de retornar): o X ou Y estão corretos? Estão fora do tamanho do mapa? NÃO
 
-// !todo! Essas funções devem receber apenas valores válidos?
-// Poderia ser uma restrição? Valores inválidos devem ser avaliados antes
+// !todo! Essas funções devem receber apenas valores válidos? SIM - criar aviso
+// Poderia ser uma restrição? Valores inválidos devem ser avaliados antes SIM
 long Node::GetX(long node_index)
 {
     return node_index / (grid_size_y); // floor division
@@ -60,11 +69,11 @@ long Node::GetIndex(long x, long y)
 }
 
 // verifica se um determinado parâmetro é válido
-// !todo! usar essas funções na função dos vizinhos
+// !done! usar essas funções na função dos vizinhos
 bool Node::VerifyCoordinate(long x, long y)
 {
-    bool valid_x = false;
-    bool valid_y = false;
+    //bool valid_x = false; // !todo! Retirar
+    //bool valid_y = false;
 
     if ( !(x >= 0 && x < grid_size_x) )
     {
@@ -86,6 +95,3 @@ bool Node::VerifyIndex(long node_index)
     }
     return true;
 }
-
-
-

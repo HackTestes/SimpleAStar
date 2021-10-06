@@ -8,12 +8,14 @@ console.log(path);
 
 const fs = require('fs')
 
-try {
-  const data = fs.readFileSync(path, 'utf8')
-  map_string = data;
-  //console.log(data)
-} catch (err) {
-  console.error(err)
+try
+{
+    const data = fs.readFileSync(path, 'utf8')
+    map_string = data;
+}
+catch (err)
+{
+    console.error(err)
 }
 
 // Put every letter in an addressable array

@@ -14,11 +14,11 @@
     class Node
     {
         public:
-            long x;
-            long y;
+            //long x;
+            //long y;
             long node_index;
 
-            long f; // f(n) = g(n) + h(n)
+            long f; // f(n) = cost_g(n) + heuristic_h(n)
             long g;
 
             long came_from;
@@ -68,7 +68,7 @@
     extern bool interactive;
     extern bool show_map;
     extern bool show_barrier;
-    extern bool no_warning;
+    extern bool warning_enabled;
     extern long heuristic_weight;
     extern long cost_weight;
 
@@ -79,23 +79,21 @@
     extern bool json_config_enabled;
 
     // FnFunctions.cpp
-    long g (Node current, Node start);
-    long h (Node current, Node goal);
+    long cost_g (long current_node_index, long neighbor_node_index);
+    long heuristic_h (long current_node_index, long goal_node_index);
 
     // FunctionsUtils.cpp
-    //long ArgsOptions(int argc, char* argv[]);
-
-    class CustomComparator
+    class SortPriorityQueue
     {
         public:
             bool operator() (Node n1, Node n2);
     };
 
-    void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue);
+    void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > priority_queue);
 
-    std::priority_queue < Node, std::vector<Node>, CustomComparator > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, CustomComparator > priority_queue,long except_index);
+    std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > priority_queue,long except_index);
 
-    void ExpandNeighbors (Node current_node, std::vector <long> *my_neighbors_coord);
+    void ExpandNeighbors (long current_node_x, long current_node_y, std::vector <long> *my_neighbors_coord);
 
     void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> barrier_map);
 
@@ -103,17 +101,19 @@
 
     void ShowBarrier(std::unordered_set<long> my_barrier);
 
-    class NodeParsed
+    std::pair<long, long> CoordinateParser(std::string string_coordinate, std::string separator);
+
+    class ParsedNode
     {
         public:
             long x;
             long y;
             long index;
 
-        NodeParsed(long x, long y);
+        ParsedNode(long x, long y);
     };
 
-    NodeParsed ParserXY(std::string string_coordinate, std::string separator);
+    ParsedNode ParserXY(std::string string_coordinate, std::string separator);
 
     // FunctionsConfig.cpp
     void ArgsOptions(int argc, char* argv[]);
