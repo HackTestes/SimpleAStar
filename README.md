@@ -62,7 +62,7 @@ SOFTWARE.
 
 ### Prerequisites
 
-It is necessary to have a Linux machine and the following programs installed:
+It is recommended to use Linux and have the following installed:
 * GNU make
 * GNU C compiler
 
