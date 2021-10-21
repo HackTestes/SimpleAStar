@@ -1,4 +1,4 @@
-// esse arquivo contém funções "utilitárias" para o funcionamento do código principal
+// Esse arquivo contém funções "utilitárias" para o funcionamento do código principal
 
 #include <unordered_map>
 #include <unordered_set>
@@ -9,6 +9,9 @@
 #include <stdlib.h>
 
 #include"AStarHeader.h"
+
+// !todo! Retirar trecho
+/*
 
 // essa classe é a que organiza a lista de prioridades
 // baseado no valor f de cada nó
@@ -54,6 +57,8 @@ std::priority_queue< Node, std::vector<Node>, SortPriorityQueue > CopyPriorityQu
     return new_priority_queue;
 }
 
+*/
+
 // feito especialmente para a expansão dos vizinhos
 // guarda apenas os valores necessários
 class SmallNode
@@ -80,8 +85,10 @@ class SmallNode
 
 // !done! usar Node::Verify
 // essa função encontra os nós vizinhos e devolve um vetor do tamanho adequando (== a quantidade de vizinhos)
-void ExpandNeighbors (long current_node_x, long current_node_y, std::vector <long> *my_neighbors_coord)
+std::vector<long> ExpandNeighbors (long current_node_x, long current_node_y)
 {
+    std::vector <long> my_neighbors_coord;
+
     SmallNode neighbors_nodes[4];
     neighbors_nodes[0] = SmallNode(current_node_x, current_node_y - 1, ((current_node_x * grid_size_y) + current_node_y - 1));
     neighbors_nodes[1] = SmallNode(current_node_x + 1, current_node_y, ((current_node_x + 1) * grid_size_y + current_node_y));
@@ -96,7 +103,7 @@ void ExpandNeighbors (long current_node_x, long current_node_y, std::vector <lon
 
         if (valid_coord && valid_index)
         {
-            my_neighbors_coord->push_back(neighbors_nodes[i].node_index);
+            my_neighbors_coord.push_back(neighbors_nodes[i].node_index);
         }
 
         if(debug == true)
@@ -110,6 +117,9 @@ void ExpandNeighbors (long current_node_x, long current_node_y, std::vector <lon
             << "\n";
         }
     }
+
+    return my_neighbors_coord;
+
     if(debug == true)
     {
         std::cout << "\n\n";
@@ -225,16 +235,6 @@ ParsedNode::ParsedNode(long x, long y)
 
 ParsedNode ParserXY(std::string string_coordinate, std::string separator)
 {
-    // !todo! Retirar trecho
-    /*
-    long x, y;
-    long separator_pos = string_coordinate.find(separator);
-    long end_line_pos = string_coordinate.size();
-
-    x = std::stoi(string_coordinate.substr(0, separator_pos));
-    y = std::stoi(string_coordinate.substr(separator_pos + 1, end_line_pos - separator_pos));
-    */
-
     std::pair<long, long>coordinate_pair = CoordinateParser(string_coordinate, separator);
 
     return ParsedNode(coordinate_pair.first, coordinate_pair.second);

@@ -1,5 +1,6 @@
 // Esse arquivo contém funções de configuração
 #include <unordered_set>
+#include <vector>
 #include <map>
 #include <iostream>
 #include <fstream>
@@ -8,7 +9,16 @@
 #include"json/single_include/nlohmann/json.hpp"
 #include"AStarHeader.h"
 
-// TEMPLATE para a reestruturação dos argumentos
+/*
+// !todo! Adicionar parâmetro obrigatório?
+// !done! adicionar supporte para opções com uma única letra "-h"
+// !todo! melhorar opções que recebem valores (Snapshot, SnapshotXY)
+// - verificar a entrada de dados (números - verificar se são dígitos)
+// !done! adicionar um Snapshot/SnapshotXY all: imprimir para todos os nós
+// !done! warning flag?
+// !todo! Melhorar os warnings?
+// !todo! show JSON config info (ex.: file path)???? NÃO
+// Obs: Switch só funciona bem com comparação de inteiros!
 
 namespace ArgumentSnapshot
 {
@@ -345,8 +355,20 @@ namespace ArgumentTest
 
     long run(int current_arg, char* argv[])
     {
-        warning_enabled = true;
+        SlidingPuzzle test_SP = SlidingPuzzle(sliding_puzzle_start);
 
+        std::vector<long> my_list_start = test_SP.CreateObjPositionList();
+        for (long i = 0; i < my_list_start.size(); ++i)
+        {
+            std::cout << "my_list_start " << i << "  " << my_list_start[i] << "\n";
+        }
+
+        test_SP.PrintCurrentSlidingPuzzle(10, 10, 0, 2);
+
+        long value_h = SlidingPuzzleHeuristic_h( my_list_start, {4, 0, 1, 3, 2} );
+        std::cout << value_h << "\n";
+
+        std::exit(0);
         return 0;
     }
 }
@@ -470,7 +492,7 @@ long ExecuteArg(std::string my_argument, int current_arg, char* argv[])
     {
         std::cout << "Invalid option : " << my_argument << "\n";
 
-        std::exit(0);
+        std::exit(1);
         return 0;
     }
 }
@@ -513,252 +535,13 @@ void ArgsOptions(int argc, char* argv[])
         {
             std::cout << "Invalid option : " << argument << "\n";
 
-            std::exit(0);
-        }
-    }
-
-}
-
-
-
-
-// --------------------------------------- TESTE ACIMA ------------------------------------------ //
-
-
-/*
-// !todo! Adicionar parâmetro obrigatório
-// !todo! adicionar supporte para opções com uma única letra "-h"
-// !todo! melhorar opções que recebem valores (Snapshot, SnapshotXY)
-// - verificar a entrada de dados (números - verificar se são dígitos)
-// !done! adicionar um Snapshot/SnapshotXY all: imprimir para todos os nós
-// !done! warning flag?
-// !todo! Melhorar os warnings?
-// !todo! show JSON config info (ex.: file path)????
-// Obs: Switch só funciona bem com comparação de inteiros!
-void ArgsOptions_old(int argc, char* argv[])
-{
-    for (int i = 1; i < argc; ++i)
-    {
-        if ((std::string)argv[i] == "--help")
-        {
-            std::cout << "./SimpleAStarExecutable [gid_size_x] [gid_size_y] [START_X-START_Y] [GOAL_X-GOAL_Y]\n\n"
-                      << "Options:\n\n"
-                      << "--help\n"
-                      << "--Debug\n"
-                      << "--DebugAll\n" // !todo! Retirar
-                      << "--BestPathIndex\n"
-                      << "--ShowPriorityQueue\n"
-                      << "--ShowVisitedNeighbors\n"
-                      << "--Snapshot [[snapshot_start_node_index] [snapshot_end_node_index]|all]\n"
-                      << "--SnapshotXY [snapshot_start_node_x]-[snapshot_end_node_x] [snapshot_start_node_y]-[snapshot_end_node_y]\n"
-                      << "--Interactive\n"
-                      << "--ShowMap\n"
-                      << "--ShowBarrier\n"
-                      << "--Padding [padding_cell_size]\n"
-                      << "--WarningEnabled\n"
-                      << "--Heuristic [heuristic_weight]\n"
-                      << "--Cost [cost_weight]\n"
-                      << "--JsonConfig [json_config_file_path]\n"
-                      << "--Test\n\n"; // !todo! Talvez usar unit tests simples
-
-
-            std::exit(0); // qual o código para --help?
-        }
-
-        else if ((std::string)argv[i] == "--Debug")
-        {
-            debug = true;
-            std::cout << "Debug mode enabled!\n";
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--DebugAll") // !todo! Retirar
-        {
-            debug_all = true;
-            std::cout << "Debug all mode enabled!\n";
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--BestPathIndex")
-        {
-            best_path_index = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowPriorityQueue")
-        {
-            show_priority_queue = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowVisitedNeighbors")
-        {
-            show_visited_neighbors = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Snapshot")
-        {
-            snapshot = true;
-
-            if ((std::string)argv[i + 1] == "all")
-            {
-                snapshot_start_node_index = 0;
-                snapshot_end_node_index = grid_size_x * grid_size_y;
-
-                i = i + 1;
-                continue;
-            }
-            else
-            {
-                snapshot_start_node_index = std::abs(std::stoi(argv[i + 1]));
-                snapshot_end_node_index = std::abs(std::stoi(argv[i + 2]));
-
-                i = i + 2;
-                continue;
-            }
-        }
-
-        // !done! adicionar o CoordinateParser
-        // ParserXY(std::string string_coordinate, std::string separator)
-        else if ((std::string)argv[i] == "--SnapshotXY")
-        {
-            snapshot = true;
-
-            // !todo! Retirar trecho
-            
-            // X-X : start-end
-            snapshot_start_node_x = std::abs(std::stoi(&argv[i + 1][0]));
-            snapshot_end_node_x = std::abs(std::stoi((&argv[i + 1][2])));
-
-            // Y-Y : start-end
-            snapshot_start_node_y = std::abs(std::stoi(&argv[i + 2][0]));
-            snapshot_end_node_y = std::abs(std::stoi((&argv[i + 2][2])));
-            
-
-            std::pair<long, long> start_coordinates_pair_x = CoordinateParser(argv[i + 1], "-");
-            std::pair<long, long> start_coordinates_pair_y = CoordinateParser(argv[i + 2], "-");
-
-            // X-X : start-end
-            snapshot_start_node_x = start_coordinates_pair_x.first;
-            snapshot_end_node_x = start_coordinates_pair_x.second;
-
-            // Y-Y : start-end
-            snapshot_start_node_y = start_coordinates_pair_y.first;
-            snapshot_end_node_y = start_coordinates_pair_y.second;
-
-            std::cout << "snapshot_start_node_x :  " << snapshot_start_node_x << " | snapshot_end_node_x:  " << snapshot_end_node_x << "\n"
-            << "snapshot_start_node_y :  " << snapshot_start_node_y << " | snapshot_end_node_y:  " << snapshot_end_node_y<< "\n\n";
-
-            i = i + 2;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Interactive")
-        {
-            interactive = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowMap")
-        {
-            show_map = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--ShowBarrier")
-        {
-            show_barrier = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Padding")
-        {
-            padding_cell_size = std::stoi(argv[i + 1]);
-            i = i + 1;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--JsonConfig")
-        {
-            json_config_enabled = true;
-            json_config_file_path = (std::string)argv[i + 1];
-            i = i + 1;
-            JsonConfig();
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--WarningEnabled")
-        {
-            warning_enabled = true;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Heuristic")
-        {
-            heuristic_weight = std::stoi(argv[i + 1]);
-            i = i + 1;
-            continue;
-        }
-
-        else if ((std::string)argv[i] == "--Cost")
-        {
-            cost_weight = std::stoi(argv[i + 1]);
-            i = i + 1;
-            continue;
-        }
-
-        // !todo! Retirar trecho
-        // !todo! ineficiente - "setar" todos os valores logo de uma vez
-        // os parâmetros iniciais (tamanho, início e fim) são estáticos
-        else if ( !json_config_enabled && ( (i == 1) || (i == 2) || (i == 3) || (i == 4) ) && std::isdigit(*(argv[i])) )
-        {
-            // !todo! usar switch case - talvez nem precise
-            if (i == 1)
-            {
-                SetGirdSizeX(std::stoi(argv[i]));
-            }
-
-            else if (i == 2)
-            {
-                SetGirdSizeY(std::stoi(argv[i]));
-            }
-
-            else if (i == 3)
-            {
-                SetStart(ParserXY(argv[i], "-").x, ParserXY(argv[i], "-").y);
-            }
-
-            else if (i == 4)
-            {
-                SetGoal(ParserXY(argv[i], "-").x, ParserXY(argv[i], "-").y);
-            }
-        }
-
-        // !done! ineficiente - "setar" todos os valores logo de uma vez
-        // os parâmetros iniciais (tamanho, início e fim) são estáticos
-        else if ( !json_config_enabled && (i == 1) )
-        {
-            SetGirdSizeX(std::stoi(argv[i]));
-
-            SetGirdSizeY(std::stoi(argv[i + 1]));
-
-            SetStart(ParserXY(argv[i + 2], "-").x, ParserXY(argv[i + 2], "-").y);
-
-            SetGoal(ParserXY(argv[i + 3], "-").x, ParserXY(argv[i + 3], "-").y);
-
-            i = i + 3;
-        }
-
-        else
-        {
-            std::cout << "Invalid option : " << (std::string)argv[i] << "\n";
             std::exit(1);
         }
     }
-}
 
+}
 */
+
 
 void SetStart(long start_x, long start_y)
 {
@@ -794,7 +577,7 @@ void SetGirdSizeX(long size_x)
 {
     if (size_x < 0)
     {
-        std::cout << "WARNING: Gird size X is negative. Using absolute value\n";
+        std::cout << "WARNING: Gird size X is negative. Using absolute value insted\n";
     }
 
     grid_size_x = std::abs(size_x);
@@ -804,12 +587,103 @@ void SetGirdSizeY(long size_y)
 {
     if (size_y < 0)
     {
-        std::cout << "WARNING: Gird size Y is negative. Using absolute value\n";
+        std::cout << "WARNING: Gird size Y is negative. Using absolute value insted\n";
     }
 
     grid_size_y = std::abs(size_y);
 }
 
+void ConfigNodeMap(nlohmann::json parsed_json_configuration)
+{
+    // !todo! Adicionar suporte para SlidingPuzzle
+    // - Criar um fluxo de execução alternativo
+    // - Desmembrar cada uma das configurações específicas em funções
+
+    SetGirdSizeX(parsed_json_configuration["Grid size X"]);
+    SetGirdSizeY(parsed_json_configuration["Grid size Y"]);
+
+    SetStart(parsed_json_configuration["Start"][0], parsed_json_configuration["Start"][1]);
+    SetGoal(parsed_json_configuration["Goal"][0], parsed_json_configuration["Goal"][1]);
+
+    for (long i = 0; i < parsed_json_configuration["Barrier coordinates"].size(); ++i)
+    {
+        long barrier_x = parsed_json_configuration["Barrier coordinates"][i][0];
+        long barrier_y = parsed_json_configuration["Barrier coordinates"][i][1];
+        long barrier_index = Node::GetIndex(barrier_x, barrier_y);
+
+        // Vefifica se é uma barreira válida
+        if ( Node::VerifyCoordinate(barrier_x, barrier_y) && Node::VerifyIndex(barrier_index) )
+        {
+            barrier.insert(Node::GetIndex(barrier_x, barrier_y));
+        }
+        else if (warning_enabled)
+        {
+            // A barreira simplesmente não será inserida, não é necessário encerrar o programa
+            // Um aviso será envido apenas para se saber do problema
+            std::cout << "WARNING: Invalid barrier - " << parsed_json_configuration["Barrier coordinates"][i] << "\n";
+        }
+    }
+
+    if (barrier.find(START) != barrier.end())
+    {
+        std::cout << "WARNING: Barrier overlaps the START node\n";
+        std::exit(1);
+    }
+
+    if (barrier.find(GOAL) != barrier.end())
+    {
+        std::cout << "WARNING: Barrier overlaps the GOAL node\n";
+        std::exit(1);
+    }
+
+    /*
+    std::cout << "Grid size X " << grid_size_x << "\n";
+    std::cout << "Grid size Y " << grid_size_y << "\n";
+    std::cout << "Start [" << parsed_json_configuration["Start"][0] << "] [" << parsed_json_configuration["Start"][1] << "]\n";
+    std::cout << "Goal [" << parsed_json_configuration["Goal"][0] << "] [" << parsed_json_configuration["Goal"][1] << "]\n";
+    std::cout << "Barrier coordinates " << parsed_json_configuration["Barrier coordinates"] << "\n";
+    */
+}
+
+void SetSlidingPuzzleStartGoal(std::vector<long> json_sliding_puzzle_start, std::vector<long> json_sliding_puzzle_goal)
+{
+    // Checar se os tamanhos são compatíveis
+    if (json_sliding_puzzle_goal.size() != json_sliding_puzzle_start.size())
+    {
+        std::cout << "Start and goal have different sizes\n";
+        std::exit(1);
+    }
+
+    sliding_puzzle_start = json_sliding_puzzle_start;
+    sliding_puzzle_goal = json_sliding_puzzle_goal;
+
+    /*for (long i = 0; i < sliding_puzzle_start.size(); ++i)
+    {
+        std::cout << "sliding_puzzle_start [" << i << "] =  " << sliding_puzzle_start[i] << "\n";
+    }
+
+    for (long i = 0; i < sliding_puzzle_goal.size(); ++i)
+    {
+        std::cout << "sliding_puzzle_goal [" << i << "] =  " << sliding_puzzle_goal[i] << "\n";
+    }*/
+}
+
+
+void ConfigSlidingPuzzle(nlohmann::json parsed_json_configuration)
+{
+    // !todo! Adicionar suporte para SlidingPuzzle
+    // - Criar um fluxo de execução alternativo
+    // - Desmembrar cada uma das configurações específicas em funções
+
+    sliding_puzzle_enabled = true;
+    node_map_enabled = false;
+
+    SetGirdSizeX(parsed_json_configuration["Grid size X"]);
+    SetGirdSizeY(parsed_json_configuration["Grid size Y"]);
+
+    SetSlidingPuzzleStartGoal(parsed_json_configuration["Start"], parsed_json_configuration["Goal"]);
+
+}
 
 void JsonConfig()
 {
@@ -833,48 +707,18 @@ void JsonConfig()
 
     nlohmann::json configuration = nlohmann::json::parse(json_config);
 
-    SetGirdSizeX(configuration["Grid size X"]);
-    SetGirdSizeY(configuration["Grid size Y"]);
-
-    SetStart(configuration["Start"][0], configuration["Start"][1]);
-    SetGoal(configuration["Goal"][0], configuration["Goal"][1]);
-
-    for (long i = 0; i < configuration["Barrier coordinates"].size(); ++i)
+    // Problem
+    if (configuration["Problem type"] == "Node Map")
     {
-        long barrier_x = configuration["Barrier coordinates"][i][0];
-        long barrier_y = configuration["Barrier coordinates"][i][1];
-        long barrier_index = Node::GetIndex(barrier_x, barrier_y);
-
-        // Vefifica se é uma barreira válida
-        if ( Node::VerifyCoordinate(barrier_x, barrier_y) && Node::VerifyIndex(barrier_index) )
-        {
-            barrier.insert(Node::GetIndex(barrier_x, barrier_y));
-        }
-        else if (warning_enabled)
-        {
-            // A barreira simplesmente não será inserida, não é necessário encerrar o programa
-            // Um aviso será envido apenas para se saber do problema
-            std::cout << "WARNING: Invalid barrier - " << configuration["Barrier coordinates"][i] << "\n";
-        }
+        ConfigNodeMap(configuration);
     }
-
-    if (barrier.find(START) != barrier.end())
+    else if (configuration["Problem type"] == "Sliding Puzzle")
     {
-        std::cout << "WARNING: Barrier overlaps the START node\n";
-        std::exit(0);
+        ConfigSlidingPuzzle(configuration);
     }
-
-    if (barrier.find(GOAL) != barrier.end())
+    else
     {
-        std::cout << "WARNING: Barrier overlaps the GOAL node\n";
-        std::exit(0);
+        std::cout << "Invalid problem type\n";
+        std::exit(1);
     }
-
-    /*
-    std::cout << "Grid size X " << grid_size_x << "\n";
-    std::cout << "Grid size Y " << grid_size_y << "\n";
-    std::cout << "Start [" << configuration["Start"][0] << "] [" << configuration["Start"][1] << "]\n";
-    std::cout << "Goal [" << configuration["Goal"][0] << "] [" << configuration["Goal"][1] << "]\n";
-    std::cout << "Barrier coordinates " << configuration["Barrier coordinates"] << "\n";
-    */
 }

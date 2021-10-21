@@ -1,10 +1,9 @@
-CC=g++
-CPP= FnFunctions.cpp FunctionsUtils.cpp Node.cpp simple_Astar.cpp FunctionsConfig.cpp
-HEADERS= AStarHeader.h json.hpp
-OBJ= FnFunctions.o FunctionsUtils.o Node.o simple_Astar.o FunctionsConfig.o
+CC = g++
+CPP = $(wildcard *.cpp)
+OBJ = $(CPP:.cpp=.o)
 
 %.o: %.cpp
-	$(CC) -c -o $@ $^ -std=c++17
+	$(CC) -c -o $@ $^
 
 SimpleAStarExecutable: $(OBJ)
 	$(CC) -o $@ $^

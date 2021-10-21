@@ -1,4 +1,5 @@
 {
+    "Problem type" : "Node Map",
     "Grid size X" : 15,
     "Grid size Y" : 15,
     "Start" : [0, 0],
