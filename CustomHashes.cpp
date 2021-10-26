@@ -7,7 +7,7 @@
 #include"AStarHeader.h"
 
 
-size_t HashVector::operator ()(const std::vector<long>& v) const// noexcept
+size_t HashVector::operator ()(const std::vector<long>& v) const
 {
     return boost::hash_range(v.begin(), v.end());
 }

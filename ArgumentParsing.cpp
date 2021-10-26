@@ -367,11 +367,19 @@ namespace ArgumentTest
             std::cout << "achei\n";
         }
 
-
         test_SP_start.PrintCurrentSlidingPuzzle(10, 10);
+        std::cout << "\n\n";
 
         //long value_h = SlidingPuzzleHeuristic_h( my_list_start, {4, 0, 1, 3, 2} );
-       //std::cout << value_h << "\n";
+        //std::cout << value_h << "\n";
+
+        std::vector< std::vector<long> > neighbors_test = CreateSlidingPuzzleFromNeighbors(test_SP_start.sliding_puzzle, {1, 3}, 0);
+
+        for(long i =0 ; i < neighbors_test.size(); ++i)
+        {
+            SlidingPuzzle( neighbors_test[i] ).PrintCurrentSlidingPuzzle(10, 10);
+            std::cout << "\n\n";
+        }
 
         std::exit(0);
         return 0;

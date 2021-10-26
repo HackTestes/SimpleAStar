@@ -12,7 +12,7 @@
 // Estrututura de propósito geral, que guarda apenas o necessário
 //  - Chave de referência: diz a qual objeto faz referência
 //  - f: calculado e utilizado para fazer o ordenamento da lista, mostra qual é o "melhor" nó
-PriorityQueueContainer::PriorityQueueContainer(long f, long reference_key)
+PriorityQueueContainer::PriorityQueueContainer(long f, std::vector<long> reference_key)
 {
     this->f = f;
     this->reference_key = reference_key;
@@ -32,6 +32,7 @@ bool SortPriorityQueue::operator() (PriorityQueueContainer n1, PriorityQueueCont
     }
 }
 
+/*
 // usa uma cópia da minha lista de prioridade
 // imprime a lista de prioridades a partir de uma cópia
 void ShowPriorityQueue (std::priority_queue < PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue > priority_queue)
@@ -62,4 +63,4 @@ std::priority_queue< PriorityQueueContainer, std::vector<PriorityQueueContainer>
         priority_queue.pop();
     }
     return new_priority_queue;
-}
+}*/

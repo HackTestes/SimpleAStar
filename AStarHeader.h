@@ -94,20 +94,7 @@
 
     long SlidingPuzzleHeuristic_h (std::vector<long> current_sliding_puzzle_obj_position, std::vector<long> goal_sliding_puzzle_obj_position);
 
-    /*
     // FunctionsUtils.cpp
-    class SortPriorityQueue
-    {
-        public:
-            bool operator() (Node n1, Node n2);
-    };
-
-    void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > priority_queue);
-
-    std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > CopyPriorityQueueExcept (std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > priority_queue,long except_index);
-
-    */
-
     std::vector<long> ExpandNeighbors (long current_node_x, long current_node_y);
 
     std::string StringPadding(long string_length);
@@ -147,7 +134,7 @@
         std::vector<long> sliding_puzzle;
         long empty_index; // empty cell index
         long g;
-        long came_from;
+        std::vector<long> came_from;
         bool visited;
         bool in_priority_queue; // otimização de velocidade em busca
 
@@ -160,13 +147,16 @@
         std::string PrintCurrentSlidingPuzzle(long cell_length, long cell_height);
     };
 
+    std::vector< std::vector<long> > CreateSlidingPuzzleFromNeighbors(std::vector<long> current_sliding_puzzle, std::vector<long> neighbors_indexes, long empty_position_index);
+    std::vector<long> CreateVectorFromNeighbor(std::vector<long> current_sliding_puzzle, long neighbor_index, long empty_position_index);
+
     // PriorityQueue.cpp
     struct PriorityQueueContainer
     {
         long f; // f(n) = cost_g(n) + heuristic_h(n)
-        long reference_key; //chave única que faz referência a um item: nó, Sliding Puzzle...
+        std::vector<long> reference_key; //chave única que faz referência a um item: nó, Sliding Puzzle...
 
-        PriorityQueueContainer(long f, long reference_key);
+        PriorityQueueContainer(long f, std::vector<long> reference_key);
     };
 
 
@@ -195,7 +185,12 @@
     //CustomHashes.cpp
     struct HashVector
     {
-        size_t operator ()(const std::vector<long>& v) const;// noexcept
+        size_t operator ()(const std::vector<long>& v) const;
     };
+
+    int mainSP(std::vector<long> local_start, std::vector<long> local_goal);
+
+    // PriorityQueueTemplates
+    
 
 #endif
