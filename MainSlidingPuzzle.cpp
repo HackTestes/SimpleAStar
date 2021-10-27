@@ -21,7 +21,7 @@ int mainSP(std::vector<long> local_start, std::vector<long> local_goal)
     long previous_map_size = my_map.size();
 
     // usa o f do nó para ordenar
-    std::priority_queue < PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue > OPEN;
+    std::priority_queue < PriorityQueueContainer<std::vector<long>>, std::vector< PriorityQueueContainer<std::vector<long>> >, SortPriorityQueue<std::vector<long>> > OPEN;
 
     // inicializo todos os atributos necessários para começar
     my_map[local_start].in_priority_queue = true;
@@ -105,8 +105,6 @@ int mainSP(std::vector<long> local_start, std::vector<long> local_goal)
                     path_executed_bool[3] = true;
                 }
 
-                previous_map_size = my_map.size(); // atualiza o valor de tamanho para posterior avaliação
-
             }
         }
 
@@ -117,6 +115,8 @@ int mainSP(std::vector<long> local_start, std::vector<long> local_goal)
             //PrintMap(my_map, barrier);
             return 0;
         }
+
+        previous_map_size = my_map.size(); // atualiza o valor de tamanho
     }
 
     std::cout << " BEST PATH\n\n\n";

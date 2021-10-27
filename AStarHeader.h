@@ -88,6 +88,37 @@
     extern std::vector<long> sliding_puzzle_goal;
     extern std::vector<long> sliding_puzzle_start;
 
+    // PriorityQueueTemplates
+    template<typename T>
+    struct PriorityQueueContainer
+    {
+        long f; // f(n) = cost_g(n) + heuristic_h(n)
+        T reference_key; //chave única que faz referência a um item: nó, Sliding Puzzle...
+
+        PriorityQueueContainer(long f, T reference_key)
+        {
+            this->f = f;
+            this->reference_key = reference_key;
+        }
+    };
+
+    template<typename T>
+    class SortPriorityQueue
+    {
+        public:
+            bool operator() (PriorityQueueContainer<T> n1, PriorityQueueContainer<T> n2)
+            {
+                if (n1.f > n2.f)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+    };
+
     // FnFunctions.cpp
     long cost_g (long current_node_index, long neighbor_node_index);
     long heuristic_h (long current_node_index, long goal_node_index);
@@ -150,7 +181,7 @@
     std::vector< std::vector<long> > CreateSlidingPuzzleFromNeighbors(std::vector<long> current_sliding_puzzle, std::vector<long> neighbors_indexes, long empty_position_index);
     std::vector<long> CreateVectorFromNeighbor(std::vector<long> current_sliding_puzzle, long neighbor_index, long empty_position_index);
 
-    // PriorityQueue.cpp
+    /*// PriorityQueue.cpp
     struct PriorityQueueContainer
     {
         long f; // f(n) = cost_g(n) + heuristic_h(n)
@@ -164,23 +195,11 @@
     {
         public:
             bool operator() (PriorityQueueContainer n1, PriorityQueueContainer n2);
-    };
+    };*/
 
-    void ShowPriorityQueue (std::priority_queue < PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue > priority_queue);
+    void ShowPriorityQueue (std::priority_queue < PriorityQueueContainer<long>, std::vector<PriorityQueueContainer<long>>, SortPriorityQueue<long> > priority_queue);
 
-    std::priority_queue< PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue > CopyPriorityQueueExcept (std::priority_queue <PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue>priority_queue, long except_key);
-
-    // MainFunctions.cpp
-    void ReversePath(std::unordered_map<long, Node> &map_reverse);
-
-    void SnapshotOptions(long current_key,
-                        std::priority_queue < PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue > current_priority_queue,
-                        std::string neighbors,
-                        std::unordered_map<long, Node> &current_map);
-
-    long MainLoop(std::unordered_map<long, Node> &my_map, std::priority_queue<PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue> &OPEN, long previous_map_size);
-
-    long StartMain();
+    std::priority_queue< PriorityQueueContainer<long>, std::vector<PriorityQueueContainer<long>>, SortPriorityQueue<long> > CopyPriorityQueueExcept (std::priority_queue <PriorityQueueContainer<long>, std::vector<PriorityQueueContainer<long>>, SortPriorityQueue<long>>priority_queue, long except_key);
 
     //CustomHashes.cpp
     struct HashVector
@@ -188,9 +207,7 @@
         size_t operator ()(const std::vector<long>& v) const;
     };
 
+    // Main functions
     int mainSP(std::vector<long> local_start, std::vector<long> local_goal);
-
-    // PriorityQueueTemplates
-    
-
+    int MainNodeMap(long local_start, long local_goal);
 #endif

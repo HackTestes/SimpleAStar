@@ -1,4 +1,5 @@
 // Esse arquivo contém funções de configuração
+#include <array>
 #include <unordered_set>
 #include <vector>
 #include <map>
@@ -354,32 +355,10 @@ namespace ArgumentTest
 
     long run(int current_arg, char* argv[])
     {
-        SlidingPuzzle test_SP_start = SlidingPuzzle(sliding_puzzle_start);
-        SlidingPuzzle test_SP_goal = SlidingPuzzle(sliding_puzzle_goal);
+        long tamanho = grid_size_x * grid_size_y;
+        std::array<long, 5> minha_array_teste;
 
-        std::unordered_map<std::vector<long>, SlidingPuzzle, HashVector> test_map;
-
-        test_map[ test_SP_start.sliding_puzzle ] = test_SP_start;
-        test_map[ test_SP_goal.sliding_puzzle ] = test_SP_goal;
-
-        if (test_map.find(test_SP_start.sliding_puzzle) != test_map.end())
-        {
-            std::cout << "achei\n";
-        }
-
-        test_SP_start.PrintCurrentSlidingPuzzle(10, 10);
-        std::cout << "\n\n";
-
-        //long value_h = SlidingPuzzleHeuristic_h( my_list_start, {4, 0, 1, 3, 2} );
-        //std::cout << value_h << "\n";
-
-        std::vector< std::vector<long> > neighbors_test = CreateSlidingPuzzleFromNeighbors(test_SP_start.sliding_puzzle, {1, 3}, 0);
-
-        for(long i =0 ; i < neighbors_test.size(); ++i)
-        {
-            SlidingPuzzle( neighbors_test[i] ).PrintCurrentSlidingPuzzle(10, 10);
-            std::cout << "\n\n";
-        }
+        std::cout << minha_array_teste.size();
 
         std::exit(0);
         return 0;

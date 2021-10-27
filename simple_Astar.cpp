@@ -66,9 +66,9 @@ int main (int argc, char* argv[])
 
     ArgsOptions(argc, argv);
 
-    //return StartMain();
+    return MainNodeMap(START, GOAL);
 
-    return mainSP(sliding_puzzle_start, sliding_puzzle_goal);
+    //return mainSP(sliding_puzzle_start, sliding_puzzle_goal);
 
 /*
     std::unordered_map <long, Node> my_map;
