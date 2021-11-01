@@ -355,10 +355,10 @@ namespace ArgumentTest
 
     long run(int current_arg, char* argv[])
     {
-        long tamanho = grid_size_x * grid_size_y;
-        std::array<long, 5> minha_array_teste;
-
-        std::cout << minha_array_teste.size();
+        for(long i = 0; i < sliding_puzzle_start.size(); ++i)
+        {
+            std::cout << sliding_puzzle_start[i] << "\n";
+        }
 
         std::exit(0);
         return 0;

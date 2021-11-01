@@ -35,7 +35,7 @@ long heuristic_h (long current_node_index, long goal_node_index)
 
 // std::vector <position_index> = [item]; : otimiza o acesso para a posição
 // std::vector <item> = [position_index]; : otimiza o acesso para o item ESCOLHIDO
-
+/*
 long SlidingPuzzleHeuristic_h (std::vector<long> current_sliding_puzzle_obj_position, std::vector<long> goal_sliding_puzzle_obj_position)
 {
     long heuristic_total = 0;
@@ -48,4 +48,4 @@ long SlidingPuzzleHeuristic_h (std::vector<long> current_sliding_puzzle_obj_posi
     }
 
     return heuristic_total;
-}
+}*/
