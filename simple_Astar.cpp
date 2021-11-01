@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include"AStarHeader.h"
+#include "MainSlidingPuzzle.h"
 
 // o mapa é uma tabela
 // movimentos: cima, baixo, esquerda, direta (4 movimentos possíveis)

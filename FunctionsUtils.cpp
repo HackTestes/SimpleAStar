@@ -10,55 +10,6 @@
 
 #include"AStarHeader.h"
 
-// !todo! Retirar trecho
-/*
-
-// essa classe é a que organiza a lista de prioridades
-// baseado no valor f de cada nó
-bool SortPriorityQueue::operator() (Node n1, Node n2)
-{
-    if (n1.f > n2.f)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-// usa uma cópia da minha lista de prioridade
-// imprime a lista de prioridades a partir de uma cópia
-void ShowPriorityQueue (std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > priority_queue)
-{
-    while (!priority_queue.empty())
-    {
-        std::cout << "priority_queue_copy : " 
-        << " x " << Node::GetX(priority_queue.top().node_index) 
-        << "  y " << Node::GetY(priority_queue.top().node_index) 
-        << "  |  f " << priority_queue.top().f 
-        << "  |  node_index " << priority_queue.top().node_index 
-        << "\n";
-        priority_queue.pop();
-    }
-}
-
-std::priority_queue< Node, std::vector<Node>, SortPriorityQueue > CopyPriorityQueueExcept (std::priority_queue <Node, std::vector<Node>, SortPriorityQueue>priority_queue, long except_index)
-{
-    std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > new_priority_queue;
-    while (!priority_queue.empty())
-    {
-        if(priority_queue.top().node_index != except_index)
-        {
-            new_priority_queue.push(priority_queue.top());
-        }
-        priority_queue.pop();
-    }
-    return new_priority_queue;
-}
-
-*/
-
 // feito especialmente para a expansão dos vizinhos
 // guarda apenas os valores necessários
 class SmallNode
