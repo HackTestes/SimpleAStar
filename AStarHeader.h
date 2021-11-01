@@ -20,7 +20,6 @@
         public:
             long node_index;
 
-            long f; // f(n) = cost_g(n) + heuristic_h(n)
             long g;
 
             long came_from;
@@ -119,13 +118,16 @@
             }
     };
 
+
     // FnFunctions.cpp
+    /*
     long cost_g (long current_node_index, long neighbor_node_index);
     long heuristic_h (long current_node_index, long goal_node_index);
 
     //template<typename Type>
     //long SlidingPuzzleHeuristic_h (Type current_sliding_puzzle_obj_position, Type goal_sliding_puzzle_obj_position);
 
+    
     template<typename Type>
     long SlidingPuzzleHeuristic_h (Type current_sliding_puzzle_obj_position, Type goal_sliding_puzzle_obj_position)
     {
@@ -140,6 +142,9 @@
 
         return heuristic_total;
     }
+    */
+
+    #include "FnFunctions.h"
 
 
     // FunctionsUtils.cpp

@@ -1,8 +1,9 @@
 #ifndef MainSlidingPuzzle_H
 #define MainSlidingPuzzle_H
 
-#include "CustomHashes.h"
-#include "SlidingPuzzle.h"
+    #include "CustomHashes.h"
+    #include "SlidingPuzzle.h"
+    #include "Neighbors.h"
 
 /*
 #include <queue>
@@ -67,14 +68,15 @@
             long empty_pos_x = Node::GetX( my_map[current_sliding_puzzle].empty_index );
             long empty_pos_y = Node::GetY( my_map[current_sliding_puzzle].empty_index );
 
-            std::vector<long> empty_cell_neighbors_list = ExpandNeighbors(empty_pos_x, empty_pos_y);
+            std::vector<long> empty_cell_neighbors_list = ExpandNeighbors<>(empty_pos_x, empty_pos_y);
 
             //std::vector< std::vector<long> > sliding_puzzle_neighbors_list = CreateSlidingPuzzleFromNeighbors(current_sliding_puzzle, empty_cell_neighbors_list, my_map[current_sliding_puzzle].empty_index);
 
             std::string visited_neighbors = "";
+            long neighbor_f = 0;
             for (long neighbor_index : empty_cell_neighbors_list)
             {
-                long neighbor_f = 0;
+                neighbor_f = 0;
                 bool path_executed_bool[4];
                 path_executed_bool[0] = true;
                 path_executed_bool[1] = false;

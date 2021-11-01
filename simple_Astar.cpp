@@ -8,8 +8,9 @@
 #include <fstream>
 #include <stdlib.h>
 
-#include"AStarHeader.h"
+#include "AStarHeader.h"
 #include "MainSlidingPuzzle.h"
+#include "MainNodeMap.h"
 
 // o mapa é uma tabela
 // movimentos: cima, baixo, esquerda, direta (4 movimentos possíveis)
@@ -69,7 +70,7 @@ int main (int argc, char* argv[])
 
     if (node_map_enabled)
     {
-        return MainNodeMap(START, GOAL);
+        return MainNodeMap<long>(START, GOAL);
     }
 
     if(sliding_puzzle_enabled)

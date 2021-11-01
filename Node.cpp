@@ -15,7 +15,6 @@ Node::Node(long node_index)
 {
     this->node_index = node_index;
 
-    this->f = 0;
     this->g = 0;
 
     this->came_from = 0;
@@ -31,7 +30,6 @@ Node::Node()
 {
     this->node_index = 0;
 
-    this->f = 0;
     this->g = 0;
 
     this->came_from = 0;

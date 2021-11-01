@@ -55,6 +55,8 @@
                     return position;
                 }
             }
+
+            return -1;
         }
 
         std::vector<long> CreateObjPositionList()
