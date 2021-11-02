@@ -9,11 +9,11 @@
 #include"json/single_include/nlohmann/json.hpp"
 #include"AStarHeader.h"
 
-void SetStart(long start_x, long start_y)
+void SetStart(long long start_x, long long start_y)
 {
-    long start_index = Node<long>::GetIndex(start_x, start_y);
+    long long start_index = Node<long long>::GetIndex(start_x, start_y);
 
-    if ( Node<long>::VerifyCoordinate(start_x, start_y) && Node<long>::VerifyIndex(start_index) )
+    if ( Node<long long>::VerifyCoordinate(start_x, start_y) && Node<long long>::VerifyIndex(start_index) )
     {
         START = start_index;
     }
@@ -24,11 +24,11 @@ void SetStart(long start_x, long start_y)
     }
 }
 
-void SetGoal(long goal_x, long goal_y)
+void SetGoal(long long goal_x, long long goal_y)
 {
-    long goal_index = Node<long>::GetIndex(goal_x, goal_y);
+    long long goal_index = Node<long long>::GetIndex(goal_x, goal_y);
 
-    if ( Node<long>::VerifyCoordinate(goal_x, goal_y) && Node<long>::VerifyIndex(goal_index) )
+    if ( Node<long long>::VerifyCoordinate(goal_x, goal_y) && Node<long long>::VerifyIndex(goal_index) )
     {
         GOAL = goal_index;
     }
@@ -39,7 +39,7 @@ void SetGoal(long goal_x, long goal_y)
     }
 }
 
-void SetGirdSizeX(long size_x)
+void SetGirdSizeX(long long size_x)
 {
     if (size_x < 0)
     {
@@ -49,7 +49,7 @@ void SetGirdSizeX(long size_x)
     grid_size_x = std::abs(size_x);
 }
 
-void SetGirdSizeY(long size_y)
+void SetGirdSizeY(long long size_y)
 {
     if (size_y < 0)
     {
@@ -73,14 +73,14 @@ void ConfigNodeMap(nlohmann::json parsed_json_configuration)
 
     for (long i = 0; i < parsed_json_configuration["Barrier coordinates"].size(); ++i)
     {
-        long barrier_x = parsed_json_configuration["Barrier coordinates"][i][0];
-        long barrier_y = parsed_json_configuration["Barrier coordinates"][i][1];
-        long barrier_index = Node<long>::GetIndex(barrier_x, barrier_y);
+        long long barrier_x = parsed_json_configuration["Barrier coordinates"][i][0];
+        long long barrier_y = parsed_json_configuration["Barrier coordinates"][i][1];
+        long long barrier_index = Node<long long>::GetIndex(barrier_x, barrier_y);
 
         // Vefifica se é uma barreira válida
-        if ( Node<long>::VerifyCoordinate(barrier_x, barrier_y) && Node<long>::VerifyIndex(barrier_index) )
+        if ( Node<long long>::VerifyCoordinate(barrier_x, barrier_y) && Node<long long>::VerifyIndex(barrier_index) )
         {
-            barrier.insert(Node<long>::GetIndex(barrier_x, barrier_y));
+            barrier.insert(Node<long long>::GetIndex(barrier_x, barrier_y));
         }
         else if (warning_enabled)
         {
@@ -111,7 +111,7 @@ void ConfigNodeMap(nlohmann::json parsed_json_configuration)
     */
 }
 
-void SetSlidingPuzzleStartGoal(std::vector<long> json_sliding_puzzle_start, std::vector<long> json_sliding_puzzle_goal)
+void SetSlidingPuzzleStartGoal(std::vector<long long> json_sliding_puzzle_start, std::vector<long long> json_sliding_puzzle_goal)
 {
     // Checar se os tamanhos são compatíveis
     if (json_sliding_puzzle_goal.size() != json_sliding_puzzle_start.size())

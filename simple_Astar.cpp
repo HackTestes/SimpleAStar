@@ -23,13 +23,13 @@ bool node_map_enabled = true;
 bool sliding_puzzle_enabled = false;
 
 // grid_size
-long grid_size_x = 0;
-long grid_size_y = 0;
+long long grid_size_x = 0;
+long long grid_size_y = 0;
 
-long START = 0;
-long GOAL = 0;
+long long START = 0;
+long long GOAL = 0;
 
-std::unordered_set<long> barrier = {};
+std::unordered_set<long long> barrier = {};
 
 bool debug = false;
 bool best_path_index = false;
@@ -38,30 +38,30 @@ bool show_priority_queue = false;
 bool show_visited_neighbors = false;
 
 bool snapshot = false;
-long snapshot_start_node_index = -1;
-long snapshot_end_node_index = -1;
+long long snapshot_start_node_index = -1;
+long long snapshot_end_node_index = -1;
 
-long snapshot_start_node_x = -1;
-long snapshot_end_node_x = -1;
-long snapshot_start_node_y = -1;
-long snapshot_end_node_y = -1;
+long long snapshot_start_node_x = -1;
+long long snapshot_end_node_x = -1;
+long long snapshot_start_node_y = -1;
+long long snapshot_end_node_y = -1;
 
 bool interactive = false;
 bool show_map = false;
 bool show_barrier = false;
 bool warning_enabled = false;
-long heuristic_weight = 1;
-long cost_weight = 1;
+long long heuristic_weight = 1;
+long long cost_weight = 1;
 
 // map padding
-long padding_cell_size = 7;
+long long padding_cell_size = 7;
 
 std::string json_config_file_path = "";
 bool json_config_enabled = false;
 
 // SlidingPuzzle
-std::vector<long> sliding_puzzle_goal = {};
-std::vector<long> sliding_puzzle_start = {};
+std::vector<long long> sliding_puzzle_goal = {};
+std::vector<long long> sliding_puzzle_start = {};
 
 // gera os espaços necessário para fazer um padding 
 std::string StringPadding(long string_length)

@@ -90,7 +90,7 @@
     // imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
     // será construída uma string de baixo para cima em cada linha (cima para baixo, esquerda para direita)
     template<typename IntType>
-    void PrintMap (std::unordered_map <IntType, Node<IntType>> map, std::unordered_set<long> barrier_map)
+    void PrintMap (std::unordered_map <IntType, Node<IntType>> map, std::unordered_set<long long> barrier_map)
     {
         std::string map_string;
         std::string line;

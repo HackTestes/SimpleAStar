@@ -157,7 +157,7 @@
 
                     if (show_barrier)
                     {
-                        ShowBarrier<long>(barrier);
+                        ShowBarrier<long long>(barrier);
                         std::cout << "\n\n";
                     }
 
@@ -215,7 +215,7 @@
             }
         }
 
-        PrintMap<IndexType>(my_map, barrier);
+        //PrintMap<IndexType>(my_map, barrier);
 
         return 0;
     }

@@ -45,13 +45,13 @@
     extern bool sliding_puzzle_enabled;
 
     // grid_size
-    extern long grid_size_x;
-    extern long grid_size_y;
+    extern long long grid_size_x;
+    extern long long grid_size_y;
 
-    extern long START;
-    extern long GOAL;
+    extern long long START;
+    extern long long GOAL;
 
-    extern std::unordered_set<long> barrier;
+    extern std::unordered_set<long long> barrier;
 
     // boleanos e variáveis para argumentos
     extern bool debug;
@@ -61,31 +61,31 @@
     extern bool show_visited_neighbors;
 
     extern bool snapshot;
-    extern long snapshot_start_node_index;
-    extern long snapshot_end_node_index;
+    extern long long snapshot_start_node_index;
+    extern long long snapshot_end_node_index;
 
     //extern bool snapshot_XY;
-    extern long snapshot_start_node_x;
-    extern long snapshot_end_node_x;
-    extern long snapshot_start_node_y;
-    extern long snapshot_end_node_y;
+    extern long long snapshot_start_node_x;
+    extern long long snapshot_end_node_x;
+    extern long long snapshot_start_node_y;
+    extern long long snapshot_end_node_y;
 
     extern bool interactive;
     extern bool show_map;
     extern bool show_barrier;
     extern bool warning_enabled;
-    extern long heuristic_weight;
-    extern long cost_weight;
+    extern long long heuristic_weight;
+    extern long long cost_weight;
 
     // map padding
-    extern long padding_cell_size;
+    extern long long padding_cell_size;
 
     extern std::string json_config_file_path;
     extern bool json_config_enabled;
 
     // SlidingPuzzle
-    extern std::vector<long> sliding_puzzle_goal;
-    extern std::vector<long> sliding_puzzle_start;
+    extern std::vector<long long> sliding_puzzle_goal;
+    extern std::vector<long long> sliding_puzzle_start;
 
     std::string StringPadding(long string_length);
 
@@ -152,7 +152,7 @@
 
     //#include "FnFunctions.h"
 
-
+/*
     // FunctionsUtils.cpp
     std::vector<long> ExpandNeighbors (long current_node_x, long current_node_y);
 
@@ -161,6 +161,7 @@
     void PrintMap (std::unordered_map <long, Node<long>> map, std::unordered_set<long> barrier_map);
 
     void ShowBarrier(std::unordered_set<long> my_barrier);
+    */
 
 /*
     std::pair<long, long> CoordinateParser(std::string string_coordinate, std::string separator);
@@ -181,11 +182,12 @@
     // FunctionsConfig.cpp
     void ArgsOptions(int argc, char* argv[]);
     void JsonConfig();
-    void SetStart(long start_x, long start_y);
-    void SetGoal(long goal_x, long goal_y);
-    void SetGirdSizeX(long size_x);
-    void SetGirdSizeY(long size_y);
+    void SetStart(long long start_x, long long start_y);
+    void SetGoal(long long goal_x, long long goal_y);
+    void SetGirdSizeX(long long size_x);
+    void SetGirdSizeY(long long size_y);
 
+/*
     // PriorityQueue.cpp
     void ShowPriorityQueue
         (std::priority_queue < PriorityQueueContainer<long, long>, std::vector<PriorityQueueContainer<long, long>>, SortPriorityQueue<long, long> > priority_queue);
@@ -193,7 +195,7 @@
     std::priority_queue< PriorityQueueContainer<long, long>, std::vector<PriorityQueueContainer<long, long>>, SortPriorityQueue<long, long> >
         CopyPriorityQueueExcept
             (std::priority_queue <PriorityQueueContainer<long, long>, std::vector<PriorityQueueContainer<long, long>>, SortPriorityQueue<long, long>>priority_queue, long except_key);
-
+*/
     //#include "CustomHashes.h"
 
     // Main functions

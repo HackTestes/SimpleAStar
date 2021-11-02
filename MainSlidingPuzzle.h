@@ -17,11 +17,11 @@
 */
 
     template<typename Type, typename IntType>
-    Type ConvertListItemType(std::vector<long> original_list)
+    Type ConvertListItemType(std::vector<long long> original_list)
     {
         Type new_converted_list;
 
-        for(long i = 0; i < original_list.size(); ++i)
+        for(long long i = 0; i < original_list.size(); ++i)
         {
             new_converted_list[i] = (IntType)original_list[i];
         }
@@ -30,7 +30,7 @@
     }
 
     template<typename Type, typename IntType>
-    int mainSP(std::vector<long> global_start, std::vector<long> global_goal)
+    int mainSP(std::vector<long long> global_start, std::vector<long long> global_goal)
     {
 
         Type local_start;
