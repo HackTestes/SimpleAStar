@@ -10,7 +10,7 @@
 
 #include"AStarHeader.h"
 
-// feito especialmente para a expansão dos vizinhos
+/*// feito especialmente para a expansão dos vizinhos
 // guarda apenas os valores necessários
 class SmallNode
 {
@@ -75,8 +75,9 @@ std::vector<long> ExpandNeighbors (long current_node_x, long current_node_y)
     {
         std::cout << "\n\n";
     }
-}
+}*/
 
+/*
 // gera os espaços necessário para fazer um padding 
 std::string StringPadding(long string_length)
 {
@@ -90,10 +91,12 @@ std::string StringPadding(long string_length)
 
     return padding_text;
 }
+*/
 
+/*
 // imprimo meu mapa de nós usando uma cópia (parecido com um snapshot do momento)
 // será construída uma string de baixo para cima em cada linha (cima para baixo, esquerda para direita)
-void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> barrier_map)
+void PrintMap (std::unordered_map <long, Node<long>> map, std::unordered_set<long> barrier_map)
 {
     std::string map_string;
     std::string line;
@@ -163,7 +166,9 @@ void ShowBarrier(std::unordered_set<long> my_barrier)
 
     std::cout << barrier_indexes;
 }
+*/
 
+/*
 std::pair<long, long> CoordinateParser(std::string string_coordinate, std::string separator)
 {
     long first, second;
@@ -179,7 +184,7 @@ std::pair<long, long> CoordinateParser(std::string string_coordinate, std::strin
 // !done! ParsedNode => ParsedNode
 ParsedNode::ParsedNode(long x, long y)
 {
-    this->index = Node::GetIndex(x, y);
+    this->index = Node<long>::GetIndex(x, y);
     this->x = x;
     this->y = y;
 }
@@ -190,3 +195,4 @@ ParsedNode ParserXY(std::string string_coordinate, std::string separator)
 
     return ParsedNode(coordinate_pair.first, coordinate_pair.second);
 }
+*/

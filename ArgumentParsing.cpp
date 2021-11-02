@@ -8,7 +8,8 @@
 #include <stdlib.h>
 #include <functional>
 
-#include"AStarHeader.h"
+#include "AStarHeader.h"
+#include "ParsedNode.h"
 
 // !todo! Adicionar parâmetro obrigatório?
 // !done! adicionar supporte para opções com uma única letra "-h"
@@ -67,8 +68,8 @@ namespace ArgumentSnapshotXY
     {
         snapshot = true;
 
-        std::pair<long, long> start_coordinates_pair_x = CoordinateParser(argv[current_arg + 1], "-");
-        std::pair<long, long> start_coordinates_pair_y = CoordinateParser(argv[current_arg + 2], "-");
+        std::pair<long, long> start_coordinates_pair_x = CoordinateParser<long>(argv[current_arg + 1], "-");
+        std::pair<long, long> start_coordinates_pair_y = CoordinateParser<long>(argv[current_arg + 2], "-");
 
         // X-X : start-end
         snapshot_start_node_x = start_coordinates_pair_x.first;
@@ -333,9 +334,9 @@ namespace ArgumentDefaultArguments
 
         SetGirdSizeY(std::stoi(argv[current_arg + 1]));
 
-        SetStart(ParserXY(argv[current_arg + 2], "-").x, ParserXY(argv[current_arg + 2], "-").y);
+        SetStart(ParserXY<long>(argv[current_arg + 2], "-").x, ParserXY<long>(argv[current_arg + 2], "-").y);
 
-        SetGoal(ParserXY(argv[current_arg + 3], "-").x, ParserXY(argv[current_arg + 3], "-").y);
+        SetGoal(ParserXY<long>(argv[current_arg + 3], "-").x, ParserXY<long>(argv[current_arg + 3], "-").y);
 
         return 3;
     }

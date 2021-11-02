@@ -63,6 +63,20 @@ bool json_config_enabled = false;
 std::vector<long> sliding_puzzle_goal = {};
 std::vector<long> sliding_puzzle_start = {};
 
+// gera os espaços necessário para fazer um padding 
+std::string StringPadding(long string_length)
+{
+    long padding = padding_cell_size - string_length;
+    std::string padding_text;
+
+    for (long i = 0; i < padding; ++i)
+    {
+        padding_text += " ";
+    }
+
+    return padding_text;
+}
+
 int main (int argc, char* argv[])
 {
 
@@ -70,7 +84,7 @@ int main (int argc, char* argv[])
 
     if (node_map_enabled)
     {
-        return MainNodeMap<long>(START, GOAL);
+        return MainNodeMap<long long>(START, GOAL);
     }
 
     if(sliding_puzzle_enabled)

@@ -14,7 +14,7 @@
     #include <boost/range/iterator_range_core.hpp>
     #include <boost/functional/hash.hpp>
 
-    // Node.cpp
+    /*// Node.cpp
     class Node
     {
         public:
@@ -38,7 +38,7 @@
 
             static bool VerifyCoordinate(long x, long y);
             static bool VerifyIndex(long node_index);
-    };
+    };*/
 
     // problem type
     extern bool node_map_enabled;
@@ -87,11 +87,15 @@
     extern std::vector<long> sliding_puzzle_goal;
     extern std::vector<long> sliding_puzzle_start;
 
-    // PriorityQueueTemplates
-    template<typename T>
+    std::string StringPadding(long string_length);
+
+    #include "Node.h"
+
+    /*// PriorityQueueTemplates
+    template<typename T, typename IntType>
     struct PriorityQueueContainer
     {
-        long f; // f(n) = cost_g(n) + heuristic_h(n)
+        IntType f; // f(n) = cost_g(n) + heuristic_h(n)
         T reference_key; //chave única que faz referência a um item: nó, Sliding Puzzle...
 
         PriorityQueueContainer(long f, T reference_key)
@@ -101,11 +105,11 @@
         }
     };
 
-    template<typename T>
+    template<typename T, typename IntType>
     class SortPriorityQueue
     {
         public:
-            bool operator() (PriorityQueueContainer<T> n1, PriorityQueueContainer<T> n2)
+            bool operator() (PriorityQueueContainer<T, IntType> n1, PriorityQueueContainer<T, IntType> n2)
             {
                 if (n1.f > n2.f)
                 {
@@ -116,7 +120,9 @@
                     return false;
                 }
             }
-    };
+    };*/
+
+    #include "PriorityQueue.h"
 
 
     // FnFunctions.cpp
@@ -144,20 +150,19 @@
     }
     */
 
-    #include "FnFunctions.h"
+    //#include "FnFunctions.h"
 
 
     // FunctionsUtils.cpp
     std::vector<long> ExpandNeighbors (long current_node_x, long current_node_y);
 
-    std::string StringPadding(long string_length);
+    //std::string StringPadding(long string_length);
 
-    void PrintMap (std::unordered_map <long, Node> map, std::unordered_set<long> barrier_map);
-
-    long ReadBarrier(std::unordered_set<long> *my_barrier);
+    void PrintMap (std::unordered_map <long, Node<long>> map, std::unordered_set<long> barrier_map);
 
     void ShowBarrier(std::unordered_set<long> my_barrier);
 
+/*
     std::pair<long, long> CoordinateParser(std::string string_coordinate, std::string separator);
 
     class ParsedNode
@@ -171,6 +176,7 @@
     };
 
     ParsedNode ParserXY(std::string string_coordinate, std::string separator);
+*/
 
     // FunctionsConfig.cpp
     void ArgsOptions(int argc, char* argv[]);
@@ -181,15 +187,18 @@
     void SetGirdSizeY(long size_y);
 
     // PriorityQueue.cpp
-    void ShowPriorityQueue (std::priority_queue < PriorityQueueContainer<long>, std::vector<PriorityQueueContainer<long>>, SortPriorityQueue<long> > priority_queue);
+    void ShowPriorityQueue
+        (std::priority_queue < PriorityQueueContainer<long, long>, std::vector<PriorityQueueContainer<long, long>>, SortPriorityQueue<long, long> > priority_queue);
 
-    std::priority_queue< PriorityQueueContainer<long>, std::vector<PriorityQueueContainer<long>>, SortPriorityQueue<long> > CopyPriorityQueueExcept (std::priority_queue <PriorityQueueContainer<long>, std::vector<PriorityQueueContainer<long>>, SortPriorityQueue<long>>priority_queue, long except_key);
+    std::priority_queue< PriorityQueueContainer<long, long>, std::vector<PriorityQueueContainer<long, long>>, SortPriorityQueue<long, long> >
+        CopyPriorityQueueExcept
+            (std::priority_queue <PriorityQueueContainer<long, long>, std::vector<PriorityQueueContainer<long, long>>, SortPriorityQueue<long, long>>priority_queue, long except_key);
 
     //#include "CustomHashes.h"
 
     // Main functions
     //int mainSP(std::vector<long> local_start, std::vector<long> local_goal);
-    int MainNodeMap(long local_start, long local_goal);
+    //int MainNodeMap(long local_start, long local_goal);
 
     //#include "SlidingPuzzle.h"
 

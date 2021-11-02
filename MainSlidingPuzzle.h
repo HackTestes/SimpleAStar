@@ -4,6 +4,7 @@
     #include "CustomHashes.h"
     #include "SlidingPuzzle.h"
     #include "Neighbors.h"
+    #include "FnFunctions.h"
 
 /*
 #include <queue>
@@ -15,45 +16,45 @@
 #include <stdlib.h>
 */
 
-    template<typename Type, typename ConvertToThisType>
+    template<typename Type, typename IntType>
     Type ConvertListItemType(std::vector<long> original_list)
     {
         Type new_converted_list;
 
         for(long i = 0; i < original_list.size(); ++i)
         {
-            new_converted_list[i] = (ConvertToThisType)original_list[i];
+            new_converted_list[i] = (IntType)original_list[i];
         }
 
         return new_converted_list;
     }
 
-    template<typename Type, typename ConvertToThisType>
+    template<typename Type, typename IntType>
     int mainSP(std::vector<long> global_start, std::vector<long> global_goal)
     {
 
         Type local_start;
         Type local_goal;
 
-        local_start = ConvertListItemType<Type, ConvertToThisType>(global_start);
+        local_start = ConvertListItemType<Type, IntType>(global_start);
 
-        local_goal = ConvertListItemType<Type, ConvertToThisType>(global_goal);
+        local_goal = ConvertListItemType<Type, IntType>(global_goal);
 
-        std::unordered_map <Type, SlidingPuzzle<Type>, HashVector<Type>> my_map;
+        std::unordered_map <Type, SlidingPuzzle<Type, IntType>, HashVector<Type>> my_map;
 
         // Verificação feita em outro lugar, criação do nó aqui
-        my_map[local_start] = SlidingPuzzle<Type>(local_start); 
+        my_map[local_start] = SlidingPuzzle<Type, IntType>(local_start); 
 
-        my_map[local_goal] = SlidingPuzzle<Type>(local_goal);
+        my_map[local_goal] = SlidingPuzzle<Type, IntType>(local_goal);
 
-        long previous_map_size = my_map.size();
+        IntType previous_map_size = my_map.size();
 
         // usa o f do nó para ordenar
-        std::priority_queue < PriorityQueueContainer<Type>, std::vector< PriorityQueueContainer<Type> >, SortPriorityQueue<Type> > OPEN;
+        std::priority_queue < PriorityQueueContainer<Type, IntType>, std::vector< PriorityQueueContainer<Type, IntType> >, SortPriorityQueue<Type, IntType> > OPEN;
 
         // inicializo todos os atributos necessários para começar
         my_map[local_start].in_priority_queue = true;
-        OPEN.push( PriorityQueueContainer<Type>(0, local_start) );
+        OPEN.push( PriorityQueueContainer<Type, IntType>(0, local_start) );
 
 
         // inicio o loop principal
@@ -65,16 +66,16 @@
 
             my_map[current_sliding_puzzle].visited = true;
 
-            long empty_pos_x = Node::GetX( my_map[current_sliding_puzzle].empty_index );
-            long empty_pos_y = Node::GetY( my_map[current_sliding_puzzle].empty_index );
+            IntType empty_pos_x = Node<IntType>::GetX( my_map[current_sliding_puzzle].empty_index );
+            IntType empty_pos_y = Node<IntType>::GetY( my_map[current_sliding_puzzle].empty_index );
 
-            std::vector<long> empty_cell_neighbors_list = ExpandNeighbors<>(empty_pos_x, empty_pos_y);
+            std::vector<IntType> empty_cell_neighbors_list = ExpandNeighbors<IntType>(empty_pos_x, empty_pos_y);
 
             //std::vector< std::vector<long> > sliding_puzzle_neighbors_list = CreateSlidingPuzzleFromNeighbors(current_sliding_puzzle, empty_cell_neighbors_list, my_map[current_sliding_puzzle].empty_index);
 
             std::string visited_neighbors = "";
-            long neighbor_f = 0;
-            for (long neighbor_index : empty_cell_neighbors_list)
+            IntType neighbor_f = 0;
+            for (IntType neighbor_index : empty_cell_neighbors_list)
             {
                 neighbor_f = 0;
                 bool path_executed_bool[4];
@@ -83,7 +84,7 @@
                 path_executed_bool[2] = false;
                 path_executed_bool[3] = false;
 
-                Type neighbor_key = CreateVectorFromNeighbor(current_sliding_puzzle, neighbor_index, my_map[current_sliding_puzzle].empty_index);
+                Type neighbor_key = CreateVectorFromNeighbor<Type, IntType>(current_sliding_puzzle, neighbor_index, my_map[current_sliding_puzzle].empty_index);
 
                 // se não for uma barreira
                 if (true)
@@ -92,10 +93,10 @@
                     // se não existir no meu mapa ainda, crie
                     if (!(my_map.find(neighbor_key) != my_map.end()))
                     {
-                        my_map[neighbor_key] = SlidingPuzzle<Type>(neighbor_key);
+                        my_map[neighbor_key] = SlidingPuzzle<Type, IntType>(neighbor_key);
                     }
 
-                    long cost_so_far = my_map[current_sliding_puzzle].g + cost_g(my_map[current_sliding_puzzle].empty_index, neighbor_index);
+                    uint64_t cost_so_far = my_map[current_sliding_puzzle].g + cost_g(my_map[current_sliding_puzzle].empty_index, neighbor_index);
 
                     // in_priority_queue = true ---> se estiver na PQ (toda adição na PQ)
                     // in_priority_queue = false ---> se não estiver na PQ (toda remoção da PQ)
@@ -103,11 +104,11 @@
                     // A verificação não precisa iterar sobre a PQ (otimização de velocidade talvez?)
                     if (my_map[neighbor_key].in_priority_queue && (cost_so_far < my_map[neighbor_key].g))
                     {
-                        neighbor_f = cost_so_far + SlidingPuzzleHeuristic_h<Type>(neighbor_key, local_goal);
+                        neighbor_f = cost_so_far + SlidingPuzzleHeuristic_h<Type, IntType>(neighbor_key, local_goal);
                         my_map[neighbor_key].g = cost_so_far;
                         my_map[neighbor_key].came_from = current_sliding_puzzle;
                         //OPEN = CopyPriorityQueueExcept(OPEN, neighbor_key); // removo o nó com valor antigo
-                        OPEN.push( PriorityQueueContainer<Type>(neighbor_f, neighbor_key) ); // coloco de volta com o valor atualizado
+                        OPEN.push( PriorityQueueContainer<Type, IntType>(neighbor_f, neighbor_key) ); // coloco de volta com o valor atualizado
 
                         path_executed_bool[0] = false;
                         path_executed_bool[1] = true;
@@ -123,12 +124,12 @@
 
                     if (!my_map[neighbor_key].in_priority_queue && !my_map[neighbor_key].visited)
                     {
-                        neighbor_f = cost_so_far + SlidingPuzzleHeuristic_h<Type>(neighbor_key, local_goal);
+                        neighbor_f = cost_so_far + SlidingPuzzleHeuristic_h<Type, IntType>(neighbor_key, local_goal);
                         my_map[neighbor_key].g = cost_so_far;
                         my_map[neighbor_key].came_from = current_sliding_puzzle;
                         my_map[neighbor_key].in_priority_queue = true;
 
-                        OPEN.push( PriorityQueueContainer<Type>(neighbor_f, neighbor_key) );
+                        OPEN.push( PriorityQueueContainer<Type, IntType>(neighbor_f, neighbor_key) );
 
                         path_executed_bool[0] = false;
                         path_executed_bool[3] = true;

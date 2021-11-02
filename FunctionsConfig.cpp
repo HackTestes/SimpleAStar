@@ -11,9 +11,9 @@
 
 void SetStart(long start_x, long start_y)
 {
-    long start_index = Node::GetIndex(start_x, start_y);
+    long start_index = Node<long>::GetIndex(start_x, start_y);
 
-    if ( Node::VerifyCoordinate(start_x, start_y) && Node::VerifyIndex(start_index) )
+    if ( Node<long>::VerifyCoordinate(start_x, start_y) && Node<long>::VerifyIndex(start_index) )
     {
         START = start_index;
     }
@@ -26,9 +26,9 @@ void SetStart(long start_x, long start_y)
 
 void SetGoal(long goal_x, long goal_y)
 {
-    long goal_index = Node::GetIndex(goal_x, goal_y);
+    long goal_index = Node<long>::GetIndex(goal_x, goal_y);
 
-    if ( Node::VerifyCoordinate(goal_x, goal_y) && Node::VerifyIndex(goal_index) )
+    if ( Node<long>::VerifyCoordinate(goal_x, goal_y) && Node<long>::VerifyIndex(goal_index) )
     {
         GOAL = goal_index;
     }
@@ -75,12 +75,12 @@ void ConfigNodeMap(nlohmann::json parsed_json_configuration)
     {
         long barrier_x = parsed_json_configuration["Barrier coordinates"][i][0];
         long barrier_y = parsed_json_configuration["Barrier coordinates"][i][1];
-        long barrier_index = Node::GetIndex(barrier_x, barrier_y);
+        long barrier_index = Node<long>::GetIndex(barrier_x, barrier_y);
 
         // Vefifica se é uma barreira válida
-        if ( Node::VerifyCoordinate(barrier_x, barrier_y) && Node::VerifyIndex(barrier_index) )
+        if ( Node<long>::VerifyCoordinate(barrier_x, barrier_y) && Node<long>::VerifyIndex(barrier_index) )
         {
-            barrier.insert(Node::GetIndex(barrier_x, barrier_y));
+            barrier.insert(Node<long>::GetIndex(barrier_x, barrier_y));
         }
         else if (warning_enabled)
         {

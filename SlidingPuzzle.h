@@ -4,20 +4,18 @@
     // Esse arquivo trata de implementações específicas para resolver um Sliding Puzzle
     #include <vector>
 
-    template<typename Type>
+    template<typename Type, typename IntType>
     struct SlidingPuzzle
     {
-        long map_key; // !todo! Itens de tamanhos variados
         Type sliding_puzzle;
-        long empty_index; // empty cell index
-        long g;
+        IntType empty_index; // empty cell index
+        IntType g;
         Type came_from;
         bool visited;
         bool in_priority_queue; // otimização de velocidade em busca
 
         SlidingPuzzle(Type sliding_puzzle)
         {
-            this->map_key = 0;
             this->sliding_puzzle = sliding_puzzle;
             this->empty_index = SlidingPuzzle::CalculateEmptyCell(sliding_puzzle);
 
@@ -29,7 +27,6 @@
 
         SlidingPuzzle()
         {
-            this->map_key = 0;
             this->sliding_puzzle = sliding_puzzle;
             this->empty_index = SlidingPuzzle::CalculateEmptyCell(sliding_puzzle);
 
@@ -44,11 +41,11 @@
             return sliding_puzzle == v;
         }
 
-        long CalculateEmptyCell(Type &current_map)
+        IntType CalculateEmptyCell(Type &current_map)
         {
-            for(long position = 0; position < current_map.size(); ++position)
+            for(IntType position = 0; position < current_map.size(); ++position)
             {
-                long cell_value = current_map[position];
+                IntType cell_value = current_map[position];
 
                 if(cell_value == 0)
                 {
@@ -59,32 +56,32 @@
             return -1;
         }
 
-        std::vector<long> CreateObjPositionList()
+        std::vector<IntType> CreateObjPositionList()
         {
-            std::vector<long> obj_position_mapping (sliding_puzzle.size());
+            std::vector<IntType> obj_position_mapping (sliding_puzzle.size());
 
-            for (long position = 0; position < sliding_puzzle.size(); ++position)
+            for (IntType position = 0; position < sliding_puzzle.size(); ++position)
             {
-                long obj = sliding_puzzle[position];
+                IntType obj = sliding_puzzle[position];
                 obj_position_mapping[obj] = position;
             }
 
             return obj_position_mapping;
         }
 
-        std::string PrintCurrentSlidingPuzzle(long cell_length, long cell_height)
+        std::string PrintCurrentSlidingPuzzle(IntType cell_length, IntType cell_height)
         {
             // #WARNING# Perigoso! Variável global sendo modificada
             padding_cell_size = cell_length;
 
-            long empty_cell_coordinate_x = Node::GetX(empty_index);
-            long empty_cell_coordinate_y = Node::GetY(empty_index);
+            IntType empty_cell_coordinate_x = Node<IntType>::GetX(empty_index);
+            IntType empty_cell_coordinate_y = Node<IntType>::GetY(empty_index);
 
             std::string empty_symbol = " ";
 
             std::string sliding_puzzle_map;
 
-            for(long y = 0; y < grid_size_y; ++y)
+            for(IntType y = 0; y < grid_size_y; ++y)
             {
                 std::string grid_line = "";
 
@@ -95,12 +92,12 @@
 
 
                 // Linha superior ".________."
-                for(long x = 0; x < grid_size_x; ++x)
+                for(IntType x = 0; x < grid_size_x; ++x)
                 {
                     if ( !(x == empty_cell_coordinate_x && y == empty_cell_coordinate_y) )
                     {
                         cell_top_line += cell_top_edge_symbol;
-                        for(long j = 1; j <= cell_length; ++j)
+                        for(IntType j = 1; j <= cell_length; ++j)
                         {
                             cell_top_line += line_symbol;
                         }
@@ -110,7 +107,7 @@
                     else
                     {
                         cell_top_line += empty_symbol;
-                        for(long j = 1; j <= cell_length; ++j)
+                        for(IntType j = 1; j <= cell_length; ++j)
                         {
                             cell_top_line += empty_symbol;
                         }
@@ -122,14 +119,14 @@
 
 
                 // Meio "|    |"
-                long middle = (cell_height/2) + 1;
+                IntType middle = (cell_height/2) + 1;
                 std::string left_right_symbol = "|";
                 std::string cell_body_line = "";
 
                 // (cell_height - 2) : subentendido o topo e o fim
-                for (long j = 2; j <= (cell_height - 1); ++j)
+                for (IntType j = 2; j <= (cell_height - 1); ++j)
                 {
-                    for(long x = 0; x < grid_size_x; ++x)
+                    for(IntType x = 0; x < grid_size_x; ++x)
                     {
                         if ( !(x == empty_cell_coordinate_x && y == empty_cell_coordinate_y) ) {cell_body_line += left_right_symbol;}
                         else {cell_body_line += empty_symbol;}
@@ -145,7 +142,7 @@
                             }
                             else
                             {
-                                long item_index = Node::GetIndex(x, y);
+                                IntType item_index = Node<IntType>::GetIndex(x, y);
                                 item = std::to_string( this->sliding_puzzle[item_index] );
                             }
                             std::string center = std::string((cell_length - item.length()) / 2, ' ') + item;
@@ -170,12 +167,12 @@
                 // Linha inferior "|_____________|"
                 std::string bottom_line = "";
 
-                for(long x = 0; x < grid_size_x; ++x)
+                for(IntType x = 0; x < grid_size_x; ++x)
                 {
                     if ( !(x == empty_cell_coordinate_x && y == empty_cell_coordinate_y) )
                     {
                         bottom_line += left_right_symbol;
-                        for(long j = 1; j <= cell_length; ++j)
+                        for(IntType j = 1; j <= cell_length; ++j)
                         {
                             bottom_line += line_symbol;
                         }
@@ -185,7 +182,7 @@
                     else
                     {
                         bottom_line += empty_symbol;
-                        for(long j = 1; j <= cell_length; ++j)
+                        for(IntType j = 1; j <= cell_length; ++j)
                         {
                             bottom_line += empty_symbol;
                         }
@@ -205,18 +202,18 @@
 
     };
 
-    template<typename Type>
-    Type CreateSlidingPuzzleFromNeighbors(Type current_sliding_puzzle, std::vector<long> neighbors_indexes, long empty_position_index)
+    /*template<typename Type, typename IntType>
+    Type CreateSlidingPuzzleFromNeighbors(Type current_sliding_puzzle, std::vector<IntType> neighbors_indexes, IntType empty_position_index)
     {
-        std::vector< std::vector<long> > neighbors_keys ( neighbors_indexes.size() );
+        std::vector< std::vector<IntType> > neighbors_keys ( neighbors_indexes.size() );
 
-        for(long i = 0; i < neighbors_indexes.size(); ++i)
+        for(IntType i = 0; i < neighbors_indexes.size(); ++i)
         {
             // copy the original vector
             neighbors_keys[i] = current_sliding_puzzle;
 
-            long current_neighbor_index = neighbors_indexes[i];
-            long neighbor_value = current_sliding_puzzle[current_neighbor_index];
+            IntType current_neighbor_index = neighbors_indexes[i];
+            IntType neighbor_value = current_sliding_puzzle[current_neighbor_index];
 
             //Swap places with the neighbor
             neighbors_keys[i][empty_position_index] = neighbor_value;
@@ -224,14 +221,14 @@
         }
 
         return neighbors_keys;
-    }
+    }*/
 
-    template<typename Type>
-    Type CreateVectorFromNeighbor(Type current_sliding_puzzle, long neighbor_index, long empty_position_index)
+    template<typename Type, typename IntType>
+    Type CreateVectorFromNeighbor(Type current_sliding_puzzle, IntType neighbor_index, IntType empty_position_index)
     {
         // copy the original vector
         Type neighbor_sliding_puzzle = current_sliding_puzzle;
-        long neighbor_value = current_sliding_puzzle[neighbor_index];
+        IntType neighbor_value = current_sliding_puzzle[neighbor_index];
 
         //Swap places with the neighbor
         neighbor_sliding_puzzle[empty_position_index] = neighbor_value;

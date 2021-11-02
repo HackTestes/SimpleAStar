@@ -16,23 +16,23 @@
     template<typename IndexType>
     int MainNodeMap(IndexType local_start, IndexType local_goal)
     {
-        std::unordered_map<IndexType, Node> my_map;
+        std::unordered_map<IndexType, Node<IndexType>> my_map;
 
         // Verificação feita em outro lugar, criação do nó aqui
-        my_map[local_start] = Node(local_start); 
+        my_map[local_start] = Node<IndexType>(local_start); 
         my_map[local_start].appearance = "S";
 
-        my_map[local_goal] = Node(local_goal);
+        my_map[local_goal] = Node<IndexType>(local_goal);
         my_map[local_goal].appearance = "G";
 
-        long previous_map_size = my_map.size();
+        IndexType previous_map_size = my_map.size();
 
         // usa o f do nó para ordenar
-        std::priority_queue < PriorityQueueContainer<IndexType>, std::vector<PriorityQueueContainer<IndexType>>, SortPriorityQueue<IndexType> > OPEN;
+        std::priority_queue < PriorityQueueContainer<IndexType, IndexType>, std::vector<PriorityQueueContainer<IndexType, IndexType>>, SortPriorityQueue<IndexType, IndexType> > OPEN;
 
         // inicializo todos os atributos necessários para começar
         my_map[local_start].in_priority_queue = true;
-        OPEN.push( PriorityQueueContainer<IndexType>(0, local_start) );
+        OPEN.push( PriorityQueueContainer<IndexType, IndexType>(0, local_start) );
 
 
         // inicio o loop principal
@@ -45,7 +45,7 @@
             my_map[current_node_index].visited = true;
 
             std::vector <IndexType> my_neighbors_list;
-            my_neighbors_list = ExpandNeighbors(Node::GetX(current_node_index), Node::GetY(current_node_index));
+            my_neighbors_list = ExpandNeighbors<IndexType>(Node<IndexType>::GetX(current_node_index), Node<IndexType>::GetY(current_node_index));
 
             std::string visited_neighbors = "";
             IndexType neighbor_f = 0;
@@ -65,7 +65,7 @@
                     // se não existir no meu mapa ainda, crie
                     if (!(my_map.find(neighbor_index) != my_map.end()))
                     {
-                        my_map[neighbor_index] = Node(neighbor_index);
+                        my_map[neighbor_index] = Node<IndexType>(neighbor_index);
                     }
 
                     IndexType cost_so_far = my_map[current_node_index].g + cost_g<IndexType>(current_node_index, neighbor_index);
@@ -79,8 +79,8 @@
                         neighbor_f = cost_so_far + heuristic_h<IndexType>(neighbor_index, local_goal);
                         my_map[neighbor_index].g = cost_so_far;
                         my_map[neighbor_index].came_from = current_node_index;
-                        OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
-                        OPEN.push( PriorityQueueContainer<long>(neighbor_f, neighbor_index) ); // coloco de volta com o valor atualizado
+                        OPEN = CopyPriorityQueueExcept<IndexType>(OPEN, neighbor_index); // removo o nó com valor antigo
+                        OPEN.push( PriorityQueueContainer<IndexType, IndexType>(neighbor_f, neighbor_index) ); // coloco de volta com o valor atualizado
 
                         path_executed_bool[0] = false;
                         path_executed_bool[1] = true;
@@ -101,7 +101,7 @@
                         my_map[neighbor_index].came_from = current_node_index;
                         my_map[neighbor_index].in_priority_queue = true;
 
-                        OPEN.push( PriorityQueueContainer<IndexType>(neighbor_f, neighbor_index) );
+                        OPEN.push( PriorityQueueContainer<IndexType, IndexType>(neighbor_f, neighbor_index) );
 
                         path_executed_bool[0] = false;
                         path_executed_bool[3] = true;
@@ -113,8 +113,8 @@
                     {
                         visited_neighbors += "Visited neighbor:\n"
                                             "  -  node_index " + std::to_string(my_map[neighbor_index].node_index) + "\n" +
-                                            "  -  x " + std::to_string( Node::GetX(neighbor_index) ) +
-                                            "  y " + std::to_string( Node::GetY(neighbor_index) ) +  "\n" +
+                                            "  -  x " + std::to_string( Node<IndexType>::GetX(neighbor_index) ) +
+                                            "  y " + std::to_string( Node<IndexType>::GetY(neighbor_index) ) +  "\n" +
                                             "  -  f " + std::to_string(neighbor_f) + "\n" +
                                             "  -  g " + std::to_string(my_map[neighbor_index].g) + "\n" +
                                             "  -  visited " + std::to_string(my_map[neighbor_index].visited) + "\n" +
@@ -132,13 +132,13 @@
             if (snapshot)
             {
                 if ( (current_node_index >= snapshot_start_node_index && current_node_index <= snapshot_end_node_index) || //usando index
-                    (Node::GetX(current_node_index) >= snapshot_start_node_x  && Node::GetX(current_node_index) <= snapshot_end_node_x && //usando as coordenadas
-                    Node::GetY(current_node_index) >= snapshot_start_node_y  && Node::GetY(current_node_index) <= snapshot_end_node_y) )
+                    (Node<IndexType>::GetX(current_node_index) >= snapshot_start_node_x  && Node<IndexType>::GetX(current_node_index) <= snapshot_end_node_x && //usando as coordenadas
+                    Node<IndexType>::GetY(current_node_index) >= snapshot_start_node_y  && Node<IndexType>::GetY(current_node_index) <= snapshot_end_node_y) )
                 {
                     std::cout << "<<-------------------------End of loop iformation:------------------------->>\n\n";
                     std::cout << "CURRENT NODE  : " << " node_index " << my_map[current_node_index].node_index
-                                                    << "  |  x " << Node::GetX(current_node_index)
-                                                    << "  y " << Node::GetY(current_node_index)
+                                                    << "  |  x " << Node<IndexType>::GetX(current_node_index)
+                                                    << "  y " << Node<IndexType>::GetY(current_node_index)
                                                     << "  |  f " << neighbor_f
                                                     << "  |  g " << my_map[current_node_index].g
                                                     << "  |  visited " << my_map[current_node_index].visited
@@ -146,7 +146,7 @@
 
                     if (show_priority_queue)
                     {
-                        ShowPriorityQueue(OPEN);
+                        ShowPriorityQueue<IndexType>(OPEN);
                         std::cout << "\n";
                     }
 
@@ -157,13 +157,13 @@
 
                     if (show_barrier)
                     {
-                        ShowBarrier(barrier);
+                        ShowBarrier<long>(barrier);
                         std::cout << "\n\n";
                     }
 
                     if (show_map)
                     {
-                        PrintMap(my_map, barrier);
+                        PrintMap<IndexType>(my_map, barrier);
                     }
 
                     if (interactive)
@@ -180,7 +180,7 @@
             {
                 std::cout << "The best path doesn't exist\n\n";
 
-                PrintMap(my_map, barrier);
+                PrintMap<IndexType>(my_map, barrier);
                 return 0;
             }
 
@@ -215,7 +215,7 @@
             }
         }
 
-        PrintMap(my_map, barrier);
+        PrintMap<IndexType>(my_map, barrier);
 
         return 0;
     }
