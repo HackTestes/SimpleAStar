@@ -89,28 +89,26 @@ int main (int argc, char* argv[])
 
     if(sliding_puzzle_enabled)
     {
-        //Sliding Puzzle 3x3
-        if(sliding_puzzle_goal.size() == 9)
+        switch(sliding_puzzle_goal.size())
         {
-            return mainSP< std::array<uint8_t, 9>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
-        }
+            //Sliding Puzzle 3x3
+            case 9:
+                return mainSP< std::array<uint8_t, 9>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
 
-        //Sliding Puzzle 4x4
-        if(sliding_puzzle_goal.size() == 16)
-        {
-            return mainSP< std::array<uint8_t, 16>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
-        }
 
-        //Sliding Puzzle 5x5
-        if(sliding_puzzle_goal.size() == 25)
-        {
-            return mainSP< std::array<uint8_t, 25>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
-        }
+            //Sliding Puzzle 4x4
+            case 16:
+                return mainSP< std::array<uint8_t, 16>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
 
-        //Sliding Puzzle 6x6
-        if(sliding_puzzle_goal.size() == 36)
-        {
-            return mainSP< std::array<uint8_t, 36>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
+
+            //Sliding Puzzle 5x5
+            case 25:
+                return mainSP< std::array<uint8_t, 25>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
+
+
+            //Sliding Puzzle 6x6
+            case 36:
+                return mainSP< std::array<uint8_t, 36>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
         }
     }
 }

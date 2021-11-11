@@ -55,6 +55,9 @@ SOFTWARE.
 * GNU C Compiler
 * GNU Makefile
 * C++ Programming language
+* C++ LibBoost
+* Linux Containers
+* Podman
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -63,8 +66,11 @@ SOFTWARE.
 ### Prerequisites
 
 It is recommended to use Linux and have the following installed:
+* GNU C++ compiler
 * GNU make
-* GNU C compiler
+* C++ Boostlib
+* Git
+* Podman or equivalent software (Docker)
 
 
 ### Installation
@@ -127,5 +133,5 @@ Project Link: [https://github.com/HackTestes/SimpleAStar](https://github.com/Hac
 
 ## Acknowledgements
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
-* [Daniel](???????)
-* [Diego](???????)
+* [Daniel](https://github.com/danielsundfeld)
+* [Diego](https://github.com/dcfq)

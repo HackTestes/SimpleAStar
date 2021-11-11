@@ -12,10 +12,14 @@
     #include "AStarHeader.h"
     #include "FnFunctions.h"
     #include "Neighbors.h"
+    #include "OutputJSON.hpp"
 
     template<typename IndexType>
     int MainNodeMap(IndexType local_start, IndexType local_goal)
     {
+        //Stats
+        long long expanded_nodes = 0;
+
         std::unordered_map<IndexType, Node<IndexType>> my_map;
 
         // Verificação feita em outro lugar, criação do nó aqui
@@ -41,6 +45,7 @@
             IndexType current_node_index = OPEN.top().reference_key;
             my_map[current_node_index].in_priority_queue = false;
             OPEN.pop();
+            ++expanded_nodes;
 
             my_map[current_node_index].visited = true;
 
@@ -191,6 +196,7 @@
 
         // mudo a "aparência" dos nós que pertencem ao melhor caminho
         // fazendo o caminho reverso do local_goal para o local_start
+        std::vector<IndexType> compressed_best_path;
         IndexType index = local_goal;
         while (true)
         {
@@ -211,11 +217,19 @@
                         my_map[index].appearance = "@";
                     }
                 }
+                compressed_best_path.push_back(index);
                 index = my_map[index].came_from;
             }
         }
 
-        //PrintMap<IndexType>(my_map, barrier);
+        PrintMap<IndexType>(my_map, barrier);
+
+        // Final Statistics
+        std::cout << ShowJsonStatisticsNodeMap<IndexType>(my_map.size(),
+                                                          my_map[local_goal].g,
+                                                          compressed_best_path,
+                                                          expanded_nodes,
+                                                          "Nodes");
 
         return 0;
     }
