@@ -1,0 +1,6 @@
+#podman build -t empty_container -f './Empty_container_dockerfile'
+
+FROM scratch
+WORKDIR /
+COPY SimpleAStarExecutable /SimpleAStarExecutable
+ENTRYPOINT ["/SimpleAStarExecutable"]

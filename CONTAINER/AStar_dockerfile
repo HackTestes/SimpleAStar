@@ -13,7 +13,7 @@ RUN dnf install git -y
 
 #Selecting branches might be a litte problematic, if they change
 RUN git clone https://github.com/HackTestes/SimpleAStar.git ./SimpleAStar -b HackTestes-patch-2
-WORKDIR /SimpleAStar
+WORKDIR /SimpleAStar/src
 RUN make
 RUN make clean
 
