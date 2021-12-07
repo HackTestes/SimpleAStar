@@ -1,0 +1,17 @@
+.MajorSection
+{
+    display: none;
+}
+
+#Presentation
+{
+    display: block;
+}
+
+.LegendColorBox
+{
+    background-color: white;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}

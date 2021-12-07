@@ -235,7 +235,7 @@
                                                             my_map[local_goal].g,
                                                             compressed_best_path,
                                                             expanded_nodes,
-                                                            "Nodes");
+                                                            "Node Map");
         }
 
 

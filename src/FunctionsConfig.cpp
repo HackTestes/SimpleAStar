@@ -9,6 +9,20 @@
 #include"json/single_include/nlohmann/json.hpp"
 #include"AStarHeader.h"
 
+void StoreJsonObjectStringValues(nlohmann::json parsed_json_configuration)
+{
+    json_input_string_values.problem_type = parsed_json_configuration["Problem_type"].dump();
+    json_input_string_values.grid_size_x = parsed_json_configuration["Grid_size_X"].dump();
+    json_input_string_values.gird_size_Y = parsed_json_configuration["Grid_size_Y"].dump();
+    json_input_string_values.start = parsed_json_configuration["Start"].dump();
+    json_input_string_values.goal = parsed_json_configuration["Goal"].dump();
+
+    if(parsed_json_configuration["Problem_type"] == "Node Map")
+    {
+        json_input_string_values.barrier = parsed_json_configuration["Barrier"].dump();
+    }
+}
+
 void SetStart(long long start_x, long long start_y)
 {
     long long start_index = Node<long long>::GetIndex(start_x, start_y);
@@ -61,20 +75,16 @@ void SetGirdSizeY(long long size_y)
 
 void ConfigNodeMap(nlohmann::json parsed_json_configuration)
 {
-    // !todo! Adicionar suporte para SlidingPuzzle
-    // - Criar um fluxo de execução alternativo
-    // - Desmembrar cada uma das configurações específicas em funções
-
-    SetGirdSizeX(parsed_json_configuration["Grid size X"]);
-    SetGirdSizeY(parsed_json_configuration["Grid size Y"]);
+    SetGirdSizeX(parsed_json_configuration["Grid_size_X"]);
+    SetGirdSizeY(parsed_json_configuration["Grid_size_Y"]);
 
     SetStart(parsed_json_configuration["Start"][0], parsed_json_configuration["Start"][1]);
     SetGoal(parsed_json_configuration["Goal"][0], parsed_json_configuration["Goal"][1]);
 
-    for (long i = 0; i < parsed_json_configuration["Barrier coordinates"].size(); ++i)
+    for (long i = 0; i < parsed_json_configuration["Barrier"].size(); ++i)
     {
-        long long barrier_x = parsed_json_configuration["Barrier coordinates"][i][0];
-        long long barrier_y = parsed_json_configuration["Barrier coordinates"][i][1];
+        long long barrier_x = parsed_json_configuration["Barrier"][i][0];
+        long long barrier_y = parsed_json_configuration["Barrier"][i][1];
         long long barrier_index = Node<long long>::GetIndex(barrier_x, barrier_y);
 
         // Vefifica se é uma barreira válida
@@ -86,7 +96,7 @@ void ConfigNodeMap(nlohmann::json parsed_json_configuration)
         {
             // A barreira simplesmente não será inserida, não é necessário encerrar o programa
             // Um aviso será envido apenas para se saber do problema
-            std::cout << "WARNING: Invalid barrier - " << parsed_json_configuration["Barrier coordinates"][i] << "\n";
+            std::cout << "WARNING: Invalid barrier - " << parsed_json_configuration["Barrier"][i] << "\n";
         }
     }
 
@@ -103,12 +113,14 @@ void ConfigNodeMap(nlohmann::json parsed_json_configuration)
     }
 
     /*
-    std::cout << "Grid size X " << grid_size_x << "\n";
-    std::cout << "Grid size Y " << grid_size_y << "\n";
+    std::cout << "Grid_size_X " << grid_size_x << "\n";
+    std::cout << "Grid_size_Y " << grid_size_y << "\n";
     std::cout << "Start [" << parsed_json_configuration["Start"][0] << "] [" << parsed_json_configuration["Start"][1] << "]\n";
     std::cout << "Goal [" << parsed_json_configuration["Goal"][0] << "] [" << parsed_json_configuration["Goal"][1] << "]\n";
-    std::cout << "Barrier coordinates " << parsed_json_configuration["Barrier coordinates"] << "\n";
+    std::cout << "Barrier " << parsed_json_configuration["Barrier"] << "\n";
     */
+
+    StoreJsonObjectStringValues(parsed_json_configuration);
 }
 
 void SetSlidingPuzzleStartGoal(std::vector<long long> json_sliding_puzzle_start, std::vector<long long> json_sliding_puzzle_goal)
@@ -144,10 +156,12 @@ void ConfigSlidingPuzzle(nlohmann::json parsed_json_configuration)
     sliding_puzzle_enabled = true;
     node_map_enabled = false;
 
-    SetGirdSizeX(parsed_json_configuration["Grid size X"]);
-    SetGirdSizeY(parsed_json_configuration["Grid size Y"]);
+    SetGirdSizeX(parsed_json_configuration["Grid_size_X"]);
+    SetGirdSizeY(parsed_json_configuration["Grid_size_Y"]);
 
     SetSlidingPuzzleStartGoal(parsed_json_configuration["Start"], parsed_json_configuration["Goal"]);
+
+    StoreJsonObjectStringValues(parsed_json_configuration);
 
 }
 
@@ -174,11 +188,11 @@ void JsonConfig()
     nlohmann::json configuration = nlohmann::json::parse(json_config);
 
     // Problem
-    if (configuration["Problem type"] == "Node Map")
+    if (configuration["Problem_type"] == "Node Map")
     {
         ConfigNodeMap(configuration);
     }
-    else if (configuration["Problem type"] == "Sliding Puzzle")
+    else if (configuration["Problem_type"] == "Sliding Puzzle")
     {
         ConfigSlidingPuzzle(configuration);
     }

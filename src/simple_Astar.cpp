@@ -9,14 +9,15 @@
 #include <stdlib.h>
 
 #include "AStarHeader.h"
-#include "MainSlidingPuzzle.h"
-#include "MainNodeMap.h"
 
 // o mapa é uma tabela
 // movimentos: cima, baixo, esquerda, direta (4 movimentos possíveis)
 
 // !todo! GlobalParameters.cpp ????? Ou .h?
 // Variáveis globais
+
+//Json
+JsonInputStringFormat json_input_string_values = JsonInputStringFormat();
 
 // problem type
 bool node_map_enabled = true;
@@ -64,8 +65,9 @@ std::vector<long long> sliding_puzzle_goal = {};
 std::vector<long long> sliding_puzzle_start = {};
 
 //Output
-bool json_output_enabled = true;
+bool json_output_enabled = false;
 
+// !todo! Encontrar um local adequando fora da main
 // gera os espaços necessário para fazer um padding 
 std::string StringPadding(long string_length)
 {
@@ -85,38 +87,14 @@ int main (int argc, char* argv[])
 
     ArgsOptions(argc, argv);
 
-    // !todo! Criar os "bindings" para cada um dos tipos de problema
-    // 1 arquivo compila todos os problemas de sliding puzzle
-    // 1 arquivo compila todos os problemas de nodes(nós)
-    // Basicamente arquivos .cpp separados para fazer a compilação
     if (node_map_enabled)
     {
-        return MainNodeMap<long long>(START, GOAL);
+        return StartNodeMapImplementations();
     }
 
     if(sliding_puzzle_enabled)
     {
-        switch(sliding_puzzle_goal.size())
-        {
-            //Sliding Puzzle 3x3
-            case 9:
-                return mainSP< std::array<uint8_t, 9>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
-
-
-            //Sliding Puzzle 4x4
-            case 16:
-                return mainSP< std::array<uint8_t, 16>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
-
-
-            //Sliding Puzzle 5x5
-            case 25:
-                return mainSP< std::array<uint8_t, 25>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
-
-
-            //Sliding Puzzle 6x6
-            case 36:
-                return mainSP< std::array<uint8_t, 36>, uint8_t >(sliding_puzzle_start, sliding_puzzle_goal);
-        }
+        return StartSlidingPuzzleImplementations();
     }
 }
 

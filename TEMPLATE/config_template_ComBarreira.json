@@ -1,10 +1,10 @@
 {
-    "Problem type" : "Node Map",
-    "Grid size X" : 15,
-    "Grid size Y" : 15,
+    "Problem_type" : "Node Map",
+    "Grid_size_X" : 15,
+    "Grid_size_Y" : 15,
     "Start" : [0, 0],
     "Goal" : [0, 10],
-    "Barrier coordinates" :
+    "Barrier" :
     [
         [1, 0],
         [1, 2],

@@ -14,6 +14,10 @@
     #include <boost/range/iterator_range_core.hpp>
     #include <boost/functional/hash.hpp>
 
+    //Json
+    #include "JsonInputStringFormat.hpp"
+    extern JsonInputStringFormat json_input_string_values;
+
     // problem type
     extern bool node_map_enabled;
     extern bool sliding_puzzle_enabled;
@@ -77,5 +81,8 @@
     void SetGoal(long long goal_x, long long goal_y);
     void SetGirdSizeX(long long size_x);
     void SetGirdSizeY(long long size_y);
+
+    int StartNodeMapImplementations();
+    int StartSlidingPuzzleImplementations();
 
 #endif

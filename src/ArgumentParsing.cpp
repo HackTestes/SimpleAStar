@@ -21,6 +21,10 @@
 // !todo! show JSON config info (ex.: file path)???? NÃO
 // Obs: Switch só funciona bem com comparação de inteiros!
 
+// !todo! Precisa de uma entrada JSON!!! 
+// - Incluir aviso como comentário
+// - Depreciar argumento: ArgumentDefaultArguments
+
 namespace ArgumentSnapshot
 {
     std::string long_option = "--Snapshot";
@@ -318,20 +322,20 @@ namespace ArgumentJsonConfig
 };
 
 
-namespace ArgumentVisualOutput
+namespace ArgumentJsonOutput
 {
-    std::string long_option = "--VisualOutput";
-    std::string short_option= "-V";
+    std::string long_option = "--JsonOutput";
+    std::string short_option= "-j";
 
     void help()
     {
-        std::string help = "\t" + long_option + "  " + short_option + "  Disables Json output and enables visual mode\n\n";
+        std::string help = "\t" + long_option + "  " + short_option + "  Enables Json output and disables the visual mode\n\n";
         std::cout << help;
     };
 
     long run(int current_arg, char* argv[])
     {
-        json_output_enabled = false;
+        json_output_enabled = true;
 
         return 1;
     }
@@ -417,7 +421,7 @@ namespace ArgumentHelp
         ArgumentHeuristic::help();
         ArgumentCost::help();
         ArgumentJsonConfig::help();
-        ArgumentVisualOutput::help();
+        ArgumentJsonOutput::help();
         ArgumentTest::help();
 
         std::exit(0); // !todo! Perigoso?
@@ -499,8 +503,8 @@ long ExecuteArg(std::string my_argument, int current_arg, char* argv[])
     arguments_mapping[ArgumentTest::short_option] = ArgumentTest::run;
 
     // VisualOutput
-    arguments_mapping[ArgumentVisualOutput::long_option] = ArgumentVisualOutput::run;
-    arguments_mapping[ArgumentVisualOutput::short_option] = ArgumentVisualOutput::run;
+    arguments_mapping[ArgumentJsonOutput::long_option] = ArgumentJsonOutput::run;
+    arguments_mapping[ArgumentJsonOutput::short_option] = ArgumentJsonOutput::run;
 
     if (arguments_mapping.count(my_argument) != 0)
     {
