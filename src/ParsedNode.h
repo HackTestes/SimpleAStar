@@ -34,7 +34,7 @@
     {
         std::pair<IntType, IntType>coordinate_pair = CoordinateParser<IntType>(string_coordinate, separator);
 
-        return ParsedNode(coordinate_pair.first, coordinate_pair.second);
+        return ParsedNode<IntType>(coordinate_pair.first, coordinate_pair.second);
     }
 
 #endif
