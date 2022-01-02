@@ -1,0 +1,7 @@
+{
+    "Problem_type" : "Sliding Puzzle",
+    "Grid_size_X" : 3,
+    "Grid_size_Y" : 3,
+    "Start" : [0, 5, 2, 1, 7, 3, 8, 4, 6],
+    "Goal" : [7, 4, 1, 8, 5, 2, 0, 6, 3]
+}
