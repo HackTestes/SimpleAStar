@@ -168,21 +168,29 @@ void ConfigSlidingPuzzle(nlohmann::json parsed_json_configuration)
 void JsonConfig()
 {
     std::string json_config;
-    std::string json_line;
-    std::ifstream json_config_file (json_config_file_path);
 
-    if (json_config_file.is_open())
+    if(raw_json_enabled == false)
     {
-        while (getline(json_config_file, json_line))
+        std::string json_line;
+        std::ifstream json_config_file (json_config_file_path);
+
+        if (json_config_file.is_open())
         {
-            json_config += json_line;
+            while (getline(json_config_file, json_line))
+            {
+                json_config += json_line;
+            }
+            json_config_file.close();
         }
-        json_config_file.close();
+        else
+        {
+            std::cout << "Cannot open JSON file\n";
+            std::exit(1);
+        }
     }
     else
     {
-        std::cout << "Cannot open JSON file\n";
-        std::exit(1);
+        json_config = raw_json_input;
     }
 
     nlohmann::json configuration = nlohmann::json::parse(json_config);

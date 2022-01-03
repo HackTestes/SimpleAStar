@@ -58,8 +58,11 @@
     // map padding
     extern long long padding_cell_size;
 
+    // json
     extern std::string json_config_file_path;
     extern bool json_config_enabled;
+    extern bool raw_json_enabled;
+    extern std::string raw_json_input;
 
     // SlidingPuzzle
     extern std::vector<long long> sliding_puzzle_goal;

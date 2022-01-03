@@ -57,8 +57,11 @@ long long cost_weight = 1;
 // map padding
 long long padding_cell_size = 7;
 
+//json
 std::string json_config_file_path = "";
 bool json_config_enabled = false;
+bool raw_json_enabled = false;
+std::string raw_json_input = "";
 
 // SlidingPuzzle
 std::vector<long long> sliding_puzzle_goal = {};
@@ -122,7 +125,7 @@ int main (int argc, char* argv[])
 
     // !todo! Retirar trecho
     // inicio o loop principal
-    /*while (OPEN.top().reference_key != GOAL)
+    while (OPEN.top().reference_key != GOAL)
     {
         long current_node_index = OPEN.top().reference_key;
         my_map[current_node_index].in_priority_queue = false;
@@ -217,7 +220,7 @@ int main (int argc, char* argv[])
 
         SnapshotOptions(current_node_index, OPEN, visited_neighbors, my_map);
         // !todo! Retirar trecho
-        /* Options - mostra uma série de informações sobre o loop principal
+         Options - mostra uma série de informações sobre o loop principal
         if (snapshot)
         {
             if ( (current_node_index >= snapshot_start_node_index && current_node_index <= snapshot_end_node_index) || //usando index

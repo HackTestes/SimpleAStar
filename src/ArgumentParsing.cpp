@@ -341,6 +341,27 @@ namespace ArgumentJsonOutput
     }
 };
 
+namespace ArgumentRawJson
+{
+    std::string long_option = "--RawJson";
+    std::string short_option= "-R";
+
+    void help()
+    {
+        std::string help = "\t" + long_option + "  " + short_option + "  Takes a raw strig input of a json file\n\n";
+        std::cout << help;
+    };
+
+    long run(int current_arg, char* argv[])
+    {
+        json_config_enabled = true;
+        raw_json_enabled = true;
+        raw_json_input = (std::string)argv[current_arg + 1];
+        JsonConfig();
+        return 1;
+    }
+};
+
 namespace ArgumentDefaultArguments
 {
     std::string long_option = "";
@@ -422,6 +443,7 @@ namespace ArgumentHelp
         ArgumentCost::help();
         ArgumentJsonConfig::help();
         ArgumentJsonOutput::help();
+        ArgumentRawJson::help();
         ArgumentTest::help();
 
         std::exit(0); // !todo! Perigoso?
@@ -497,6 +519,10 @@ long ExecuteArg(std::string my_argument, int current_arg, char* argv[])
     // JsonConfig
     arguments_mapping[ArgumentJsonConfig::long_option] = ArgumentJsonConfig::run;
     arguments_mapping[ArgumentJsonConfig::short_option] = ArgumentJsonConfig::run;
+
+    // RawJson
+    arguments_mapping[ArgumentRawJson::long_option] = ArgumentRawJson::run;
+    arguments_mapping[ArgumentRawJson::short_option] = ArgumentRawJson::run;
 
     // Test
     arguments_mapping[ArgumentTest::long_option] = ArgumentTest::run;
