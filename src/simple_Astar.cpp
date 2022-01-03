@@ -8,21 +8,29 @@
 #include <fstream>
 #include <stdlib.h>
 
-#include"AStarHeader.h"
+#include "AStarHeader.h"
 
 // o mapa é uma tabela
 // movimentos: cima, baixo, esquerda, direta (4 movimentos possíveis)
 
 // !todo! GlobalParameters.cpp ????? Ou .h?
 // Variáveis globais
+
+//Json
+JsonInputStringFormat json_input_string_values = JsonInputStringFormat();
+
+// problem type
+bool node_map_enabled = true;
+bool sliding_puzzle_enabled = false;
+
 // grid_size
-long grid_size_x = 0;
-long grid_size_y = 0;
+long long grid_size_x = 0;
+long long grid_size_y = 0;
 
-long START = 0;
-long GOAL = 0;
+long long START = 0;
+long long GOAL = 0;
 
-std::unordered_set<long> barrier = {};
+std::unordered_set<long long> barrier = {};
 
 bool debug = false;
 bool best_path_index = false;
@@ -31,32 +39,71 @@ bool show_priority_queue = false;
 bool show_visited_neighbors = false;
 
 bool snapshot = false;
-long snapshot_start_node_index = -1;
-long snapshot_end_node_index = -1;
+long long snapshot_start_node_index = -1;
+long long snapshot_end_node_index = -1;
 
-long snapshot_start_node_x = -1;
-long snapshot_end_node_x = -1;
-long snapshot_start_node_y = -1;
-long snapshot_end_node_y = -1;
+long long snapshot_start_node_x = -1;
+long long snapshot_end_node_x = -1;
+long long snapshot_start_node_y = -1;
+long long snapshot_end_node_y = -1;
 
 bool interactive = false;
 bool show_map = false;
 bool show_barrier = false;
 bool warning_enabled = false;
-long heuristic_weight = 1;
-long cost_weight = 1;
+long long heuristic_weight = 1;
+long long cost_weight = 1;
 
 // map padding
-long padding_cell_size = 7;
+long long padding_cell_size = 7;
 
+//json
 std::string json_config_file_path = "";
 bool json_config_enabled = false;
+bool raw_json_enabled = false;
+std::string raw_json_input = "";
+
+// SlidingPuzzle
+std::vector<long long> sliding_puzzle_goal = {};
+std::vector<long long> sliding_puzzle_start = {};
+
+//Output
+bool json_output_enabled = false;
+
+// !todo! Encontrar um local adequando fora da main
+// gera os espaços necessário para fazer um padding 
+std::string StringPadding(long string_length)
+{
+    long padding = padding_cell_size - string_length;
+    std::string padding_text;
+
+    for (long i = 0; i < padding; ++i)
+    {
+        padding_text += " ";
+    }
+
+    return padding_text;
+}
 
 int main (int argc, char* argv[])
 {
-    std::unordered_map <long, Node> my_map;
 
     ArgsOptions(argc, argv);
+
+    if (node_map_enabled)
+    {
+        return StartNodeMapImplementations();
+    }
+
+    if(sliding_puzzle_enabled)
+    {
+        return StartSlidingPuzzleImplementations();
+    }
+}
+
+
+/*
+    std::unordered_map <long, Node> my_map;
 
     // Verificação feita em outro lugar, criação do nó aqui
     my_map[START] = Node(START); 
@@ -68,16 +115,19 @@ int main (int argc, char* argv[])
     long previous_map_size = my_map.size();
 
     // usa o f do nó para ordenar
-    std::priority_queue < Node, std::vector<Node>, SortPriorityQueue > OPEN;
+    std::priority_queue < PriorityQueueContainer, std::vector<PriorityQueueContainer>, SortPriorityQueue > OPEN;
 
     // inicializo todos os atributos necessários para começar
     my_map[START].in_priority_queue = true;
-    OPEN.push(my_map[START]);
+    OPEN.push( PriorityQueueContainer(my_map[START].f, START) );
 
+    MainLoop(my_map, OPEN, previous_map_size);
+
+    // !todo! Retirar trecho
     // inicio o loop principal
-    while (OPEN.top().node_index != my_map[GOAL].node_index)
+    while (OPEN.top().reference_key != GOAL)
     {
-        long current_node_index = OPEN.top().node_index;
+        long current_node_index = OPEN.top().reference_key;
         my_map[current_node_index].in_priority_queue = false;
         OPEN.pop();
 
@@ -117,7 +167,7 @@ int main (int argc, char* argv[])
                     my_map[neighbor_index].g = cost_so_far;
                     my_map[neighbor_index].came_from = current_node_index;
                     OPEN = CopyPriorityQueueExcept(OPEN, neighbor_index); // removo o nó com valor antigo
-                    OPEN.push(my_map[neighbor_index]); // coloco de volta com o valor atualizado
+                    OPEN.push( PriorityQueueContainer(my_map[neighbor_index].f, neighbor_index) ); // coloco de volta com o valor atualizado
 
                     path_executed_bool[0] = false;
                     path_executed_bool[1] = true;
@@ -138,7 +188,7 @@ int main (int argc, char* argv[])
                     my_map[neighbor_index].came_from = current_node_index;
                     my_map[neighbor_index].in_priority_queue = true;
 
-                    OPEN.push(my_map[neighbor_index]);
+                    OPEN.push( PriorityQueueContainer(my_map[neighbor_index].f, neighbor_index) );
 
                     path_executed_bool[0] = false;
                     path_executed_bool[3] = true;
@@ -167,7 +217,10 @@ int main (int argc, char* argv[])
             }
         }
 
-        // Options - mostra uma série de informações sobre o loop principal
+
+        SnapshotOptions(current_node_index, OPEN, visited_neighbors, my_map);
+        // !todo! Retirar trecho
+         Options - mostra uma série de informações sobre o loop principal
         if (snapshot)
         {
             if ( (current_node_index >= snapshot_start_node_index && current_node_index <= snapshot_end_node_index) || //usando index
@@ -225,6 +278,8 @@ int main (int argc, char* argv[])
 
     std::cout << " BEST PATH\n\n\n";
 
+
+    // !todo! Retirar trecho
     // mudo a "aparência" dos nós que pertencem ao melhor caminho
     // fazendo o caminho reverso do GOAL para o START
     long index = GOAL;
@@ -251,7 +306,9 @@ int main (int argc, char* argv[])
         }
     }
 
+    ReversePath(my_map);
+
     PrintMap(my_map, barrier);
 
     return 0;
-}
+}*/

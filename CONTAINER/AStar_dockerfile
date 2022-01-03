@@ -1,0 +1,20 @@
+#podman build -t a_star_image -f './AStar_dockerfile'
+
+FROM registry.fedoraproject.org/fedora:latest
+
+WORKDIR /
+
+RUN dnf upgrade -y
+RUN dnf install boost -y
+RUN dnf install boost-devel -y
+RUN dnf install make -y
+RUN dnf install g++ -y
+RUN dnf install git -y
+
+#Selecting branches might be a litte problematic, if they change
+RUN git clone https://github.com/HackTestes/SimpleAStar.git ./SimpleAStar -b HackTestes-patch-2
+WORKDIR /SimpleAStar/src
+RUN make
+RUN make clean
+
+CMD /bin/bash

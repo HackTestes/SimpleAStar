@@ -1,9 +1,10 @@
 {
-    "Grid size X" : 125,
-    "Grid size Y" : 125,
+    "Problem_type": "Node Map",
+    "Grid_size_X" : 125,
+    "Grid_size_Y" : 125,
     "Start" : [1, 1],
     "Goal" : [78, 41],
-    "Barrier coordinates" :
+    "Barrier" :
     [
         [0, 0],
         [0, 1],

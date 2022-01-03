@@ -1,8 +1,8 @@
-var path = "";
-var map_string = "";
+let path = "";
+let map_string = "";
 path = process.argv[2];
-var my_map = [];
-var my_barrier_indexes = [];
+let my_map = [];
+let my_barrier_indexes = [];
 
 console.log(path);
 
@@ -35,7 +35,7 @@ for (let line = 0; line < my_map.length; ++line)
         }
 }
 
-for (var i = 0; i < my_barrier_indexes.length; ++i)
+for (let i = 0; i < my_barrier_indexes.length; ++i)
 {
     console.log("[" + my_barrier_indexes[i][0] + ", " + my_barrier_indexes[i][1] + "],");
 }
